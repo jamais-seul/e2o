@@ -43,13 +43,27 @@ nav{position:sticky;top:0;z-index:1000;background:var(--card);border-bottom:1px 
 .btn.rd{background:#ef4444}
 .btn.sm{padding:.4rem .7rem;font-size:.8rem}
 
-/* Google Translate */
-.gt-wrap{display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:2px 6px;max-width:160px}
-.gt-wrap .goog-te-gadget{font-size:0!important}
-.gt-wrap .goog-te-gadget .goog-te-combo{font-size:.78rem!important;padding:3px 5px;border-radius:7px;border:1px solid var(--bd);background:var(--card);color:var(--text);max-width:130px;font-family:inherit}
-.goog-te-banner-frame{display:none!important}
+/* Google Translate — style propre */
+.gt-wrap{
+  display:inline-flex;align-items:center;gap:0;
+  background:var(--bg);border:1px solid var(--bd);border-radius:10px;
+  padding:0 2px 0 8px;height:34px;overflow:hidden;max-width:150px;
+}
+.gt-wrap::before{content:"🌐";font-size:.95rem;margin-right:2px;line-height:1}
+.gt-wrap .goog-te-gadget{font-size:0!important;line-height:1}
+.gt-wrap .goog-te-gadget .goog-te-combo{
+  font-size:.78rem!important;padding:4px 6px;border:0!important;
+  background:transparent!important;color:var(--text)!important;
+  max-width:120px;font-family:inherit;cursor:pointer;outline:none;
+}
+.gt-wrap .goog-te-gadget>span,
+.gt-wrap .goog-te-gadget .goog-te-combo option:first-child{/* keep */}
+.goog-te-banner-frame,.goog-te-balloon-frame,.goog-tooltip,.goog-te-spinner-pos{display:none!important}
 body{top:0!important}
 .gt-wrap .goog-te-gadget>span{display:none!important}
+#google_translate_element{display:inline-flex;align-items:center}
+body.dark .gt-wrap{background:#1e293b;border-color:var(--bd)}
+body.dark .gt-wrap .goog-te-gadget .goog-te-combo{color:var(--text)!important}
 
 /* Hero */
 .hero{background:linear-gradient(135deg,#0c4a6e 0%,#0369a1 50%,#0ea5e9 100%);color:#fff;padding:3.2rem 1.1rem 2.8rem;text-align:center;position:relative;overflow:hidden}
@@ -116,14 +130,14 @@ body.dark #lockBtn{background:#1e293b}
 @media(max-width:700px){
   .nav-in{padding:.55rem .7rem;gap:.35rem;flex-wrap:wrap}
   .nav-links{order:10;flex:1 1 100%;max-width:100%}
-  .gt-wrap{max-width:120px}
-  .gt-wrap .goog-te-gadget .goog-te-combo{max-width:95px!important;font-size:.7rem!important}
+  .gt-wrap{max-width:130px;height:32px}
+  .gt-wrap .goog-te-gadget .goog-te-combo{max-width:100px!important;font-size:.7rem!important}
   nav .btn{padding:.4rem .6rem;font-size:.8rem}
   .hero{padding:2.2rem 1rem}
 }
 @media(max-width:400px){
-  .gt-wrap{max-width:100px}
-  .gt-wrap .goog-te-gadget .goog-te-combo{max-width:78px!important;font-size:.65rem!important}
+  .gt-wrap{max-width:110px}
+  .gt-wrap .goog-te-gadget .goog-te-combo{max-width:85px!important;font-size:.65rem!important}
 }
 
 .photo-list{display:flex;flex-direction:column;gap:.6rem}
@@ -147,8 +161,7 @@ body.dark .warn{background:#431407;border-color:#9a3412;color:#fdba74}
       <a href="#contact">Contact</a>
     </div>
     <div class="nav-right">
-      <div class="gt-wrap notranslate" title="Traduire">
-        <span style="font-size:1rem">🌐</span>
+      <div class="gt-wrap notranslate" title="Traduire le site">
         <div id="google_translate_element"></div>
       </div>
       <button class="btn l sm" data-a="theme" title="Mode sombre / clair">🌓</button>
@@ -185,7 +198,7 @@ body.dark .warn{background:#431407;border-color:#9a3412;color:#fdba74}
       <h2 class="t" id="realTitle">Réalisations</h2>
       <p class="sub" id="realSub">Quelques chantiers récents. Les photos défilent automatiquement.</p>
       <div class="gallery-wrap" id="gallery">
-        <img src="https://images.unsplash.com/photo-1631545806608-1b2c0c0c0c0c?w=1200&q=80" alt="Réalisation" class="on" id="galImg0" onerror="this.src='data:image/svg+xml,'+encodeURIComponent('<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%221200%22 height=%22675%22><rect fill=%22%230f172a%22 width=%22100%25%22 height=%22100%25%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%2394a3b8%22 font-size=%2224%22 text-anchor=%22middle%22 dy=%22.3em%22>Ajoutez vos photos dans l’espace créateur</text></svg>')">
+        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:1.05rem;padding:1.5rem;text-align:center">Ajoutez vos photos de chantiers dans l’espace créateur → onglet Photos</div>
       </div>
       <div class="gallery-dots" id="galDots"></div>
       <p class="gallery-cap" id="galCap">Photo 1</p>
@@ -417,19 +430,17 @@ $("#contactForm")?.addEventListener("submit", ev=>{
   setTimeout(()=>$("#formMsg").textContent="", 5000);
 });
 
-// Password only (local + optional Firebase later)
+// Mot de passe UNIQUE (toi seul). Change MASTER_PASS ci-dessous si besoin.
+const MASTER_PASS = "clim2024"; // ← ton code d'accès unique
 function hash(str){
   let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i)|0;
   return "h_"+Math.abs(h).toString(36);
 }
+function getPassHash(){
+  return localStorage.getItem("clim_pass") || hash(MASTER_PASS);
+}
 function checkPass(pass){
-  const stored = localStorage.getItem("clim_pass");
-  if(!stored){
-    // first time: create
-    localStorage.setItem("clim_pass", hash(pass));
-    return {ok:true, created:true};
-  }
-  return {ok: stored===hash(pass)};
+  return { ok: hash(pass) === getPassHash() };
 }
 
 function panelLogin(){
@@ -438,22 +449,21 @@ function panelLogin(){
   S.innerHTML=`
     <div class="sh"><span>🔒 Espace créateur</span><button class="btn sm" id="sX">✕</button></div>
     <div class="sb">
-      <p class="sub">Accès réservé. Mot de passe uniquement.</p>
+      <p class="sub">Accès réservé au propriétaire du site.</p>
       <label>Mot de passe</label>
       <input id="authPass" class="field" type="password" placeholder="••••••••" autocomplete="current-password">
       <button class="btn g" id="authGo" style="width:100%;margin-top:.6rem">Entrer</button>
       <p class="msg" id="authMsg"></p>
-      <p class="sub" style="margin-top:1rem;font-size:.78rem">Première connexion : le mot de passe saisi devient le code d’accès de cet appareil.</p>
     </div>`;
   $("#sX").onclick=()=>{S.hidden=true};
   $("#authGo").onclick=()=>{
     const pass=$("#authPass").value||"";
-    if(!pass){ $("#authMsg").textContent="Entrez un mot de passe."; return; }
+    if(!pass){ $("#authMsg").textContent="Entrez le mot de passe."; return; }
     const r=checkPass(pass);
     if(r.ok){
       unlocked=true;
       sessionStorage.setItem("clim_ok","1");
-      $("#authMsg").textContent=r.created?"✅ Mot de passe créé.":"✅ Connecté.";
+      $("#authMsg").textContent="✅ Connecté.";
       setTimeout(panel,300);
     } else $("#authMsg").textContent="❌ Mot de passe incorrect.";
   };
@@ -608,13 +618,13 @@ function panel(){
     };
   }
 
-  // Password change
+  // Password change (unique code)
   $("#passSave")?.addEventListener("click",()=>{
     const p1=$("#newPass").value, p2=$("#newPass2").value;
     if(!p1||p1.length<4){ $("#passMsg").textContent="Minimum 4 caractères."; return; }
     if(p1!==p2){ $("#passMsg").textContent="Les mots de passe ne correspondent pas."; return; }
     localStorage.setItem("clim_pass", hash(p1));
-    $("#passMsg").textContent="✅ Mot de passe mis à jour.";
+    $("#passMsg").textContent="✅ Mot de passe mis à jour. Utilise ce nouveau code la prochaine fois.";
   });
 
   $("#aSave").onclick=()=>{
