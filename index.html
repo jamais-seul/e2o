@@ -1,1 +1,651 @@
-E2O fonctionne !
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clim & Électricité — Pose et dépannage</title>
+<meta name="description" content="Pose de climatisation, dépannage électrique, entretien. Intervention rapide, devis gratuit.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#0ea5e9;--primary-d:#0284c7;--accent:#f59e0b;--ok:#10b981;
+  --bg:#f8fafc;--card:#ffffff;--text:#0f172a;--muted:#64748b;--bd:#e2e8f0;
+  --sh:0 4px 20px rgba(15,23,42,.08);--radius:14px;
+}
+body.dark{
+  --bg:#0b1220;--card:#111827;--text:#e5eefb;--muted:#94a3b8;--bd:#1e293b;
+  --primary:#38bdf8;--primary-d:#0ea5e9;--accent:#fbbf24;--ok:#34d399;
+  --sh:0 4px 24px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+a{color:var(--primary);text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:1100px;margin:0 auto;padding:0 1.1rem}
+
+/* Nav */
+nav{position:sticky;top:0;z-index:1000;background:var(--card);border-bottom:1px solid var(--bd);backdrop-filter:blur(10px)}
+.nav-in{display:flex;align-items:center;gap:.6rem;padding:.7rem 1.1rem;max-width:1100px;margin:0 auto}
+.logo{font-family:Outfit,sans-serif;font-weight:700;font-size:1.15rem;color:var(--text);display:flex;align-items:center;gap:.45rem;white-space:nowrap}
+.logo span{color:var(--primary)}
+.nav-links{display:flex;gap:.15rem;flex:1;overflow-x:auto}
+.nav-links a{color:var(--text);font-weight:600;font-size:.88rem;padding:.4rem .7rem;border-radius:8px;white-space:nowrap}
+.nav-links a:hover{background:var(--bg)}
+.nav-right{display:flex;align-items:center;gap:.4rem;flex-shrink:0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;background:var(--primary);color:#fff;border:0;padding:.55rem .95rem;border-radius:10px;font-weight:600;font-size:.88rem;cursor:pointer;font-family:inherit;text-decoration:none}
+.btn:hover{filter:brightness(1.08)}
+.btn.acc{background:var(--accent);color:#111}
+.btn.l{background:var(--bg);color:var(--text);border:1px solid var(--bd)}
+.btn.g{background:var(--ok)}
+.btn.rd{background:#ef4444}
+.btn.sm{padding:.4rem .7rem;font-size:.8rem}
+
+/* Google Translate */
+.gt-wrap{display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:2px 6px;max-width:160px}
+.gt-wrap .goog-te-gadget{font-size:0!important}
+.gt-wrap .goog-te-gadget .goog-te-combo{font-size:.78rem!important;padding:3px 5px;border-radius:7px;border:1px solid var(--bd);background:var(--card);color:var(--text);max-width:130px;font-family:inherit}
+.goog-te-banner-frame{display:none!important}
+body{top:0!important}
+.gt-wrap .goog-te-gadget>span{display:none!important}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,#0c4a6e 0%,#0369a1 50%,#0ea5e9 100%);color:#fff;padding:3.2rem 1.1rem 2.8rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.12),transparent 50%)}
+.hero h1{font-family:Outfit,sans-serif;font-size:clamp(1.7rem,4.5vw,2.5rem);max-width:720px;margin:0 auto .7rem;position:relative}
+.hero p{max-width:560px;margin:0 auto 1.4rem;opacity:.93;font-size:1.05rem;position:relative}
+.hero-cta{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;position:relative}
+.hero .btn{background:#fff;color:#0369a1;font-weight:700}
+.hero .btn.acc{background:var(--accent);color:#111}
+
+/* Sections */
+section{padding:2.6rem 0}
+h2.t{font-family:Outfit,sans-serif;font-size:1.55rem;margin-bottom:.35rem}
+.sub{color:var(--muted);margin-bottom:1.3rem;font-size:.95rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.1rem}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--radius);padding:1.25rem;box-shadow:var(--sh)}
+.card h3{font-size:1.05rem;margin-bottom:.4rem}
+.card p{color:var(--muted);font-size:.9rem}
+.icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:.75rem;background:linear-gradient(135deg,#e0f2fe,#bae6fd)}
+body.dark .icon{background:linear-gradient(135deg,#0c4a6e,#075985)}
+
+/* Gallery */
+.gallery-wrap{position:relative;border-radius:var(--radius);overflow:hidden;aspect-ratio:16/9;background:#0f172a;box-shadow:var(--sh)}
+.gallery-wrap img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:0;transition:opacity .7s ease}
+.gallery-wrap img.on{opacity:1}
+.gallery-dots{display:flex;gap:6px;justify-content:center;margin-top:.8rem}
+.gallery-dots button{width:9px;height:9px;border-radius:50%;border:0;background:var(--bd);cursor:pointer;padding:0}
+.gallery-dots button.on{background:var(--primary);transform:scale(1.2)}
+.gallery-cap{text-align:center;margin-top:.5rem;font-size:.88rem;color:var(--muted)}
+
+/* Tarifs */
+.price{font-size:1.6rem;font-weight:800;color:var(--primary);font-family:Outfit,sans-serif}
+.price small{font-size:.85rem;font-weight:600;color:var(--muted)}
+.tag{display:inline-block;background:#e0f2fe;color:#0369a1;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:6px;margin-bottom:.5rem}
+body.dark .tag{background:#0c4a6e;color:#7dd3fc}
+
+/* Contact */
+.field{width:100%;padding:.7rem .85rem;margin:.3rem 0 .75rem;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--text);font-size:.95rem;font-family:inherit}
+label{font-weight:600;font-size:.88rem}
+textarea.field{min-height:110px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+@media(max-width:700px){.two{grid-template-columns:1fr}}
+
+/* Footer */
+footer{background:var(--card);border-top:1px solid var(--bd);text-align:center;padding:1.8rem 1rem;font-size:.85rem;color:var(--muted);margin-top:1rem}
+
+/* Creator lock btn */
+#lockBtn{position:fixed;left:14px;bottom:18px;z-index:9999;width:46px;height:46px;border-radius:50%;border:0;background:#0f172a;color:#fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center}
+body.dark #lockBtn{background:#1e293b}
+
+/* Side panel */
+#side{position:fixed;top:0;right:0;width:min(400px,100vw);height:100vh;background:var(--card);border-left:1px solid var(--bd);z-index:10000;display:flex;flex-direction:column;box-shadow:-8px 0 28px rgba(0,0,0,.15);overflow:hidden}
+#side[hidden]{display:none!important}
+#side .sh{display:flex;justify-content:space-between;align-items:center;padding:.85rem 1rem;background:#0f172a;color:#fff;font-weight:700;gap:.5rem}
+#side .sh .btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);padding:.35rem .65rem;font-size:.8rem}
+#side .tabs{display:flex;flex-wrap:wrap;gap:.35rem;padding:.65rem .9rem;border-bottom:1px solid var(--bd);background:var(--bg)}
+#side .tabs .chip{background:var(--card);border:1px solid var(--bd);border-radius:999px;padding:.35rem .75rem;font-weight:600;font-size:.8rem;cursor:pointer;font-family:inherit;color:var(--text)}
+#side .tabs .chip.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+#side .sb{padding:1rem;overflow-y:auto;flex:1}
+#side .sf{padding:.75rem 1rem;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.chip{background:var(--card);border:1px solid var(--bd);border-radius:999px;padding:.4rem .8rem;font-weight:600;font-size:.82rem;cursor:pointer;font-family:inherit}
+
+/* Mobile nav */
+@media(max-width:700px){
+  .nav-in{padding:.55rem .7rem;gap:.35rem;flex-wrap:wrap}
+  .nav-links{order:10;flex:1 1 100%;max-width:100%}
+  .gt-wrap{max-width:120px}
+  .gt-wrap .goog-te-gadget .goog-te-combo{max-width:95px!important;font-size:.7rem!important}
+  nav .btn{padding:.4rem .6rem;font-size:.8rem}
+  .hero{padding:2.2rem 1rem}
+}
+@media(max-width:400px){
+  .gt-wrap{max-width:100px}
+  .gt-wrap .goog-te-gadget .goog-te-combo{max-width:78px!important;font-size:.65rem!important}
+}
+
+.photo-list{display:flex;flex-direction:column;gap:.6rem}
+.photo-item{display:flex;align-items:center;gap:.6rem;padding:.5rem;border:1px solid var(--bd);border-radius:10px}
+.photo-item img{width:56px;height:42px;object-fit:cover;border-radius:6px}
+.photo-item .meta{flex:1;font-size:.82rem}
+.empty{text-align:center;color:var(--muted);padding:1.5rem;font-size:.92rem}
+.msg{font-size:.85rem;color:var(--muted);margin-top:.4rem}
+.warn{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:.7rem .9rem;font-size:.85rem;margin:.6rem 0}
+body.dark .warn{background:#431407;border-color:#9a3412;color:#fdba74}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-in">
+    <a class="logo" href="#top" id="siteLogo"><span id="logoIcon">❄️</span> <span id="siteName">Clim<span>&</span>Élec</span></a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#realisations">Réalisations</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-right">
+      <div class="gt-wrap notranslate" title="Traduire">
+        <span style="font-size:1rem">🌐</span>
+        <div id="google_translate_element"></div>
+      </div>
+      <button class="btn l sm" data-a="theme" title="Mode sombre / clair">🌓</button>
+      <a class="btn sm" href="tel:+33000000000" id="navTel">📞 Appeler</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <h1 id="heroTitle">Pose de clim & dépannage électrique</h1>
+  <p id="heroSub">Installation, entretien et dépannage. Intervention rapide, devis gratuit, travail soigné.</p>
+  <div class="hero-cta">
+    <a class="btn" href="#contact">Demander un devis</a>
+    <a class="btn acc" href="tel:+33000000000" id="heroTel">📞 Appeler maintenant</a>
+  </div>
+</header>
+
+<main>
+  <section id="services">
+    <div class="wrap">
+      <h2 class="t" id="servTitle">Nos services</h2>
+      <p class="sub" id="servSub">Climatisation et électricité pour particuliers et professionnels.</p>
+      <div class="grid" id="servGrid">
+        <div class="card"><div class="icon">❄️</div><h3>Pose de climatisation</h3><p>Installation mono-split, multi-split, gainable. Conseils sur la puissance adaptée à votre logement.</p></div>
+        <div class="card"><div class="icon">⚡</div><h3>Dépannage électrique</h3><p>Panne, court-circuit, tableau électrique, prises, éclairage. Intervention rapide.</p></div>
+        <div class="card"><div class="icon">🔧</div><h3>Entretien & maintenance</h3><p>Nettoyage, recharge de gaz, contrôle d’étanchéité et mise en conformité.</p></div>
+        <div class="card"><div class="icon">🏠</div><h3>Rénovation électrique</h3><p>Mise aux normes NF C 15-100, ajout de circuits, éclairage LED, domotique simple.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="realisations" style="background:var(--card);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)">
+    <div class="wrap">
+      <h2 class="t" id="realTitle">Réalisations</h2>
+      <p class="sub" id="realSub">Quelques chantiers récents. Les photos défilent automatiquement.</p>
+      <div class="gallery-wrap" id="gallery">
+        <img src="https://images.unsplash.com/photo-1631545806608-1b2c0c0c0c0c?w=1200&q=80" alt="Réalisation" class="on" id="galImg0" onerror="this.src='data:image/svg+xml,'+encodeURIComponent('<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%221200%22 height=%22675%22><rect fill=%22%230f172a%22 width=%22100%25%22 height=%22100%25%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%2394a3b8%22 font-size=%2224%22 text-anchor=%22middle%22 dy=%22.3em%22>Ajoutez vos photos dans l’espace créateur</text></svg>')">
+      </div>
+      <div class="gallery-dots" id="galDots"></div>
+      <p class="gallery-cap" id="galCap">Photo 1</p>
+    </div>
+  </section>
+
+  <section id="tarifs">
+    <div class="wrap">
+      <h2 class="t" id="tarifTitle">Tarifs indicatifs</h2>
+      <p class="sub" id="tarifSub">Devis gratuit et personnalisé. Les prix ci-dessous sont donnés à titre indicatif.</p>
+      <div class="grid" id="tarifGrid">
+        <div class="card"><span class="tag">Clim</span><h3>Pose mono-split</h3><p class="price">dès 890 € <small>TTC</small></p><p>Fourniture et pose d’un split mural standard (hors éventuels travaux d’électricité).</p></div>
+        <div class="card"><span class="tag">Clim</span><h3>Entretien annuel</h3><p class="price">dès 120 € <small>TTC</small></p><p>Nettoyage, contrôle, vérification des performances.</p></div>
+        <div class="card"><span class="tag">Électricité</span><h3>Dépannage</h3><p class="price">dès 70 € <small>TTC</small></p><p>Déplacement + 1ère heure de diagnostic / intervention.</p></div>
+        <div class="card"><span class="tag">Électricité</span><h3>Mise aux normes</h3><p class="price">Sur devis</p><p>Diagnostic et mise en conformité du tableau et des circuits.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" style="background:var(--card);border-top:1px solid var(--bd)">
+    <div class="wrap">
+      <h2 class="t" id="contactTitle">Contact & devis</h2>
+      <p class="sub" id="contactSub">Décrivez votre besoin, on vous rappelle rapidement.</p>
+      <div class="two">
+        <div class="card">
+          <form id="contactForm">
+            <label>Nom</label>
+            <input class="field" id="cName" required placeholder="Votre nom" maxlength="80">
+            <label>Téléphone</label>
+            <input class="field" id="cPhone" type="tel" required placeholder="06 12 34 56 78" maxlength="20">
+            <label>Email (optionnel)</label>
+            <input class="field" id="cEmail" type="email" placeholder="vous@email.com" maxlength="100">
+            <label>Type de demande</label>
+            <select class="field" id="cType">
+              <option value="clim">Pose / entretien clim</option>
+              <option value="elec">Dépannage électrique</option>
+              <option value="devis">Devis travaux</option>
+              <option value="autre">Autre</option>
+            </select>
+            <label>Message</label>
+            <textarea class="field" id="cMsg" placeholder="Décrivez le besoin, l’adresse, la disponibilité…" maxlength="800"></textarea>
+            <button class="btn" type="submit" style="width:100%">Envoyer la demande</button>
+            <p class="msg" id="formMsg"></p>
+          </form>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom:.8rem">Coordonnées</h3>
+          <p style="margin-bottom:.5rem"><b>📞 Téléphone</b><br><a href="tel:+33000000000" id="infoTel">+33 0 00 00 00 00</a></p>
+          <p style="margin-bottom:.5rem"><b>✉️ Email</b><br><span id="infoEmail">contact@exemple.fr</span></p>
+          <p style="margin-bottom:.5rem"><b>📍 Zone d’intervention</b><br><span id="infoZone">Votre ville et alentours (à renseigner)</span></p>
+          <p style="margin-bottom:.5rem"><b>🕒 Horaires</b><br><span id="infoHours">Lun–Ven 8h–19h · Sam sur RDV</span></p>
+          <div class="warn" id="infoNote">Déplacement et devis gratuits dans la zone d’intervention.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <strong id="footName">Clim & Élec</strong> — Pose de climatisation et dépannage électrique.<br>
+  <span id="footLegal">Mentions légales et informations à compléter dans l’espace créateur.</span>
+</footer>
+
+<button id="lockBtn" type="button" title="Espace créateur" aria-label="Espace créateur">🔒</button>
+<aside id="side" hidden></aside>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const e = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+
+const DEF = {
+  siteName: "Clim & Élec",
+  logoIcon: "❄️",
+  heroTitle: "Pose de clim & dépannage électrique",
+  heroSub: "Installation, entretien et dépannage. Intervention rapide, devis gratuit, travail soigné.",
+  servTitle: "Nos services",
+  servSub: "Climatisation et électricité pour particuliers et professionnels.",
+  realTitle: "Réalisations",
+  realSub: "Quelques chantiers récents. Les photos défilent automatiquement.",
+  tarifTitle: "Tarifs indicatifs",
+  tarifSub: "Devis gratuit et personnalisé. Les prix ci-dessous sont donnés à titre indicatif.",
+  contactTitle: "Contact & devis",
+  contactSub: "Décrivez votre besoin, on vous rappelle rapidement.",
+  phone: "+33 0 00 00 00 00",
+  email: "contact@exemple.fr",
+  zone: "Votre ville et alentours (à renseigner)",
+  hours: "Lun–Ven 8h–19h · Sam sur RDV",
+  note: "Déplacement et devis gratuits dans la zone d’intervention.",
+  primary: "#0ea5e9",
+  accent: "#f59e0b",
+  darkDefault: false,
+  photos: [],
+  tarifs: [
+    {tag:"Clim",title:"Pose mono-split",price:"dès 890 €",desc:"Fourniture et pose d’un split mural standard (hors éventuels travaux d’électricité)."},
+    {tag:"Clim",title:"Entretien annuel",price:"dès 120 €",desc:"Nettoyage, contrôle, vérification des performances."},
+    {tag:"Électricité",title:"Dépannage",price:"dès 70 €",desc:"Déplacement + 1ère heure de diagnostic / intervention."},
+    {tag:"Électricité",title:"Mise aux normes",price:"Sur devis",desc:"Diagnostic et mise en conformité du tableau et des circuits."}
+  ],
+  services: [
+    {icon:"❄️",title:"Pose de climatisation",desc:"Installation mono-split, multi-split, gainable. Conseils sur la puissance adaptée à votre logement."},
+    {icon:"⚡",title:"Dépannage électrique",desc:"Panne, court-circuit, tableau électrique, prises, éclairage. Intervention rapide."},
+    {icon:"🔧",title:"Entretien & maintenance",desc:"Nettoyage, recharge de gaz, contrôle d’étanchéité et mise en conformité."},
+    {icon:"🏠",title:"Rénovation électrique",desc:"Mise aux normes NF C 15-100, ajout de circuits, éclairage LED, domotique simple."}
+  ]
+};
+
+let cfg = {...DEF};
+try {
+  const s = localStorage.getItem("clim_cfg");
+  if (s) cfg = {...DEF, ...JSON.parse(s)};
+} catch(err){}
+
+let demandes = [];
+try { demandes = JSON.parse(localStorage.getItem("clim_demandes")||"[]"); } catch(err){}
+
+let tab = "demandes";
+let unlocked = sessionStorage.getItem("clim_ok")==="1";
+let galIndex = 0;
+let galTimer = null;
+
+function saveCfg(){ localStorage.setItem("clim_cfg", JSON.stringify(cfg)); }
+function saveDemandes(){ localStorage.setItem("clim_demandes", JSON.stringify(demandes)); }
+
+function applyCfg(){
+  const c = {...DEF, ...cfg};
+  document.title = (c.siteName||"Clim & Élec") + " — Pose et dépannage";
+  const set = (id,v) => { const el=$(id); if(el&&v!=null) el.textContent=v; };
+  set("#siteName", c.siteName);
+  set("#logoIcon", c.logoIcon||"❄️");
+  set("#heroTitle", c.heroTitle);
+  set("#heroSub", c.heroSub);
+  set("#servTitle", c.servTitle);
+  set("#servSub", c.servSub);
+  set("#realTitle", c.realTitle);
+  set("#realSub", c.realSub);
+  set("#tarifTitle", c.tarifTitle);
+  set("#tarifSub", c.tarifSub);
+  set("#contactTitle", c.contactTitle);
+  set("#contactSub", c.contactSub);
+  set("#infoTel", c.phone);
+  set("#infoEmail", c.email);
+  set("#infoZone", c.zone);
+  set("#infoHours", c.hours);
+  set("#infoNote", c.note);
+  set("#footName", c.siteName);
+  const telClean = (c.phone||"").replace(/\s/g,"");
+  $$("#navTel, #heroTel, #infoTel").forEach(a=>{
+    if(a.tagName==="A") a.href="tel:"+telClean;
+    if(a.id==="navTel") a.textContent="📞 Appeler";
+    if(a.id==="heroTel") a.textContent="📞 Appeler maintenant";
+  });
+  if(c.primary){
+    document.documentElement.style.setProperty("--primary", c.primary);
+    document.documentElement.style.setProperty("--primary-d", c.primary);
+  }
+  if(c.accent) document.documentElement.style.setProperty("--accent", c.accent);
+
+  // Services
+  const sg = $("#servGrid");
+  if(sg && c.services){
+    sg.innerHTML = c.services.map(s=>`<div class="card"><div class="icon">${e(s.icon)}</div><h3>${e(s.title)}</h3><p>${e(s.desc)}</p></div>`).join("");
+  }
+  // Tarifs
+  const tg = $("#tarifGrid");
+  if(tg && c.tarifs){
+    tg.innerHTML = c.tarifs.map(t=>`<div class="card"><span class="tag">${e(t.tag)}</span><h3>${e(t.title)}</h3><p class="price">${e(t.price)}</p><p>${e(t.desc)}</p></div>`).join("");
+  }
+  renderGallery();
+}
+
+function renderGallery(){
+  const photos = (cfg.photos&&cfg.photos.length) ? cfg.photos : [{url:"",cap:"Ajoutez vos photos dans l’espace créateur"}];
+  const wrap = $("#gallery");
+  const dots = $("#galDots");
+  if(!wrap||!dots) return;
+  wrap.innerHTML = photos.map((p,i)=>`<img src="${e(p.url||"")}" alt="${e(p.cap||"Réalisation")}" class="${i===galIndex?"on":""}" data-i="${i}" onerror="this.style.background='#0f172a'">`).join("");
+  // placeholder if no real images
+  if(!cfg.photos||!cfg.photos.length){
+    wrap.innerHTML = `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:1.05rem;padding:1.5rem;text-align:center;background:#0f172a">Ajoutez vos photos de chantiers dans l’espace créateur → onglet Photos</div>`;
+  }
+  dots.innerHTML = photos.map((_,i)=>`<button type="button" class="${i===galIndex?"on":""}" data-i="${i}" aria-label="Photo ${i+1}"></button>`).join("");
+  $("#galCap").textContent = photos[galIndex]?.cap || `Photo ${galIndex+1}`;
+  dots.querySelectorAll("button").forEach(b=>b.onclick=()=>{ galIndex=+b.dataset.i; renderGallery(); restartGal(); });
+}
+
+function nextGal(){
+  const n = (cfg.photos&&cfg.photos.length) ? cfg.photos.length : 1;
+  galIndex = (galIndex+1)%n;
+  renderGallery();
+}
+function restartGal(){
+  clearInterval(galTimer);
+  galTimer = setInterval(nextGal, 4000);
+}
+
+// Theme
+function applyTheme(){
+  const dark = localStorage.getItem("clim_dark")==="1";
+  document.body.classList.toggle("dark", dark);
+}
+$("#lockBtn"); // ensure exists
+document.addEventListener("click", ev=>{
+  const t = ev.target.closest("[data-a=theme]");
+  if(!t) return;
+  const dark = !document.body.classList.contains("dark");
+  document.body.classList.toggle("dark", dark);
+  localStorage.setItem("clim_dark", dark?"1":"0");
+});
+
+// Contact form → demandes
+$("#contactForm")?.addEventListener("submit", ev=>{
+  ev.preventDefault();
+  const d = {
+    id: Date.now(),
+    date: new Date().toLocaleString("fr-FR"),
+    name: $("#cName").value.trim(),
+    phone: $("#cPhone").value.trim(),
+    email: $("#cEmail").value.trim(),
+    type: $("#cType").value,
+    msg: $("#cMsg").value.trim(),
+    status: "nouvelle"
+  };
+  demandes.unshift(d);
+  saveDemandes();
+  $("#formMsg").textContent = "✅ Demande envoyée. Nous vous recontactons rapidement.";
+  $("#contactForm").reset();
+  setTimeout(()=>$("#formMsg").textContent="", 5000);
+});
+
+// Password only (local + optional Firebase later)
+function hash(str){
+  let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i)|0;
+  return "h_"+Math.abs(h).toString(36);
+}
+function checkPass(pass){
+  const stored = localStorage.getItem("clim_pass");
+  if(!stored){
+    // first time: create
+    localStorage.setItem("clim_pass", hash(pass));
+    return {ok:true, created:true};
+  }
+  return {ok: stored===hash(pass)};
+}
+
+function panelLogin(){
+  const S=$("#side");
+  S.hidden=false;
+  S.innerHTML=`
+    <div class="sh"><span>🔒 Espace créateur</span><button class="btn sm" id="sX">✕</button></div>
+    <div class="sb">
+      <p class="sub">Accès réservé. Mot de passe uniquement.</p>
+      <label>Mot de passe</label>
+      <input id="authPass" class="field" type="password" placeholder="••••••••" autocomplete="current-password">
+      <button class="btn g" id="authGo" style="width:100%;margin-top:.6rem">Entrer</button>
+      <p class="msg" id="authMsg"></p>
+      <p class="sub" style="margin-top:1rem;font-size:.78rem">Première connexion : le mot de passe saisi devient le code d’accès de cet appareil.</p>
+    </div>`;
+  $("#sX").onclick=()=>{S.hidden=true};
+  $("#authGo").onclick=()=>{
+    const pass=$("#authPass").value||"";
+    if(!pass){ $("#authMsg").textContent="Entrez un mot de passe."; return; }
+    const r=checkPass(pass);
+    if(r.ok){
+      unlocked=true;
+      sessionStorage.setItem("clim_ok","1");
+      $("#authMsg").textContent=r.created?"✅ Mot de passe créé.":"✅ Connecté.";
+      setTimeout(panel,300);
+    } else $("#authMsg").textContent="❌ Mot de passe incorrect.";
+  };
+  $("#authPass").onkeydown=ev=>{ if(ev.key==="Enter") $("#authGo").click(); };
+}
+
+function panel(){
+  if(!unlocked){ panelLogin(); return; }
+  const S=$("#side");
+  S.hidden=false;
+  const TABS=[
+    ["demandes","Demandes"],
+    ["textes","Textes"],
+    ["photos","Photos"],
+    ["tarifs","Tarifs"],
+    ["couleurs","Couleurs"],
+    ["contact","Contact"],
+    ["mdp","Mot de passe"]
+  ];
+  let h=`<div class="sh"><span>Espace créateur</span><span><button class="btn sm" id="sLogout">Déconnexion</button> <button class="btn sm" id="sX">✕</button></span></div>
+  <div class="tabs">${TABS.map(t=>`<button class="chip${t[0]===tab?" on":""}" data-t="${t[0]}">${t[1]}</button>`).join("")}</div>
+  <div class="sb">`;
+
+  if(tab==="demandes"){
+    h+=`<p class="sub">Demandes de rendez-vous / devis reçues via le formulaire.</p>
+    <p style="font-weight:700;margin-bottom:.6rem">${demandes.length} demande(s)</p>`;
+    if(!demandes.length) h+=`<p class="empty">Aucune demande pour le moment.</p>`;
+    else {
+      h+=demandes.map(d=>`<div class="card" style="margin-bottom:.7rem">
+        <div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
+          <b>${e(d.name)}</b>
+          <span class="tag">${e(d.type)}</span>
+        </div>
+        <p style="font-size:.85rem;color:var(--muted);margin:.3rem 0">${e(d.date)} · ${e(d.phone)}${d.email?" · "+e(d.email):""}</p>
+        <p style="font-size:.9rem">${e(d.msg||"—")}</p>
+        <button class="btn l sm" data-del="${d.id}" style="margin-top:.5rem">Supprimer</button>
+      </div>`).join("");
+    }
+  } else if(tab==="textes"){
+    h+=`<p class="sub">Textes principaux du site.</p>
+    <label>Nom du site<input id="cSiteName" class="field" value="${e(cfg.siteName||"")}"></label>
+    <label>Icône logo (emoji)<input id="cLogoIcon" class="field" value="${e(cfg.logoIcon||"")}" maxlength="4"></label>
+    <label>Titre d’accueil<input id="cHeroTitle" class="field" value="${e(cfg.heroTitle||"")}"></label>
+    <label>Sous-titre<textarea id="cHeroSub" class="field" rows="2">${e(cfg.heroSub||"")}</textarea></label>
+    <label>Titre Services<input id="cServTitle" class="field" value="${e(cfg.servTitle||"")}"></label>
+    <label>Sous-titre Services<textarea id="cServSub" class="field" rows="2">${e(cfg.servSub||"")}</textarea></label>
+    <label>Titre Réalisations<input id="cRealTitle" class="field" value="${e(cfg.realTitle||"")}"></label>
+    <label>Sous-titre Réalisations<textarea id="cRealSub" class="field" rows="2">${e(cfg.realSub||"")}</textarea></label>
+    <label>Titre Tarifs<input id="cTarifTitle" class="field" value="${e(cfg.tarifTitle||"")}"></label>
+    <label>Sous-titre Tarifs<textarea id="cTarifSub" class="field" rows="2">${e(cfg.tarifSub||"")}</textarea></label>
+    <label>Titre Contact<input id="cContactTitle" class="field" value="${e(cfg.contactTitle||"")}"></label>
+    <label>Sous-titre Contact<textarea id="cContactSub" class="field" rows="2">${e(cfg.contactSub||"")}</textarea></label>`;
+  } else if(tab==="photos"){
+    h+=`<p class="sub">Photos du carrousel (changent toutes les 4 secondes). Formats JPG/PNG, max ~800 Ko chacune.</p>
+    <label>Ajouter une photo<input type="file" id="photoAdd" accept="image/*" class="field" style="padding:.4rem"></label>
+    <label>Légende (optionnel)<input id="photoCap" class="field" placeholder="Ex : Pose multi-split — maison T4"></label>
+    <div class="photo-list" id="photoList"></div>`;
+  } else if(tab==="tarifs"){
+    h+=`<p class="sub">Modifiez les tarifs affichés. Format libre pour le prix.</p>`;
+    (cfg.tarifs||[]).forEach((t,i)=>{
+      h+=`<div class="card" style="margin-bottom:.7rem">
+        <label>Tag<input class="field" data-ti="${i}" data-k="tag" value="${e(t.tag)}"></label>
+        <label>Titre<input class="field" data-ti="${i}" data-k="title" value="${e(t.title)}"></label>
+        <label>Prix<input class="field" data-ti="${i}" data-k="price" value="${e(t.price)}"></label>
+        <label>Description<textarea class="field" data-ti="${i}" data-k="desc" rows="2">${e(t.desc)}</textarea></label>
+      </div>`;
+    });
+  } else if(tab==="couleurs"){
+    h+=`<p class="sub">Couleurs principales du site.</p>
+    <label>Couleur principale <input type="color" id="cPrimary" class="field" value="${cfg.primary||"#0ea5e9"}"></label>
+    <label>Accent (boutons secondaires) <input type="color" id="cAccent" class="field" value="${cfg.accent||"#f59e0b"}"></label>`;
+  } else if(tab==="contact"){
+    h+=`<p class="sub">Coordonnées affichées sur le site.</p>
+    <label>Téléphone<input id="cPhone" class="field" value="${e(cfg.phone||"")}"></label>
+    <label>Email<input id="cEmail" class="field" value="${e(cfg.email||"")}"></label>
+    <label>Zone d’intervention<textarea id="cZone" class="field" rows="2">${e(cfg.zone||"")}</textarea></label>
+    <label>Horaires<input id="cHours" class="field" value="${e(cfg.hours||"")}"></label>
+    <label>Note / encadré<textarea id="cNote" class="field" rows="2">${e(cfg.note||"")}</textarea></label>`;
+  } else if(tab==="mdp"){
+    h+=`<p class="sub">Changer le mot de passe d’accès à l’espace créateur.</p>
+    <label>Nouveau mot de passe<input id="newPass" class="field" type="password" placeholder="Nouveau code"></label>
+    <label>Confirmer<input id="newPass2" class="field" type="password" placeholder="Confirmer"></label>
+    <button class="btn" id="passSave" style="width:100%;margin-top:.4rem">Enregistrer le mot de passe</button>
+    <p class="msg" id="passMsg"></p>`;
+  }
+
+  h+=`</div><div class="sf">
+    <button class="btn g" id="aSave">💾 Sauvegarder</button>
+    <span class="msg" id="aMsg"></span>
+  </div>`;
+  S.innerHTML=h;
+
+  $("#sX").onclick=()=>{S.hidden=true};
+  $("#sLogout").onclick=()=>{ unlocked=false; sessionStorage.removeItem("clim_ok"); panelLogin(); };
+  $$("[data-t]").forEach(b=>b.onclick=()=>{ tab=b.dataset.t; panel(); });
+
+  // Demandes delete
+  $$("[data-del]").forEach(b=>b.onclick=()=>{
+    demandes=demandes.filter(d=>String(d.id)!==b.dataset.del);
+    saveDemandes(); panel();
+  });
+
+  // Bind texts / contact / colors
+  const bind=(id,key)=>{ const el=$("#"+id); if(!el) return; el.oninput=()=>{ cfg[key]=el.value; applyCfg(); }; };
+  bind("cSiteName","siteName"); bind("cLogoIcon","logoIcon");
+  bind("cHeroTitle","heroTitle"); bind("cHeroSub","heroSub");
+  bind("cServTitle","servTitle"); bind("cServSub","servSub");
+  bind("cRealTitle","realTitle"); bind("cRealSub","realSub");
+  bind("cTarifTitle","tarifTitle"); bind("cTarifSub","tarifSub");
+  bind("cContactTitle","contactTitle"); bind("cContactSub","contactSub");
+  bind("cPhone","phone"); bind("cEmail","email"); bind("cZone","zone");
+  bind("cHours","hours"); bind("cNote","note");
+  const cp=$("#cPrimary"), ca=$("#cAccent");
+  if(cp) cp.oninput=()=>{ cfg.primary=cp.value; applyCfg(); };
+  if(ca) ca.oninput=()=>{ cfg.accent=ca.value; applyCfg(); };
+
+  // Tarifs live
+  $$("[data-ti]").forEach(el=>{
+    el.oninput=()=>{
+      const i=+el.dataset.ti, k=el.dataset.k;
+      if(!cfg.tarifs[i]) return;
+      cfg.tarifs[i][k]=el.value;
+      applyCfg();
+    };
+  });
+
+  // Photos
+  if(tab==="photos"){
+    const list=$("#photoList");
+    const photos=cfg.photos||[];
+    list.innerHTML = photos.length ? photos.map((p,i)=>`
+      <div class="photo-item">
+        <img src="${e(p.url)}" alt="">
+        <div class="meta">${e(p.cap||"Sans légende")}</div>
+        <button class="btn l sm" data-rm="${i}">✕</button>
+      </div>`).join("") : `<p class="empty">Aucune photo pour le moment.</p>`;
+    list.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{
+      cfg.photos.splice(+b.dataset.rm,1);
+      saveCfg(); applyCfg(); panel();
+    });
+    $("#photoAdd").onchange=()=>{
+      const f=$("#photoAdd").files?.[0];
+      if(!f) return;
+      if(f.size>900000){ alert("Image trop lourde (max ~900 Ko). Compressez-la."); return; }
+      const reader=new FileReader();
+      reader.onload=()=>{
+        cfg.photos=cfg.photos||[];
+        cfg.photos.push({url:reader.result, cap:($("#photoCap").value||"").trim()});
+        saveCfg(); applyCfg(); panel();
+      };
+      reader.readAsDataURL(f);
+    };
+  }
+
+  // Password change
+  $("#passSave")?.addEventListener("click",()=>{
+    const p1=$("#newPass").value, p2=$("#newPass2").value;
+    if(!p1||p1.length<4){ $("#passMsg").textContent="Minimum 4 caractères."; return; }
+    if(p1!==p2){ $("#passMsg").textContent="Les mots de passe ne correspondent pas."; return; }
+    localStorage.setItem("clim_pass", hash(p1));
+    $("#passMsg").textContent="✅ Mot de passe mis à jour.";
+  });
+
+  $("#aSave").onclick=()=>{
+    saveCfg();
+    $("#aMsg").textContent="✅ Sauvegardé";
+    applyCfg();
+  };
+}
+
+$("#lockBtn").onclick=()=>{
+  if(unlocked) panel();
+  else panelLogin();
+};
+
+// Google Translate
+function googleTranslateElementInit(){
+  new google.translate.TranslateElement({
+    pageLanguage:"fr",
+    includedLanguages:"fr,en,es,de,it,pt,ar,zh-CN,ru,uk,pl,ro,tr,nl,hi",
+    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+    autoDisplay:false
+  },"google_translate_element");
+}
+const gt=document.createElement("script");
+gt.src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+document.head.appendChild(gt);
+
+// Init
+applyTheme();
+applyCfg();
+restartGal();
+</script>
+</body>
+</html>
