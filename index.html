@@ -5,9 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Clim & Électricité — Pose et dépannage</title>
 <meta name="description" content="Pose de climatisation, dépannage électrique, entretien. Intervention rapide, devis gratuit.">
+<meta name="robots" content="index, follow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK (Auth only) -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+
 <style>
 :root{
   --primary:#0ea5e9;--primary-d:#0284c7;--accent:#f59e0b;--ok:#10b981;
@@ -43,7 +49,7 @@ nav{position:sticky;top:0;z-index:1000;background:var(--card);border-bottom:1px 
 .btn.rd{background:#ef4444}
 .btn.sm{padding:.4rem .7rem;font-size:.8rem}
 
-/* Google Translate — style propre */
+/* Google Translate */
 .gt-wrap{
   display:inline-flex;align-items:center;gap:0;
   background:var(--bg);border:1px solid var(--bd);border-radius:10px;
@@ -56,8 +62,6 @@ nav{position:sticky;top:0;z-index:1000;background:var(--card);border-bottom:1px 
   background:transparent!important;color:var(--text)!important;
   max-width:120px;font-family:inherit;cursor:pointer;outline:none;
 }
-.gt-wrap .goog-te-gadget>span,
-.gt-wrap .goog-te-gadget .goog-te-combo option:first-child{/* keep */}
 .goog-te-banner-frame,.goog-te-balloon-frame,.goog-tooltip,.goog-te-spinner-pos{display:none!important}
 body{top:0!important}
 .gt-wrap .goog-te-gadget>span{display:none!important}
@@ -115,7 +119,7 @@ footer{background:var(--card);border-top:1px solid var(--bd);text-align:center;p
 body.dark #lockBtn{background:#1e293b}
 
 /* Side panel */
-#side{position:fixed;top:0;right:0;width:min(400px,100vw);height:100vh;background:var(--card);border-left:1px solid var(--bd);z-index:10000;display:flex;flex-direction:column;box-shadow:-8px 0 28px rgba(0,0,0,.15);overflow:hidden}
+#side{position:fixed;top:0;right:0;width:min(420px,100vw);height:100vh;background:var(--card);border-left:1px solid var(--bd);z-index:10000;display:flex;flex-direction:column;box-shadow:-8px 0 28px rgba(0,0,0,.15);overflow:hidden}
 #side[hidden]{display:none!important}
 #side .sh{display:flex;justify-content:space-between;align-items:center;padding:.85rem 1rem;background:#0f172a;color:#fff;font-weight:700;gap:.5rem}
 #side .sh .btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);padding:.35rem .65rem;font-size:.8rem}
@@ -148,6 +152,10 @@ body.dark #lockBtn{background:#1e293b}
 .msg{font-size:.85rem;color:var(--muted);margin-top:.4rem}
 .warn{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:.7rem .9rem;font-size:.85rem;margin:.6rem 0}
 body.dark .warn{background:#431407;border-color:#9a3412;color:#fdba74}
+.sec-note{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:10px;padding:.7rem .9rem;font-size:.85rem;margin:.6rem 0}
+body.dark .sec-note{background:#052e16;border-color:#166534;color:#86efac}
+.err-note{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:10px;padding:.7rem .9rem;font-size:.85rem;margin:.6rem 0}
+body.dark .err-note{background:#450a0a;border-color:#991b1b;color:#fca5a5}
 </style>
 </head>
 <body>
@@ -226,11 +234,11 @@ body.dark .warn{background:#431407;border-color:#9a3412;color:#fdba74}
         <div class="card">
           <form id="contactForm">
             <label>Nom</label>
-            <input class="field" id="cName" required placeholder="Votre nom" maxlength="80">
+            <input class="field" id="cName" required placeholder="Votre nom" maxlength="80" autocomplete="name">
             <label>Téléphone</label>
-            <input class="field" id="cPhone" type="tel" required placeholder="06 12 34 56 78" maxlength="20">
+            <input class="field" id="cPhone" type="tel" required placeholder="06 12 34 56 78" maxlength="20" autocomplete="tel">
             <label>Email (optionnel)</label>
-            <input class="field" id="cEmail" type="email" placeholder="vous@email.com" maxlength="100">
+            <input class="field" id="cEmail" type="email" placeholder="vous@email.com" maxlength="100" autocomplete="email">
             <label>Type de demande</label>
             <select class="field" id="cType">
               <option value="clim">Pose / entretien clim</option>
@@ -267,6 +275,30 @@ body.dark .warn{background:#431407;border-color:#9a3412;color:#fdba74}
 
 <script>
 "use strict";
+
+/* ============================================================
+   🔥 FIREBASE CONFIG — À REMPLIR AVEC TES CLÉS
+   1. Va sur https://console.firebase.google.com
+   2. Crée un projet (ou utilise un existant)
+   3. Authentication → Sign-in method → active "Email/Password"
+   4. Project settings → General → Your apps → Web app → copie la config
+   5. Colle les valeurs ci-dessous
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  authDomain: "TON-PROJET.firebaseapp.com",
+  projectId: "TON-PROJET",
+  storageBucket: "TON-PROJET.appspot.com",
+  messagingSenderId: "000000000000",
+  appId: "1:000000000000:web:xxxxxxxxxxxxxxxxxxxx"
+};
+
+// Initialise Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+/* ============================================================ */
+
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const e = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
@@ -291,7 +323,6 @@ const DEF = {
   note: "Déplacement et devis gratuits dans la zone d’intervention.",
   primary: "#0ea5e9",
   accent: "#f59e0b",
-  darkDefault: false,
   photos: [],
   tarifs: [
     {tag:"Clim",title:"Pose mono-split",price:"dès 890 €",desc:"Fourniture et pose d’un split mural standard (hors éventuels travaux d’électricité)."},
@@ -309,20 +340,20 @@ const DEF = {
 
 let cfg = {...DEF};
 try {
-  const s = localStorage.getItem("clim_cfg");
+  const s = localStorage.getItem("clim_cfg_v3");
   if (s) cfg = {...DEF, ...JSON.parse(s)};
 } catch(err){}
 
 let demandes = [];
-try { demandes = JSON.parse(localStorage.getItem("clim_demandes")||"[]"); } catch(err){}
+try { demandes = JSON.parse(localStorage.getItem("clim_demandes_v3")||"[]"); } catch(err){}
 
 let tab = "demandes";
-let unlocked = sessionStorage.getItem("clim_ok")==="1";
+let currentUser = null;
 let galIndex = 0;
 let galTimer = null;
 
-function saveCfg(){ localStorage.setItem("clim_cfg", JSON.stringify(cfg)); }
-function saveDemandes(){ localStorage.setItem("clim_demandes", JSON.stringify(demandes)); }
+function saveCfg(){ localStorage.setItem("clim_cfg_v3", JSON.stringify(cfg)); }
+function saveDemandes(){ localStorage.setItem("clim_demandes_v3", JSON.stringify(demandes)); }
 
 function applyCfg(){
   const c = {...DEF, ...cfg};
@@ -358,12 +389,10 @@ function applyCfg(){
   }
   if(c.accent) document.documentElement.style.setProperty("--accent", c.accent);
 
-  // Services
   const sg = $("#servGrid");
   if(sg && c.services){
     sg.innerHTML = c.services.map(s=>`<div class="card"><div class="icon">${e(s.icon)}</div><h3>${e(s.title)}</h3><p>${e(s.desc)}</p></div>`).join("");
   }
-  // Tarifs
   const tg = $("#tarifGrid");
   if(tg && c.tarifs){
     tg.innerHTML = c.tarifs.map(t=>`<div class="card"><span class="tag">${e(t.tag)}</span><h3>${e(t.title)}</h3><p class="price">${e(t.price)}</p><p>${e(t.desc)}</p></div>`).join("");
@@ -376,10 +405,10 @@ function renderGallery(){
   const wrap = $("#gallery");
   const dots = $("#galDots");
   if(!wrap||!dots) return;
-  wrap.innerHTML = photos.map((p,i)=>`<img src="${e(p.url||"")}" alt="${e(p.cap||"Réalisation")}" class="${i===galIndex?"on":""}" data-i="${i}" onerror="this.style.background='#0f172a'">`).join("");
-  // placeholder if no real images
   if(!cfg.photos||!cfg.photos.length){
     wrap.innerHTML = `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:1.05rem;padding:1.5rem;text-align:center;background:#0f172a">Ajoutez vos photos de chantiers dans l’espace créateur → onglet Photos</div>`;
+  } else {
+    wrap.innerHTML = photos.map((p,i)=>`<img src="${e(p.url||"")}" alt="${e(p.cap||"Réalisation")}" class="${i===galIndex?"on":""}" data-i="${i}" onerror="this.style.background='#0f172a'">`).join("");
   }
   dots.innerHTML = photos.map((_,i)=>`<button type="button" class="${i===galIndex?"on":""}" data-i="${i}" aria-label="Photo ${i+1}"></button>`).join("");
   $("#galCap").textContent = photos[galIndex]?.cap || `Photo ${galIndex+1}`;
@@ -396,21 +425,20 @@ function restartGal(){
   galTimer = setInterval(nextGal, 4000);
 }
 
-// Theme
+/* Theme */
 function applyTheme(){
-  const dark = localStorage.getItem("clim_dark")==="1";
+  const dark = localStorage.getItem("clim_dark_v3")==="1";
   document.body.classList.toggle("dark", dark);
 }
-$("#lockBtn"); // ensure exists
 document.addEventListener("click", ev=>{
   const t = ev.target.closest("[data-a=theme]");
   if(!t) return;
   const dark = !document.body.classList.contains("dark");
   document.body.classList.toggle("dark", dark);
-  localStorage.setItem("clim_dark", dark?"1":"0");
+  localStorage.setItem("clim_dark_v3", dark?"1":"0");
 });
 
-// Contact form → demandes
+/* Contact form → demandes (local) */
 $("#contactForm")?.addEventListener("submit", ev=>{
   ev.preventDefault();
   const d = {
@@ -425,85 +453,100 @@ $("#contactForm")?.addEventListener("submit", ev=>{
   };
   demandes.unshift(d);
   saveDemandes();
-  $("#formMsg").textContent = "✅ Demande envoyée. Nous vous recontactons rapidement.";
+  $("#formMsg").textContent = "✅ Demande enregistrée. Nous vous rappelons rapidement.";
   $("#contactForm").reset();
   setTimeout(()=>$("#formMsg").textContent="", 5000);
 });
 
-// Mot de passe UNIQUE (toi seul). Change MASTER_PASS ci-dessous si besoin.
-const MASTER_PASS = "clim2024"; // ← ton code d'accès unique
-function hash(str){
-  let h=0; for(let i=0;i<str.length;i++) h=((h<<5)-h)+str.charCodeAt(i)|0;
-  return "h_"+Math.abs(h).toString(36);
-}
-function getPassHash(){
-  return localStorage.getItem("clim_pass") || hash(MASTER_PASS);
-}
-function checkPass(pass){
-  return { ok: hash(pass) === getPassHash() };
-}
-
+/* ========== FIREBASE AUTH ========== */
 function panelLogin(){
-  const S=$("#side");
-  S.hidden=false;
-  S.innerHTML=`
+  const S = $("#side");
+  S.hidden = false;
+  S.innerHTML = `
     <div class="sh"><span>🔒 Espace créateur</span><button class="btn sm" id="sX">✕</button></div>
     <div class="sb">
-      <p class="sub">Accès réservé au propriétaire du site.</p>
+      <p class="sub">Connexion sécurisée via Firebase (email + mot de passe).</p>
+      <div class="sec-note">Utilise le compte que tu as créé dans la console Firebase.</div>
+      <label>Email</label>
+      <input id="authEmail" class="field" type="email" placeholder="ton@email.com" autocomplete="username">
       <label>Mot de passe</label>
       <input id="authPass" class="field" type="password" placeholder="••••••••" autocomplete="current-password">
-      <button class="btn g" id="authGo" style="width:100%;margin-top:.6rem">Entrer</button>
+      <button class="btn g" id="authGo" style="width:100%;margin-top:.6rem">Se connecter</button>
       <p class="msg" id="authMsg"></p>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:1rem">
+        Pas encore de compte ? Crée-en un dans<br>
+        <b>Firebase Console → Authentication → Users → Add user</b>
+      </p>
     </div>`;
-  $("#sX").onclick=()=>{S.hidden=true};
-  $("#authGo").onclick=()=>{
-    const pass=$("#authPass").value||"";
-    if(!pass){ $("#authMsg").textContent="Entrez le mot de passe."; return; }
-    const r=checkPass(pass);
-    if(r.ok){
-      unlocked=true;
-      sessionStorage.setItem("clim_ok","1");
-      $("#authMsg").textContent="✅ Connecté.";
-      setTimeout(panel,300);
-    } else $("#authMsg").textContent="❌ Mot de passe incorrect.";
+  $("#sX").onclick = () => { S.hidden = true; };
+  $("#authGo").onclick = async () => {
+    const email = ($("#authEmail").value || "").trim();
+    const pass = $("#authPass").value || "";
+    if(!email || !pass){
+      $("#authMsg").textContent = "Email et mot de passe obligatoires.";
+      return;
+    }
+    $("#authMsg").textContent = "Connexion…";
+    try {
+      await auth.signInWithEmailAndPassword(email, pass);
+      // onAuthStateChanged va ouvrir le panel
+    } catch(err) {
+      let msg = "Erreur de connexion.";
+      if(err.code === "auth/user-not-found") msg = "Aucun compte avec cet email.";
+      else if(err.code === "auth/wrong-password") msg = "Mot de passe incorrect.";
+      else if(err.code === "auth/invalid-email") msg = "Email invalide.";
+      else if(err.code === "auth/too-many-requests") msg = "Trop de tentatives. Réessaie plus tard.";
+      else if(err.code === "auth/invalid-credential") msg = "Email ou mot de passe incorrect.";
+      $("#authMsg").textContent = "❌ " + msg;
+    }
   };
-  $("#authPass").onkeydown=ev=>{ if(ev.key==="Enter") $("#authGo").click(); };
+  $("#authPass").onkeydown = ev => { if(ev.key === "Enter") $("#authGo").click(); };
+  $("#authEmail").onkeydown = ev => { if(ev.key === "Enter") $("#authPass").focus(); };
 }
 
 function panel(){
-  if(!unlocked){ panelLogin(); return; }
-  const S=$("#side");
-  S.hidden=false;
-  const TABS=[
+  if(!currentUser){
+    panelLogin();
+    return;
+  }
+  const S = $("#side");
+  S.hidden = false;
+  const TABS = [
     ["demandes","Demandes"],
     ["textes","Textes"],
     ["photos","Photos"],
     ["tarifs","Tarifs"],
     ["couleurs","Couleurs"],
     ["contact","Contact"],
-    ["mdp","Mot de passe"]
+    ["compte","Compte"]
   ];
-  let h=`<div class="sh"><span>Espace créateur</span><span><button class="btn sm" id="sLogout">Déconnexion</button> <button class="btn sm" id="sX">✕</button></span></div>
+  let h = `<div class="sh">
+    <span>Espace créateur</span>
+    <span>
+      <button class="btn sm" id="sLogout">Déconnexion</button>
+      <button class="btn sm" id="sX">✕</button>
+    </span>
+  </div>
   <div class="tabs">${TABS.map(t=>`<button class="chip${t[0]===tab?" on":""}" data-t="${t[0]}">${t[1]}</button>`).join("")}</div>
   <div class="sb">`;
 
   if(tab==="demandes"){
-    h+=`<p class="sub">Demandes de rendez-vous / devis reçues via le formulaire.</p>
+    h += `<p class="sub">Demandes reçues via le formulaire (stockage local).</p>
     <p style="font-weight:700;margin-bottom:.6rem">${demandes.length} demande(s)</p>`;
-    if(!demandes.length) h+=`<p class="empty">Aucune demande pour le moment.</p>`;
+    if(!demandes.length) h += `<p class="empty">Aucune demande pour le moment.</p>`;
     else {
-      h+=demandes.map(d=>`<div class="card" style="margin-bottom:.7rem">
+      h += demandes.map(d=>`<div class="card" style="margin-bottom:.7rem">
         <div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
           <b>${e(d.name)}</b>
           <span class="tag">${e(d.type)}</span>
         </div>
-        <p style="font-size:.85rem;color:var(--muted);margin:.3rem 0">${e(d.date)} · ${e(d.phone)}${d.email?" · "+e(d.email):""}</p>
+        <p style="font-size:.85rem;color:var(--muted);margin:.3rem 0">${e(d.date)} · ${e(d.phone)}${d.email ? " · "+e(d.email) : ""}</p>
         <p style="font-size:.9rem">${e(d.msg||"—")}</p>
         <button class="btn l sm" data-del="${d.id}" style="margin-top:.5rem">Supprimer</button>
       </div>`).join("");
     }
   } else if(tab==="textes"){
-    h+=`<p class="sub">Textes principaux du site.</p>
+    h += `<p class="sub">Textes principaux du site.</p>
     <label>Nom du site<input id="cSiteName" class="field" value="${e(cfg.siteName||"")}"></label>
     <label>Icône logo (emoji)<input id="cLogoIcon" class="field" value="${e(cfg.logoIcon||"")}" maxlength="4"></label>
     <label>Titre d’accueil<input id="cHeroTitle" class="field" value="${e(cfg.heroTitle||"")}"></label>
@@ -517,14 +560,14 @@ function panel(){
     <label>Titre Contact<input id="cContactTitle" class="field" value="${e(cfg.contactTitle||"")}"></label>
     <label>Sous-titre Contact<textarea id="cContactSub" class="field" rows="2">${e(cfg.contactSub||"")}</textarea></label>`;
   } else if(tab==="photos"){
-    h+=`<p class="sub">Photos du carrousel (changent toutes les 4 secondes). Formats JPG/PNG, max ~800 Ko chacune.</p>
+    h += `<p class="sub">Photos du carrousel (changent toutes les 4 secondes). Formats JPG/PNG, max ~800 Ko chacune.</p>
     <label>Ajouter une photo<input type="file" id="photoAdd" accept="image/*" class="field" style="padding:.4rem"></label>
     <label>Légende (optionnel)<input id="photoCap" class="field" placeholder="Ex : Pose multi-split — maison T4"></label>
     <div class="photo-list" id="photoList"></div>`;
   } else if(tab==="tarifs"){
-    h+=`<p class="sub">Modifiez les tarifs affichés. Format libre pour le prix.</p>`;
+    h += `<p class="sub">Modifiez les tarifs affichés. Format libre pour le prix.</p>`;
     (cfg.tarifs||[]).forEach((t,i)=>{
-      h+=`<div class="card" style="margin-bottom:.7rem">
+      h += `<div class="card" style="margin-bottom:.7rem">
         <label>Tag<input class="field" data-ti="${i}" data-k="tag" value="${e(t.tag)}"></label>
         <label>Titre<input class="field" data-ti="${i}" data-k="title" value="${e(t.title)}"></label>
         <label>Prix<input class="field" data-ti="${i}" data-k="price" value="${e(t.price)}"></label>
@@ -532,42 +575,48 @@ function panel(){
       </div>`;
     });
   } else if(tab==="couleurs"){
-    h+=`<p class="sub">Couleurs principales du site.</p>
+    h += `<p class="sub">Couleurs principales du site.</p>
     <label>Couleur principale <input type="color" id="cPrimary" class="field" value="${cfg.primary||"#0ea5e9"}"></label>
     <label>Accent (boutons secondaires) <input type="color" id="cAccent" class="field" value="${cfg.accent||"#f59e0b"}"></label>`;
   } else if(tab==="contact"){
-    h+=`<p class="sub">Coordonnées affichées sur le site.</p>
+    h += `<p class="sub">Coordonnées affichées sur le site. Tu peux changer l’email à tout moment.</p>
     <label>Téléphone<input id="cPhone" class="field" value="${e(cfg.phone||"")}"></label>
-    <label>Email<input id="cEmail" class="field" value="${e(cfg.email||"")}"></label>
+    <label>Email (adresse de contact du site)<input id="cEmail" class="field" type="email" value="${e(cfg.email||"")}"></label>
     <label>Zone d’intervention<textarea id="cZone" class="field" rows="2">${e(cfg.zone||"")}</textarea></label>
     <label>Horaires<input id="cHours" class="field" value="${e(cfg.hours||"")}"></label>
     <label>Note / encadré<textarea id="cNote" class="field" rows="2">${e(cfg.note||"")}</textarea></label>`;
-  } else if(tab==="mdp"){
-    h+=`<p class="sub">Changer le mot de passe d’accès à l’espace créateur.</p>
-    <label>Nouveau mot de passe<input id="newPass" class="field" type="password" placeholder="Nouveau code"></label>
-    <label>Confirmer<input id="newPass2" class="field" type="password" placeholder="Confirmer"></label>
-    <button class="btn" id="passSave" style="width:100%;margin-top:.4rem">Enregistrer le mot de passe</button>
-    <p class="msg" id="passMsg"></p>`;
+  } else if(tab==="compte"){
+    h += `<p class="sub">Compte Firebase connecté.</p>
+    <div class="sec-note">Connecté en tant que :<br><b>${e(currentUser.email)}</b></div>
+    <p style="font-size:.9rem;margin-top:1rem;color:var(--muted)">
+      Pour changer le mot de passe ou supprimer le compte, va dans la console Firebase → Authentication → Users.
+    </p>
+    <button class="btn rd" id="btnLogoutFull" style="width:100%;margin-top:1rem">Se déconnecter</button>`;
   }
 
-  h+=`</div><div class="sf">
+  h += `</div><div class="sf">
     <button class="btn g" id="aSave">💾 Sauvegarder</button>
     <span class="msg" id="aMsg"></span>
   </div>`;
-  S.innerHTML=h;
+  S.innerHTML = h;
 
-  $("#sX").onclick=()=>{S.hidden=true};
-  $("#sLogout").onclick=()=>{ unlocked=false; sessionStorage.removeItem("clim_ok"); panelLogin(); };
-  $$("[data-t]").forEach(b=>b.onclick=()=>{ tab=b.dataset.t; panel(); });
+  $("#sX").onclick = () => { S.hidden = true; };
+  $("#sLogout").onclick = () => { auth.signOut(); };
+  $("#btnLogoutFull")?.addEventListener("click", () => { auth.signOut(); });
 
-  // Demandes delete
-  $$("[data-del]").forEach(b=>b.onclick=()=>{
-    demandes=demandes.filter(d=>String(d.id)!==b.dataset.del);
-    saveDemandes(); panel();
+  $$("[data-t]").forEach(b => b.onclick = () => { tab = b.dataset.t; panel(); });
+
+  $$("[data-del]").forEach(b => b.onclick = () => {
+    demandes = demandes.filter(d => String(d.id) !== b.dataset.del);
+    saveDemandes();
+    panel();
   });
 
-  // Bind texts / contact / colors
-  const bind=(id,key)=>{ const el=$("#"+id); if(!el) return; el.oninput=()=>{ cfg[key]=el.value; applyCfg(); }; };
+  const bind = (id, key) => {
+    const el = $("#"+id);
+    if(!el) return;
+    el.oninput = () => { cfg[key] = el.value; applyCfg(); };
+  };
   bind("cSiteName","siteName"); bind("cLogoIcon","logoIcon");
   bind("cHeroTitle","heroTitle"); bind("cHeroSub","heroSub");
   bind("cServTitle","servTitle"); bind("cServSub","servSub");
@@ -576,83 +625,83 @@ function panel(){
   bind("cContactTitle","contactTitle"); bind("cContactSub","contactSub");
   bind("cPhone","phone"); bind("cEmail","email"); bind("cZone","zone");
   bind("cHours","hours"); bind("cNote","note");
-  const cp=$("#cPrimary"), ca=$("#cAccent");
-  if(cp) cp.oninput=()=>{ cfg.primary=cp.value; applyCfg(); };
-  if(ca) ca.oninput=()=>{ cfg.accent=ca.value; applyCfg(); };
 
-  // Tarifs live
-  $$("[data-ti]").forEach(el=>{
-    el.oninput=()=>{
-      const i=+el.dataset.ti, k=el.dataset.k;
+  const cp = $("#cPrimary"), ca = $("#cAccent");
+  if(cp) cp.oninput = () => { cfg.primary = cp.value; applyCfg(); };
+  if(ca) ca.oninput = () => { cfg.accent = ca.value; applyCfg(); };
+
+  $$("[data-ti]").forEach(el => {
+    el.oninput = () => {
+      const i = +el.dataset.ti, k = el.dataset.k;
       if(!cfg.tarifs[i]) return;
-      cfg.tarifs[i][k]=el.value;
+      cfg.tarifs[i][k] = el.value;
       applyCfg();
     };
   });
 
-  // Photos
-  if(tab==="photos"){
-    const list=$("#photoList");
-    const photos=cfg.photos||[];
-    list.innerHTML = photos.length ? photos.map((p,i)=>`
+  if(tab === "photos"){
+    const list = $("#photoList");
+    const photos = cfg.photos || [];
+    list.innerHTML = photos.length ? photos.map((p,i) => `
       <div class="photo-item">
         <img src="${e(p.url)}" alt="">
         <div class="meta">${e(p.cap||"Sans légende")}</div>
         <button class="btn l sm" data-rm="${i}">✕</button>
       </div>`).join("") : `<p class="empty">Aucune photo pour le moment.</p>`;
-    list.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{
-      cfg.photos.splice(+b.dataset.rm,1);
+    list.querySelectorAll("[data-rm]").forEach(b => b.onclick = () => {
+      cfg.photos.splice(+b.dataset.rm, 1);
       saveCfg(); applyCfg(); panel();
     });
-    $("#photoAdd").onchange=()=>{
-      const f=$("#photoAdd").files?.[0];
+    $("#photoAdd").onchange = () => {
+      const f = $("#photoAdd").files?.[0];
       if(!f) return;
-      if(f.size>900000){ alert("Image trop lourde (max ~900 Ko). Compressez-la."); return; }
-      const reader=new FileReader();
-      reader.onload=()=>{
-        cfg.photos=cfg.photos||[];
-        cfg.photos.push({url:reader.result, cap:($("#photoCap").value||"").trim()});
+      if(f.size > 900000){ alert("Image trop lourde (max ~900 Ko). Compressez-la."); return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        cfg.photos = cfg.photos || [];
+        cfg.photos.push({url: reader.result, cap: ($("#photoCap").value||"").trim()});
         saveCfg(); applyCfg(); panel();
       };
       reader.readAsDataURL(f);
     };
   }
 
-  // Password change (unique code)
-  $("#passSave")?.addEventListener("click",()=>{
-    const p1=$("#newPass").value, p2=$("#newPass2").value;
-    if(!p1||p1.length<4){ $("#passMsg").textContent="Minimum 4 caractères."; return; }
-    if(p1!==p2){ $("#passMsg").textContent="Les mots de passe ne correspondent pas."; return; }
-    localStorage.setItem("clim_pass", hash(p1));
-    $("#passMsg").textContent="✅ Mot de passe mis à jour. Utilise ce nouveau code la prochaine fois.";
-  });
-
-  $("#aSave").onclick=()=>{
+  $("#aSave").onclick = () => {
     saveCfg();
-    $("#aMsg").textContent="✅ Sauvegardé";
+    $("#aMsg").textContent = "✅ Sauvegardé";
     applyCfg();
   };
 }
 
-$("#lockBtn").onclick=()=>{
-  if(unlocked) panel();
+/* Auth state listener */
+auth.onAuthStateChanged(user => {
+  currentUser = user;
+  if(user){
+    if(!$("#side").hidden) panel();
+  } else {
+    if(!$("#side").hidden) panelLogin();
+  }
+});
+
+$("#lockBtn").onclick = () => {
+  if(currentUser) panel();
   else panelLogin();
 };
 
-// Google Translate
+/* Google Translate */
 function googleTranslateElementInit(){
   new google.translate.TranslateElement({
-    pageLanguage:"fr",
-    includedLanguages:"fr,en,es,de,it,pt,ar,zh-CN,ru,uk,pl,ro,tr,nl,hi",
+    pageLanguage: "fr",
+    includedLanguages: "fr,en,es,de,it,pt,ar,zh-CN,ru,uk,pl,ro,tr,nl,hi",
     layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-    autoDisplay:false
-  },"google_translate_element");
+    autoDisplay: false
+  }, "google_translate_element");
 }
-const gt=document.createElement("script");
-gt.src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+const gt = document.createElement("script");
+gt.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
 document.head.appendChild(gt);
 
-// Init
+/* Init */
 applyTheme();
 applyCfg();
 restartGal();
