@@ -302,67 +302,48 @@ function saveReqs(){ localStorage.setItem(REQ_KEY, JSON.stringify(reqs)); update
 
 /* ===== ASSISTANT RÉPONSES (5 styles) ===== */
 function suggestReplies(req) {
-  const name = (req.name||"").split(" ")[0] || "";
+  const name = (req.name || "").split(" ")[0] || "";
   const hello = name ? ("Bonjour " + name) : "Bonjour";
-  const msg = (req.msg||"").toLowerCase();
+  const msg = (req.msg || "").toLowerCase();
   const type = req.type || "";
   const phone = cfg.phone || "";
-  const isElec = type === "elec" || /disjonct|prise|tableau|court|panne|électrique|électrique/.test(msg);
+  const isElec = type === "elec" || /disjonct|prise|tableau|court|panne|électrique/.test(msg);
   const isClim = type === "clim" || /clim|froid|chaud|split|gaz|fuite|climati|pose/.test(msg);
   const wantsFriday = /vendredi/.test(msg);
   const wantsPose = /pose|install/.test(msg);
   const isUrgent = /urgent|tout de suite|immédiat|plus de courant|plus de froid/.test(msg);
 
   let diagnostic = "";
-  if (isElec) diagnostic = "Pour l’électrique, je regarde en priorité le tableau, les différentiels et le circuit concerné.";
-  else if (isClim && wantsPose) diagnostic = "Pour une pose de clim, je vérifie la puissance adaptée, l’emplacement des unités et le passage des liaisons.";
+  if (isElec) diagnostic = "Pour l'électrique, je regarde en priorité le tableau, les différentiels et le circuit concerné.";
+  else if (isClim && wantsPose) diagnostic = "Pour une pose de clim, je vérifie la puissance adaptée, l'emplacement des unités et le passage des liaisons.";
   else if (isClim) diagnostic = "Pour la clim, je contrôle filtres, évacuation, codes erreur et fonctionnement des unités.";
   else diagnostic = "Je prépare un diagnostic adapté à votre description.";
 
   const dispo = wantsFriday
-    ? "Vous mentionnez vendredi : dites-moi le créneau précis (matin / après-midi) et l’adresse exacte."
-    : "Indiquez-moi vos créneaux et l’adresse exacte pour que je m’organise.";
+    ? "Vous mentionnez vendredi : dites-moi le créneau précis (matin / après-midi) et l'adresse exacte."
+    : "Indiquez-moi vos créneaux et l'adresse exacte pour que je m'organise.";
 
   return [
-    { label: "Analyse + RDV", text: hello + ",
-
-Merci pour votre message. " + diagnostic + "
-
-" + dispo + "
-
-Je vous confirme ensuite le passage.
-
-Cordialement" },
-    { label: "Pro & clair", text: hello + ",
-
-Bien reçu. Je peux intervenir pour un diagnostic / devis. Confirmez adresse + disponibilité, et si possible une photo du tableau ou de l’unité intérieure/extérieure.
-
-Cordialement" },
-    { label: "Questions utiles", text: hello + ",
-
-Pour préparer au mieux :
-1) Depuis quand ?
-2) Y a-t-il un code erreur / un disjoncteur qui saute ?
-3) Adresse et créneaux
-
-Dès que j’ai ces infos, je vous propose un passage.
-
-Merci" },
-    { label: "Rassurant", text: hello + ",
-
-Pas d’inquiétude, on va traiter ça. " + (isUrgent ? "Je priorise votre demande. " : "") + "Donnez-moi un créneau et je m’organise au plus vite.
-
-À très vite" },
-    { label: "Urgence / appel", text: hello + ",
-
-Message bien reçu. Si c’est urgent, rappelez-moi au " + phone + ". Sinon confirmez un créneau aujourd’hui ou demain et l’adresse.
-
-Je reste joignable" }
+    { label: "Analyse + RDV", text: hello + ",\n\nMerci pour votre message. " + diagnostic + "\n\n" + dispo + "\n\nJe vous confirme ensuite le passage.\n\nCordialement" },
+    { label: "Pro & clair", text: hello + ",\n\nBien reçu. Je peux intervenir pour un diagnostic / devis. Confirmez adresse + disponibilité, et si possible une photo du tableau ou de l'unité intérieure/extérieure.\n\nCordialement" },
+    { label: "Questions utiles", text: hello + ",\n\nPour préparer au mieux :\n1) Depuis quand ?\n2) Y a-t-il un code erreur / un disjoncteur qui saute ?\n3) Adresse et créneaux\n\nDès que j'ai ces infos, je vous propose un passage.\n\nMerci" },
+    { label: "Rassurant", text: hello + ",\n\nPas d'inquiétude, on va traiter ça. " + (isUrgent ? "Je priorise votre demande. " : "") + "Donnez-moi un créneau et je m'organise au plus vite.\n\nÀ très vite" },
+    { label: "Urgence / appel", text: hello + ",\n\nMessage bien reçu. Si c'est urgent, rappelez-moi au " + phone + ". Sinon confirmez un créneau aujourd'hui ou demain et l'adresse.\n\nJe reste joignable" }
   ];
 }
 
+function aiBox(r) {
+  try {
+    const a = aiAssist(r);
+    const steps = (a.steps || []).map(function(s){ return "• " + esc(s); }).join("<br>");
+    return '<div class="help-box"><strong>🤖 Assistant IA (local)</strong><br><em>' + esc(a.analysis) + '</em><br>' + steps + '</div>';
+  } catch (e) {
+    return '';
+  }
+}
+
 function aiAssist(req) {
-  const msg = (req.msg||"").toLowerCase();
+  const msg = (req.msg || "").toLowerCase();
   const type = req.type || "";
   let analysis = "Demande générale.";
   let steps = [];
@@ -391,15 +372,15 @@ function aiAssist(req) {
         "Demander code erreur si affiché",
         "Filtres nettoyés récemment ?",
         "Unité extérieure dégagée ?",
-        "Fuite d’eau ou bruit particulier ?",
+        "Fuite d'eau ou bruit particulier ?",
         "Prévoir nettoyage / contrôle gaz selon symptôme"
       ];
     }
   }
-  return { analysis, steps };
+  return { analysis: analysis, steps: steps };
 }
 
-/* ===== AIDE DÉPANNAGE (mémo pro) ===== */
+
 function helpForType(type, msg) {
   const m = (msg||"").toLowerCase();
   if (type === "elec" || /disjonct|prise|tableau|court|panne|électrique/.test(m)) {
@@ -555,8 +536,8 @@ function renderTab(name){
           </div>
           <p class="msg">${esc(r.date)} · ${esc(r.phone)} · ${esc(r.email||"")}</p>
           ${helpForType(r.type, r.msg)}
-          ${(() => { const a = aiAssist(r); return `<div class="help-box"><strong>🤖 Assistant IA (local)</strong><br><em>${esc(a.analysis)}</em><br>` + a.steps.map(s=>"• "+esc(s)).join("<br>") + `</div>`; })()}
-          <div class="chat">${chat||"<span class='msg'>—</span>"}</div>
+          ${aiBox(r)}
+          <div class="chat">${chat||"<span class=\'msg\'>—</span>"}</div>
           <p class="msg" style="margin:.3rem 0 .2rem">Assistant — choisir un style de réponse :</p>
           <div class="style-btns">${styleBtns}</div>
           <textarea class="field" data-reply="${r.id}" rows="3" placeholder="Ta réponse…"></textarea>
@@ -736,24 +717,41 @@ cReset.onclick=()=>{ if(!confirm("Réinitialiser textes / couleurs / services ?"
 
 /* Resize + expand creator */
 (function(){
-  const panel = document.getElementById("creator");
-  const handle = document.getElementById("resizeHandle");
-  const exp = document.getElementById("expandBtn");
-  if (exp) exp.onclick = () => panel.classList.toggle("wide");
-  if (!handle) return;
-  let dragging = false, startX = 0, startW = 0;
-  handle.addEventListener("mousedown", e => {
-    dragging = true; startX = e.clientX; startW = panel.getBoundingClientRect().width;
-    handle.classList.add("active"); e.preventDefault();
-  });
-  window.addEventListener("mousemove", e => {
-    if (!dragging) return;
-    const dx = startX - e.clientX;
-    const w = Math.min(Math.max(320, startW + dx), window.innerWidth * 0.98);
-    panel.style.width = w + "px";
-    panel.classList.remove("wide");
-  });
-  window.addEventListener("mouseup", () => { dragging = false; handle.classList.remove("active"); });
+  function bindResize() {
+    const panel = document.getElementById("creator");
+    const handle = document.getElementById("resizeHandle");
+    const exp = document.getElementById("expandBtn");
+    if (!panel) return;
+    if (exp && !exp._bound) {
+      exp._bound = true;
+      exp.onclick = function(){ panel.classList.toggle("wide"); };
+    }
+    if (!handle || handle._bound) return;
+    handle._bound = true;
+    var dragging = false, startX = 0, startW = 0;
+    handle.addEventListener("mousedown", function(e) {
+      dragging = true; startX = e.clientX; startW = panel.getBoundingClientRect().width;
+      handle.classList.add("active"); e.preventDefault();
+    });
+    window.addEventListener("mousemove", function(e) {
+      if (!dragging) return;
+      var dx = startX - e.clientX;
+      var w = Math.min(Math.max(320, startW + dx), window.innerWidth * 0.98);
+      panel.style.width = w + "px";
+      panel.classList.remove("wide");
+    });
+    window.addEventListener("mouseup", function() {
+      dragging = false;
+      if (handle) handle.classList.remove("active");
+    });
+  }
+  bindResize();
+  // re-bind when opening
+  var lb = document.getElementById("lockBtn");
+  if (lb) {
+    var prev = lb.onclick;
+    lb.addEventListener("click", function(){ setTimeout(bindResize, 50); });
+  }
 })();
 
 </script>
