@@ -3,23 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Clim & Électricité — Pose et dépannage</title>
-<meta name="description" content="Pose de climatisation, dépannage électrique, entretien. Intervention rapide, devis gratuit.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<title>Clim & Électricité</title>
+<meta name="description" content="Pose de climatisation, dépannage électrique, entretien.">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <style>
-:root {
-  --ink:#1c1917;--muted:#57534e;--soft:#78716c;--bg:#faf7f2;--card:#ffffff;
-  --sand:#f5f0e8;--clay:#c4a574;--clay-dark:#a68b5b;--sage:#0f766e;--sage-dark:#0d5c56;
-  --blush:#e8d5c4;--line:#e7e0d5;--shadow:0 4px 24px rgba(28,25,23,.06);--radius:16px;
-  --font-serif:"Cormorant Garamond",Georgia,serif;--font-sans:"Source Sans 3",system-ui,sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;scroll-padding-top:84px}
-body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);line-height:1.65;font-size:17px;-webkit-font-smoothing:antialiased}
+:root{--ink:#1c1917;--muted:#57534e;--soft:#78716c;--bg:#faf7f2;--card:#fff;--sand:#f5f0e8;--clay:#c4a574;--clay-dark:#a68b5b;--sage:#0f766e;--sage-dark:#0d5c56;--blush:#e8d5c4;--line:#e7e0d5;--shadow:0 4px 24px rgba(28,25,23,.06);--radius:16px;--font-serif:"Cormorant Garamond",Georgia,serif;--font-sans:"Source Sans 3",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);line-height:1.65;font-size:17px}
 a{color:var(--sage-dark);text-decoration:none}a:hover{text-decoration:underline}
 nav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
 .brand{font-family:var(--font-serif);font-size:1.35rem;font-weight:600;color:var(--ink);text-decoration:none!important;display:flex;align-items:center;gap:.55rem}
@@ -28,61 +20,68 @@ nav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 92%
 .nav-links a{color:var(--muted);font-weight:500;font-size:.9rem;padding:.4rem .7rem;border-radius:8px;text-decoration:none!important}
 .nav-links a:hover{background:var(--sand);color:var(--ink)}
 .nav-cta{background:var(--sage)!important;color:#fff!important;padding:.45rem 1rem!important;border-radius:999px!important;font-weight:600!important}
-.hero{padding:4.25rem 1.5rem 3.25rem;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.15fr .85fr;gap:3rem;align-items:center}
+.hero{padding:4rem 1.5rem 3rem;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.15fr .85fr;gap:3rem;align-items:center}
 @media(max-width:800px){.hero{grid-template-columns:1fr}}
 .hero-badge{display:inline-flex;background:var(--sand);color:var(--sage-dark);font-size:.82rem;font-weight:600;padding:.35rem .85rem;border-radius:999px;margin-bottom:1.1rem}
-.hero h1{font-family:var(--font-serif);font-size:clamp(2.2rem,5vw,3.1rem);font-weight:600;line-height:1.15;margin-bottom:.9rem}
-.hero .lead{font-size:1.12rem;color:var(--muted);max-width:34rem;margin-bottom:1.8rem}
-.hero-actions{display:flex;flex-wrap:wrap;gap:.75rem}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;font-family:inherit;font-weight:600;font-size:.95rem;padding:.75rem 1.35rem;border-radius:999px;border:none;cursor:pointer;text-decoration:none!important}
+.hero h1{font-family:var(--font-serif);font-size:clamp(2.1rem,5vw,3rem);font-weight:600;line-height:1.15;margin-bottom:.9rem}
+.hero .lead{font-size:1.1rem;color:var(--muted);max-width:34rem;margin-bottom:1.6rem}
+.hero-actions{display:flex;flex-wrap:wrap;gap:.7rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;font-family:inherit;font-weight:600;font-size:.95rem;padding:.7rem 1.3rem;border-radius:999px;border:none;cursor:pointer;text-decoration:none!important}
 .btn-primary{background:var(--sage);color:#fff}.btn-primary:hover{background:var(--sage-dark)}
 .btn-secondary{background:var(--card);color:var(--ink);border:1px solid var(--line)}
-.hero-card{background:var(--card);border-radius:24px;padding:1.75rem;box-shadow:var(--shadow);border:1px solid var(--line)}
-.hero-card .photo{aspect-ratio:4/5;background:linear-gradient(160deg,var(--blush),var(--sand));border-radius:16px;display:grid;place-items:center;margin-bottom:1.25rem}
-.hero-card .photo span{width:88px;height:88px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:2.2rem;box-shadow:var(--shadow)}
-.hero-meta{display:flex;flex-direction:column;gap:.5rem;font-size:.92rem;color:var(--muted)}.hero-meta strong{color:var(--ink)}
-section{padding:3.4rem 1.5rem}.wrap{max-width:1000px;margin:0 auto}
-.section-label{font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);margin-bottom:.5rem}
-h2{font-family:var(--font-serif);font-size:clamp(1.8rem,3.5vw,2.35rem);font-weight:600;margin-bottom:.75rem}
-.section-intro{color:var(--muted);font-size:1.05rem;max-width:38rem;margin-bottom:2rem}
-.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.5rem 1.4rem;box-shadow:var(--shadow)}
-.card-icon{width:48px;height:48px;border-radius:12px;background:var(--sand);display:grid;place-items:center;font-size:1.4rem;margin-bottom:1rem}
-.card h3{font-family:var(--font-serif);font-size:1.3rem;font-weight:600;margin-bottom:.45rem}
-.card p{color:var(--muted);font-size:.95rem}
+.hero-card{background:var(--card);border-radius:24px;padding:1.6rem;box-shadow:var(--shadow);border:1px solid var(--line)}
+.hero-card .photo{aspect-ratio:4/5;background:linear-gradient(160deg,var(--blush),var(--sand));border-radius:16px;display:grid;place-items:center;margin-bottom:1.2rem}
+.hero-card .photo span{width:84px;height:84px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:2.1rem;box-shadow:var(--shadow)}
+.hero-meta{display:flex;flex-direction:column;gap:.45rem;font-size:.9rem;color:var(--muted)}.hero-meta strong{color:var(--ink)}
+section{padding:3.2rem 1.5rem}.wrap{max-width:1000px;margin:0 auto}
+.section-label{font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-dark);margin-bottom:.45rem}
+h2{font-family:var(--font-serif);font-size:clamp(1.7rem,3.5vw,2.2rem);font-weight:600;margin-bottom:.7rem}
+.section-intro{color:var(--muted);font-size:1.02rem;max-width:38rem;margin-bottom:1.8rem}
+.grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.15rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.4rem;box-shadow:var(--shadow)}
+.card-icon{width:46px;height:46px;border-radius:12px;background:var(--sand);display:grid;place-items:center;font-size:1.35rem;margin-bottom:.9rem}
+.card h3{font-family:var(--font-serif);font-size:1.25rem;font-weight:600;margin-bottom:.4rem}
+.card p{color:var(--muted);font-size:.93rem}
 .band{background:var(--sand);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.price{font-family:var(--font-serif);font-size:1.6rem;font-weight:600;color:var(--sage)}
-.tag{display:inline-block;background:var(--sand);color:var(--sage-dark);font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:6px;margin-bottom:.5rem}
-.field{width:100%;padding:.7rem .85rem;margin:.3rem 0 .75rem;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font-size:.95rem;font-family:inherit}
-label{font-weight:600;font-size:.88rem}textarea.field{min-height:110px;resize:vertical}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}@media(max-width:700px){.two{grid-template-columns:1fr}}
-footer{background:var(--card);border-top:1px solid var(--line);text-align:center;padding:1.8rem 1rem;font-size:.85rem;color:var(--muted)}
+.price{font-family:var(--font-serif);font-size:1.5rem;font-weight:600;color:var(--sage)}
+.tag{display:inline-block;background:var(--sand);color:var(--sage-dark);font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:6px;margin-bottom:.45rem}
+.field{width:100%;padding:.65rem .8rem;margin:.25rem 0 .7rem;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font-size:.95rem;font-family:inherit}
+label{font-weight:600;font-size:.86rem}textarea.field{min-height:100px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1.15rem}@media(max-width:700px){.two{grid-template-columns:1fr}}
+footer{background:var(--card);border-top:1px solid var(--line);text-align:center;padding:1.6rem 1rem;font-size:.84rem;color:var(--muted)}
 #lockBtn{position:fixed;left:14px;bottom:18px;z-index:9999;width:46px;height:46px;border-radius:50%;border:0;background:var(--ink);color:#fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
-#creator{position:fixed;top:0;right:0;width:min(440px,100vw);height:100vh;background:var(--card);border-left:1px solid var(--line);z-index:10000;display:none;flex-direction:column;box-shadow:-8px 0 28px rgba(0,0,0,.12)}
+#notifBadge{position:absolute;top:-4px;right:-4px;background:#dc2626;color:#fff;font-size:.65rem;font-weight:700;min-width:18px;height:18px;border-radius:999px;display:none;align-items:center;justify-content:center;padding:0 4px}
+#creator{position:fixed;top:0;right:0;width:min(460px,100vw);height:100vh;background:var(--card);border-left:1px solid var(--line);z-index:10000;display:none;flex-direction:column;box-shadow:-8px 0 28px rgba(0,0,0,.12)}
 #creator.open{display:flex}
-#creator .sh{display:flex;justify-content:space-between;align-items:center;padding:.9rem 1rem;background:var(--ink);color:#fff;font-weight:700;gap:.5rem}
-#creator .sh button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:.35rem .65rem;cursor:pointer;font-size:.85rem}
-#creator .tabs{display:flex;flex-wrap:wrap;gap:.35rem;padding:.65rem .9rem;border-bottom:1px solid var(--line);background:var(--sand)}
-#creator .tabs button{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:.35rem .75rem;font-weight:600;font-size:.8rem;cursor:pointer;font-family:inherit;color:var(--ink)}
+#creator .sh{display:flex;justify-content:space-between;align-items:center;padding:.85rem 1rem;background:var(--ink);color:#fff;font-weight:700;gap:.5rem}
+#creator .sh button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem}
+#creator .tabs{display:flex;flex-wrap:wrap;gap:.3rem;padding:.55rem .8rem;border-bottom:1px solid var(--line);background:var(--sand)}
+#creator .tabs button{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:.3rem .7rem;font-weight:600;font-size:.78rem;cursor:pointer;font-family:inherit;color:var(--ink)}
 #creator .tabs button.on{background:var(--sage);color:#fff;border-color:var(--sage)}
-#creator .sb{padding:1rem;overflow-y:auto;flex:1}
-#creator .sf{padding:.75rem 1rem;border-top:1px solid var(--line);display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
-.msg{font-size:.85rem;color:var(--muted)}
-.login-box{max-width:320px;margin:2rem auto;text-align:center}
-.warn-box{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:.7rem .9rem;font-size:.85rem;margin:.6rem 0;text-align:left}
-.ok-box{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:10px;padding:.7rem .9rem;font-size:.85rem;margin:.6rem 0;text-align:left}
-.color-row{display:flex;align-items:center;gap:.6rem;margin:.4rem 0}
-.color-row input[type=color]{width:42px;height:36px;border:1px solid var(--line);border-radius:8px;padding:0;cursor:pointer}
+#creator .sb{padding:.9rem;overflow-y:auto;flex:1}
+#creator .sf{padding:.7rem 1rem;border-top:1px solid var(--line);display:flex;gap:.45rem;align-items:center;flex-wrap:wrap}
+.msg{font-size:.84rem;color:var(--muted)}
+.login-box{max-width:320px;margin:1.8rem auto;text-align:center}
+.warn-box{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:.65rem .85rem;font-size:.84rem;margin:.55rem 0;text-align:left}
+.ok-box{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:10px;padding:.65rem .85rem;font-size:.84rem;margin:.55rem 0;text-align:left}
+.color-row{display:flex;align-items:center;gap:.55rem;margin:.35rem 0}
+.color-row input[type=color]{width:40px;height:34px;border:1px solid var(--line);border-radius:8px;padding:0;cursor:pointer}
+.req-card{border:1px solid var(--line);border-radius:12px;padding:1rem;margin-bottom:.7rem;background:var(--bg)}
+.req-card.new{border-color:var(--sage);box-shadow:0 0 0 2px color-mix(in srgb,var(--sage) 20%,transparent)}
+.chat{max-height:180px;overflow-y:auto;margin:.5rem 0;padding:.5rem;background:var(--card);border-radius:8px;border:1px solid var(--line);font-size:.88rem}
+.chat .bubble{margin:.3rem 0;padding:.4rem .6rem;border-radius:8px;max-width:90%}
+.chat .from-client{background:#e0f2fe;margin-right:auto}
+.chat .from-admin{background:#dcfce7;margin-left:auto}
 </style>
 </head>
 <body>
 <nav>
   <a class="brand" href="#top"><span class="brand-mark" id="logoMark">CÉ</span> <span id="siteName">Clim & Électricité</span></a>
   <div class="nav-links">
-    <a href="#services">Services</a>
-    <a href="#realisations">Réalisations</a>
-    <a href="#tarifs">Tarifs</a>
-    <a href="#contact" class="nav-cta">Devis gratuit</a>
+    <a href="#services" id="navServ">Services</a>
+    <a href="#realisations" id="navReal">Réalisations</a>
+    <a href="#tarifs" id="navTarif">Tarifs</a>
+    <a href="#contact" class="nav-cta" id="navCta">Devis gratuit</a>
   </div>
 </nav>
 
@@ -92,68 +91,60 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
     <h1 id="heroTitle">Pose de clim &amp; dépannage électrique</h1>
     <p class="lead" id="heroSub">Installation, entretien et dépannage. Intervention rapide, devis gratuit, travail soigné.</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="#contact">Demander un devis</a>
+      <a class="btn btn-primary" href="#contact" id="btnDevis">Demander un devis</a>
       <a class="btn btn-secondary" href="tel:+33000000000" id="heroTel">📞 Appeler maintenant</a>
     </div>
   </div>
   <div class="hero-card">
     <div class="photo"><span id="heroIcon">❄️</span></div>
     <div class="hero-meta">
-      <div><strong>Intervention rapide</strong> — devis sous 24-48h</div>
-      <div><strong>Zone</strong> — <span id="infoZone">Votre ville et alentours</span></div>
-      <div><strong>Horaires</strong> — <span id="infoHours">Lun–Ven 8h–19h · Sam sur RDV</span></div>
+      <div><strong id="meta1Label">Intervention rapide</strong> — <span id="meta1Text">devis sous 24-48h</span></div>
+      <div><strong id="meta2Label">Zone</strong> — <span id="infoZone">Votre ville et alentours</span></div>
+      <div><strong id="meta3Label">Horaires</strong> — <span id="infoHours">Lun–Ven 8h–19h · Sam sur RDV</span></div>
     </div>
   </div>
 </header>
 
 <section id="services">
   <div class="wrap">
-    <div class="section-label">Ce que nous faisons</div>
+    <div class="section-label" id="servLabel">Ce que nous faisons</div>
     <h2 id="servTitle">Nos services</h2>
     <p class="section-intro" id="servSub">Climatisation et électricité pour particuliers et professionnels.</p>
-    <div class="grid-3" id="servGrid">
-      <div class="card"><div class="card-icon">❄️</div><h3>Pose de climatisation</h3><p>Installation mono-split, multi-split, gainable.</p></div>
-      <div class="card"><div class="card-icon">⚡</div><h3>Dépannage électrique</h3><p>Panne, court-circuit, tableau électrique. Intervention rapide.</p></div>
-      <div class="card"><div class="card-icon">🔧</div><h3>Entretien & maintenance</h3><p>Nettoyage, recharge de gaz, contrôle d’étanchéité.</p></div>
-      <div class="card"><div class="card-icon">🏠</div><h3>Rénovation électrique</h3><p>Mise aux normes NF C 15-100, éclairage LED.</p></div>
-    </div>
+    <div class="grid-3" id="servGrid"></div>
   </div>
 </section>
 
 <section class="band" id="realisations">
   <div class="wrap">
-    <div class="section-label">Chantiers</div>
-    <h2>Réalisations</h2>
-    <p class="section-intro">Photos à ajouter depuis l’espace créateur.</p>
-    <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;aspect-ratio:16/9;display:grid;place-items:center;color:var(--soft);box-shadow:var(--shadow)" id="galleryPlaceholder">
-      Ajoutez vos photos dans l’espace créateur (🔒)
+    <div class="section-label" id="realLabel">Chantiers</div>
+    <h2 id="realTitle">Réalisations</h2>
+    <p class="section-intro" id="realSub">Photos de chantiers (à ajouter depuis l’espace créateur).</p>
+    <div id="galleryBox" style="background:var(--card);border:1px solid var(--line);border-radius:16px;aspect-ratio:16/9;display:grid;place-items:center;color:var(--soft);box-shadow:var(--shadow)">
+      Ajoutez vos photos dans l’espace créateur
     </div>
   </div>
 </section>
 
 <section id="tarifs">
   <div class="wrap">
-    <div class="section-label">Tarifs</div>
-    <h2>Tarifs indicatifs</h2>
-    <div class="grid-3" id="tarifGrid">
-      <div class="card"><span class="tag">Clim</span><h3>Pose mono-split</h3><p class="price">dès 890 € <small>TTC</small></p><p>Fourniture et pose d’un split mural standard.</p></div>
-      <div class="card"><span class="tag">Clim</span><h3>Entretien annuel</h3><p class="price">dès 120 € <small>TTC</small></p><p>Nettoyage et contrôle.</p></div>
-      <div class="card"><span class="tag">Électricité</span><h3>Dépannage</h3><p class="price">dès 70 € <small>TTC</small></p><p>Déplacement + 1ère heure.</p></div>
-      <div class="card"><span class="tag">Électricité</span><h3>Mise aux normes</h3><p class="price">Sur devis</p><p>Diagnostic et conformité.</p></div>
-    </div>
+    <div class="section-label" id="tarifLabel">Tarifs</div>
+    <h2 id="tarifTitle">Tarifs indicatifs</h2>
+    <p class="section-intro" id="tarifSub">Devis gratuit et personnalisé.</p>
+    <div class="grid-3" id="tarifGrid"></div>
   </div>
 </section>
 
 <section id="contact" class="band">
   <div class="wrap">
-    <div class="section-label">Contact</div>
-    <h2>Contact & devis</h2>
+    <div class="section-label" id="contactLabel">Contact</div>
+    <h2 id="contactTitle">Contact & devis</h2>
+    <p class="section-intro" id="contactSub">Décrivez votre besoin, on vous rappelle rapidement.</p>
     <div class="two">
       <div class="card">
         <form id="contactForm">
           <label>Nom</label><input class="field" id="cName" required placeholder="Votre nom">
           <label>Téléphone</label><input class="field" id="cPhone" type="tel" required placeholder="06 12 34 56 78">
-          <label>Email (optionnel)</label><input class="field" id="cEmail" type="email" placeholder="vous@email.com">
+          <label>Email</label><input class="field" id="cEmail" type="email" required placeholder="vous@email.com">
           <label>Type de demande</label>
           <select class="field" id="cType">
             <option value="clim">Pose / entretien clim</option>
@@ -161,25 +152,28 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
             <option value="devis">Devis travaux</option>
             <option value="autre">Autre</option>
           </select>
-          <label>Message</label><textarea class="field" id="cMsg" placeholder="Décrivez le besoin…"></textarea>
+          <label>Message</label><textarea class="field" id="cMsg" required placeholder="Décrivez le besoin, l’adresse, la disponibilité…"></textarea>
           <button class="btn btn-primary" type="submit" style="width:100%">Envoyer la demande</button>
-          <p id="formMsg" class="msg" style="margin-top:.6rem"></p>
+          <p id="formMsg" class="msg" style="margin-top:.55rem"></p>
         </form>
       </div>
       <div class="card">
-        <h3 style="font-family:var(--font-serif);margin-bottom:.8rem">Coordonnées</h3>
-        <p style="margin-bottom:.5rem"><strong>📞 Téléphone</strong><br><a href="tel:+33000000000" id="infoTel">+33 0 00 00 00 00</a></p>
-        <p style="margin-bottom:.5rem"><strong>✉️ Email</strong><br><span id="infoEmail">contact@exemple.fr</span></p>
-        <p style="margin-bottom:.5rem"><strong>📍 Zone</strong><br><span id="infoZone2">Votre ville et alentours</span></p>
-        <p style="margin-bottom:.5rem"><strong>🕒 Horaires</strong><br><span id="infoHours2">Lun–Ven 8h–19h · Sam sur RDV</span></p>
+        <h3 style="font-family:var(--font-serif);margin-bottom:.7rem" id="coordTitle">Coordonnées</h3>
+        <p style="margin-bottom:.45rem"><strong>📞 Téléphone</strong><br><a href="tel:+33000000000" id="infoTel">+33 0 00 00 00 00</a></p>
+        <p style="margin-bottom:.45rem"><strong>✉️ Email</strong><br><span id="infoEmail">contact@exemple.fr</span></p>
+        <p style="margin-bottom:.45rem"><strong>📍 Zone</strong><br><span id="infoZone2">Votre ville et alentours</span></p>
+        <p style="margin-bottom:.45rem"><strong>🕒 Horaires</strong><br><span id="infoHours2">Lun–Ven 8h–19h · Sam sur RDV</span></p>
       </div>
     </div>
   </div>
 </section>
 
-<footer><strong id="footName">Clim & Électricité</strong> — Pose de climatisation et dépannage électrique.</footer>
+<footer><strong id="footName">Clim & Électricité</strong> — <span id="footText">Pose de climatisation et dépannage électrique.</span></footer>
 
-<button id="lockBtn" type="button" title="Espace créateur">🔒</button>
+<button id="lockBtn" type="button" title="Espace créateur" style="position:relative">
+  🔒
+  <span id="notifBadge">0</span>
+</button>
 
 <div id="creator">
   <div class="sh">
@@ -189,23 +183,16 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
       <button type="button" id="cClose">✕</button>
     </span>
   </div>
-  <div class="tabs" id="cTabs" style="display:none">
-    <button type="button" data-tab="textes" class="on">Textes</button>
-    <button type="button" data-tab="contact">Contact</button>
-    <button type="button" data-tab="couleurs">Couleurs</button>
-    <button type="button" data-tab="demandes">Demandes</button>
-    <button type="button" data-tab="compte">Compte</button>
-  </div>
+  <div class="tabs" id="cTabs" style="display:none"></div>
   <div class="sb" id="cBody"></div>
   <div class="sf" id="cFoot" style="display:none">
-    <button class="btn btn-primary" id="cSave" style="padding:.5rem 1rem;font-size:.9rem">💾 Sauvegarder</button>
-    <button class="btn btn-secondary" id="cReset" style="padding:.5rem 1rem;font-size:.9rem">Réinitialiser</button>
+    <button class="btn btn-primary" id="cSave" style="padding:.45rem .9rem;font-size:.88rem">💾 Sauvegarder</button>
+    <button class="btn btn-secondary" id="cReset" style="padding:.45rem .9rem;font-size:.88rem">Réinit.</button>
     <span class="msg" id="cMsg"></span>
   </div>
 </div>
 
 <script>
-/* ===== COLLE ICI TON firebaseConfig ===== */
 const firebaseConfig = {
   apiKey: "AIzaSyDVn-yNq8oJZ_e6nXbRpnFbIvr5sOh7otM",
   authDomain: "e2o-5602a.firebaseapp.com",
@@ -215,67 +202,152 @@ const firebaseConfig = {
   appId: "1:732295186075:web:6cc5c9c7d762a1b626683e",
   measurementId: "G-VYJRCPD0YQ"
 };
-/* ======================================== */
-
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-const STORAGE = "clim_creator_v2";
+const STORAGE = "clim_full_v1";
+const REQ_KEY = "clim_full_reqs";
+
 const DEFAULTS = {
   siteName: "Clim & Électricité",
+  logoMark: "CÉ",
   heroTitle: "Pose de clim & dépannage électrique",
   heroSub: "Installation, entretien et dépannage. Intervention rapide, devis gratuit, travail soigné.",
   heroBadge: "❄️ Pose · Dépannage · Entretien",
   heroIcon: "❄️",
+  btnDevis: "Demander un devis",
+  btnTel: "📞 Appeler maintenant",
+  navServ: "Services", navReal: "Réalisations", navTarif: "Tarifs", navCta: "Devis gratuit",
+  meta1Label: "Intervention rapide", meta1Text: "devis sous 24-48h",
+  meta2Label: "Zone", meta3Label: "Horaires",
   phone: "+33 0 00 00 00 00",
   email: "contact@exemple.fr",
+  notifEmail: "contact@exemple.fr",
   zone: "Votre ville et alentours",
   hours: "Lun–Ven 8h–19h · Sam sur RDV",
-  servTitle: "Nos services",
-  servSub: "Climatisation et électricité pour particuliers et professionnels.",
-  colors: { sage: "#0f766e", clay: "#c4a574", bg: "#faf7f2" }
+  servLabel: "Ce que nous faisons", servTitle: "Nos services", servSub: "Climatisation et électricité pour particuliers et professionnels.",
+  realLabel: "Chantiers", realTitle: "Réalisations", realSub: "Photos de chantiers (à ajouter depuis l’espace créateur).",
+  tarifLabel: "Tarifs", tarifTitle: "Tarifs indicatifs", tarifSub: "Devis gratuit et personnalisé.",
+  contactLabel: "Contact", contactTitle: "Contact & devis", contactSub: "Décrivez votre besoin, on vous rappelle rapidement.",
+  coordTitle: "Coordonnées",
+  footText: "Pose de climatisation et dépannage électrique.",
+  services: [
+    {icon:"❄️", title:"Pose de climatisation", desc:"Installation mono-split, multi-split, gainable."},
+    {icon:"⚡", title:"Dépannage électrique", desc:"Panne, court-circuit, tableau électrique. Intervention rapide."},
+    {icon:"🔧", title:"Entretien & maintenance", desc:"Nettoyage, recharge de gaz, contrôle d’étanchéité."},
+    {icon:"🏠", title:"Rénovation électrique", desc:"Mise aux normes NF C 15-100, éclairage LED."}
+  ],
+  tarifs: [
+    {tag:"Clim", title:"Pose mono-split", price:"dès 890 €", desc:"Fourniture et pose d’un split mural standard."},
+    {tag:"Clim", title:"Entretien annuel", price:"dès 120 €", desc:"Nettoyage et contrôle."},
+    {tag:"Électricité", title:"Dépannage", price:"dès 70 €", desc:"Déplacement + 1ère heure."},
+    {tag:"Électricité", title:"Mise aux normes", price:"Sur devis", desc:"Diagnostic et conformité."}
+  ],
+  colors: { sage:"#0f766e", clay:"#c4a574", bg:"#faf7f2", ink:"#1c1917" }
 };
 
 let cfg = structuredClone(DEFAULTS);
 try { const s = localStorage.getItem(STORAGE); if (s) cfg = {...DEFAULTS, ...JSON.parse(s)}; } catch(e){}
-let demandes = [];
-try { demandes = JSON.parse(localStorage.getItem("clim_creator_demandes")||"[]"); } catch(e){}
+let reqs = [];
+try { reqs = JSON.parse(localStorage.getItem(REQ_KEY)||"[]"); } catch(e){}
 let currentUser = null;
+let currentTab = "textes";
+
+function esc(s){ return String(s??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
 function apply() {
-  document.getElementById("siteName").textContent = cfg.siteName || "Clim & Électricité";
-  document.getElementById("footName").textContent = cfg.siteName || "Clim & Électricité";
-  document.getElementById("heroTitle").textContent = cfg.heroTitle || "";
-  document.getElementById("heroSub").textContent = cfg.heroSub || "";
-  document.getElementById("heroBadge").textContent = cfg.heroBadge || "";
-  document.getElementById("heroIcon").textContent = cfg.heroIcon || "❄️";
-  document.getElementById("servTitle").textContent = cfg.servTitle || "";
-  document.getElementById("servSub").textContent = cfg.servSub || "";
+  const set = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.textContent = v; };
+  set("siteName", cfg.siteName); set("logoMark", cfg.logoMark);
+  set("heroTitle", cfg.heroTitle); set("heroSub", cfg.heroSub);
+  set("heroBadge", cfg.heroBadge); set("heroIcon", cfg.heroIcon);
+  set("btnDevis", cfg.btnDevis); 
+  const ht = document.getElementById("heroTel"); if (ht) ht.textContent = cfg.btnTel || "📞 Appeler maintenant";
+  set("navServ", cfg.navServ); set("navReal", cfg.navReal); set("navTarif", cfg.navTarif); set("navCta", cfg.navCta);
+  set("meta1Label", cfg.meta1Label); set("meta1Text", cfg.meta1Text);
+  set("meta2Label", cfg.meta2Label); set("meta3Label", cfg.meta3Label);
+  set("servLabel", cfg.servLabel); set("servTitle", cfg.servTitle); set("servSub", cfg.servSub);
+  set("realLabel", cfg.realLabel); set("realTitle", cfg.realTitle); set("realSub", cfg.realSub);
+  set("tarifLabel", cfg.tarifLabel); set("tarifTitle", cfg.tarifTitle); set("tarifSub", cfg.tarifSub);
+  set("contactLabel", cfg.contactLabel); set("contactTitle", cfg.contactTitle); set("contactSub", cfg.contactSub);
+  set("coordTitle", cfg.coordTitle); set("footName", cfg.siteName); set("footText", cfg.footText);
   const tel = (cfg.phone||"").replace(/\s/g,"");
-  document.getElementById("infoTel").textContent = cfg.phone || "";
+  document.getElementById("infoTel").textContent = cfg.phone||"";
   document.getElementById("infoTel").href = "tel:"+tel;
   document.getElementById("heroTel").href = "tel:"+tel;
-  document.getElementById("infoEmail").textContent = cfg.email || "";
-  document.getElementById("infoZone").textContent = cfg.zone || "";
-  document.getElementById("infoZone2").textContent = cfg.zone || "";
-  document.getElementById("infoHours").textContent = cfg.hours || "";
-  document.getElementById("infoHours2").textContent = cfg.hours || "";
+  document.getElementById("infoEmail").textContent = cfg.email||"";
+  document.getElementById("infoZone").textContent = cfg.zone||"";
+  document.getElementById("infoZone2").textContent = cfg.zone||"";
+  document.getElementById("infoHours").textContent = cfg.hours||"";
+  document.getElementById("infoHours2").textContent = cfg.hours||"";
+
+  // services
+  const sg = document.getElementById("servGrid");
+  if (sg && cfg.services) {
+    sg.innerHTML = cfg.services.map(s => `<div class="card"><div class="card-icon">${esc(s.icon)}</div><h3>${esc(s.title)}</h3><p>${esc(s.desc)}</p></div>`).join("");
+  }
+  // tarifs
+  const tg = document.getElementById("tarifGrid");
+  if (tg && cfg.tarifs) {
+    tg.innerHTML = cfg.tarifs.map(t => `<div class="card"><span class="tag">${esc(t.tag)}</span><h3>${esc(t.title)}</h3><p class="price">${esc(t.price)}</p><p>${esc(t.desc)}</p></div>`).join("");
+  }
+  // colors
   if (cfg.colors) {
     if (cfg.colors.sage) document.documentElement.style.setProperty("--sage", cfg.colors.sage);
     if (cfg.colors.clay) document.documentElement.style.setProperty("--clay", cfg.colors.clay);
     if (cfg.colors.bg) document.documentElement.style.setProperty("--bg", cfg.colors.bg);
+    if (cfg.colors.ink) document.documentElement.style.setProperty("--ink", cfg.colors.ink);
   }
+  updateBadge();
 }
 apply();
 
-document.getElementById("contactForm").addEventListener("submit", function(e){
+function updateBadge() {
+  const n = reqs.filter(r => !r.read).length;
+  const b = document.getElementById("notifBadge");
+  if (n > 0) { b.style.display = "flex"; b.textContent = n; }
+  else b.style.display = "none";
+}
+
+document.getElementById("contactForm").addEventListener("submit", async function(e) {
   e.preventDefault();
-  const d = { id:Date.now(), date:new Date().toLocaleString("fr-FR"), name:cName.value.trim(), phone:cPhone.value.trim(), email:cEmail.value.trim(), type:cType.value, msg:cMsg.value.trim() };
-  demandes.unshift(d);
-  localStorage.setItem("clim_creator_demandes", JSON.stringify(demandes));
-  formMsg.textContent = "✅ Demande enregistrée.";
+  const d = {
+    id: Date.now(),
+    date: new Date().toLocaleString("fr-FR"),
+    name: cName.value.trim(),
+    phone: cPhone.value.trim(),
+    email: cEmail.value.trim(),
+    type: cType.value,
+    msg: cMsg.value.trim(),
+    read: false,
+    messages: [{ from: "client", text: cMsg.value.trim(), at: new Date().toISOString() }]
+  };
+  reqs.unshift(d);
+  localStorage.setItem(REQ_KEY, JSON.stringify(reqs));
+  updateBadge();
+
+  // Notification email via FormSubmit
+  const to = (cfg.notifEmail || cfg.email || "").trim();
+  if (to && location.protocol !== "file:") {
+    try {
+      await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(to), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: "Nouvelle demande Clim — " + d.name,
+          _captcha: "false",
+          name: d.name,
+          phone: d.phone,
+          email: d.email,
+          type: d.type,
+          message: d.msg
+        })
+      });
+    } catch (err) {}
+  }
+
+  formMsg.textContent = "✅ Demande envoyée. Nous vous recontactons rapidement.";
   this.reset();
-  setTimeout(()=>formMsg.textContent="",4000);
+  setTimeout(() => formMsg.textContent = "", 5000);
 });
 
 const creator = document.getElementById("creator");
@@ -283,120 +355,224 @@ const cBody = document.getElementById("cBody");
 const cTabs = document.getElementById("cTabs");
 const cFoot = document.getElementById("cFoot");
 
-function showLogin(){
-  cTabs.style.display="none"; cFoot.style.display="none"; cLogout.style.display="none";
+const TABS = [
+  ["textes","Textes"],["services","Services"],["tarifs","Tarifs"],
+  ["contact","Contact"],["couleurs","Couleurs"],["demandes","Demandes"],["compte","Compte"]
+];
+
+function showLogin() {
+  cTabs.style.display = "none"; cFoot.style.display = "none"; cLogout.style.display = "none";
   cBody.innerHTML = `<div class="login-box">
     <h3 style="font-family:var(--font-serif);margin-bottom:1rem">Connexion créateur</h3>
-    <p class="msg" style="margin-bottom:1rem">Email + mot de passe Firebase</p>
     <input type="email" id="authEmail" class="field" placeholder="ton@email.com" autocomplete="username">
     <input type="password" id="authPass" class="field" placeholder="Mot de passe" autocomplete="current-password">
     <button class="btn btn-primary" id="authGo" style="width:100%;margin-top:.5rem">Se connecter</button>
-    <p class="msg" id="authMsg" style="margin-top:.6rem;color:#b91c1c"></p>
-    <div class="warn-box">Remplace le <code>firebaseConfig</code> en haut du fichier par tes vraies clés.</div>
+    <p class="msg" id="authMsg" style="margin-top:.55rem;color:#b91c1c"></p>
   </div>`;
-  authGo.onclick = async ()=>{
-    const email=authEmail.value.trim(), pass=authPass.value;
-    if(!email||!pass){authMsg.textContent="Email et mot de passe obligatoires.";return;}
-    authMsg.textContent="Connexion…";
-    try{ await auth.signInWithEmailAndPassword(email,pass); }
-    catch(err){
-      let m="Erreur de connexion.";
-      if(["auth/user-not-found","auth/wrong-password","auth/invalid-credential"].includes(err.code)) m="Email ou mot de passe incorrect.";
-      else if(err.code==="auth/invalid-email") m="Email invalide.";
-      else if(err.code==="auth/too-many-requests") m="Trop de tentatives.";
-      else m=err.message||m;
-      authMsg.textContent="❌ "+m;
+  authGo.onclick = async () => {
+    const email = authEmail.value.trim(), pass = authPass.value;
+    if (!email || !pass) { authMsg.textContent = "Email et mot de passe obligatoires."; return; }
+    authMsg.textContent = "Connexion…";
+    try { await auth.signInWithEmailAndPassword(email, pass); }
+    catch (err) {
+      let m = "Erreur de connexion.";
+      if (["auth/user-not-found","auth/wrong-password","auth/invalid-credential"].includes(err.code)) m = "Email ou mot de passe incorrect.";
+      else if (err.code === "auth/invalid-email") m = "Email invalide.";
+      else m = err.message || m;
+      authMsg.textContent = "❌ " + m;
     }
   };
-  authPass.onkeydown = e=>{ if(e.key==="Enter") authGo.click(); };
+  authPass.onkeydown = e => { if (e.key === "Enter") authGo.click(); };
 }
 
-function showEditor(){
-  cTabs.style.display="flex"; cFoot.style.display="flex"; cLogout.style.display="inline-block";
-  renderTab("textes");
+function showEditor() {
+  cTabs.style.display = "flex"; cFoot.style.display = "flex"; cLogout.style.display = "inline-block";
+  cTabs.innerHTML = TABS.map(([id,lab]) => `<button type="button" data-tab="${id}" class="${id===currentTab?"on":""}">${lab}</button>`).join("");
+  renderTab(currentTab);
 }
 
-function renderTab(name){
-  document.querySelectorAll("#cTabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
-  if(name==="textes"){
+function renderTab(name) {
+  currentTab = name;
+  document.querySelectorAll("#cTabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
+  if (name === "textes") {
     cBody.innerHTML = `
       <label>Nom du site</label><input class="field" data-k="siteName" value="${esc(cfg.siteName)}">
+      <label>Initiales logo</label><input class="field" data-k="logoMark" value="${esc(cfg.logoMark)}" maxlength="3">
       <label>Badge hero</label><input class="field" data-k="heroBadge" value="${esc(cfg.heroBadge)}">
       <label>Icône hero (emoji)</label><input class="field" data-k="heroIcon" value="${esc(cfg.heroIcon)}" maxlength="4">
       <label>Titre d’accueil</label><input class="field" data-k="heroTitle" value="${esc(cfg.heroTitle)}">
       <label>Sous-titre</label><textarea class="field" data-k="heroSub" rows="3">${esc(cfg.heroSub)}</textarea>
-      <label>Titre Services</label><input class="field" data-k="servTitle" value="${esc(cfg.servTitle)}">
-      <label>Sous-titre Services</label><textarea class="field" data-k="servSub" rows="2">${esc(cfg.servSub)}</textarea>`;
-  } else if(name==="contact"){
+      <label>Texte bouton devis</label><input class="field" data-k="btnDevis" value="${esc(cfg.btnDevis)}">
+      <label>Texte bouton téléphone</label><input class="field" data-k="btnTel" value="${esc(cfg.btnTel)}">
+      <label>Nav Services</label><input class="field" data-k="navServ" value="${esc(cfg.navServ)}">
+      <label>Nav Réalisations</label><input class="field" data-k="navReal" value="${esc(cfg.navReal)}">
+      <label>Nav Tarifs</label><input class="field" data-k="navTarif" value="${esc(cfg.navTarif)}">
+      <label>Nav CTA</label><input class="field" data-k="navCta" value="${esc(cfg.navCta)}">
+      <label>Meta 1 label / texte</label>
+      <input class="field" data-k="meta1Label" value="${esc(cfg.meta1Label)}" style="margin-bottom:.3rem">
+      <input class="field" data-k="meta1Text" value="${esc(cfg.meta1Text)}">
+      <label>Label Zone / Horaires</label>
+      <input class="field" data-k="meta2Label" value="${esc(cfg.meta2Label)}" style="margin-bottom:.3rem">
+      <input class="field" data-k="meta3Label" value="${esc(cfg.meta3Label)}">
+      <label>Titre Services / sous-titre</label>
+      <input class="field" data-k="servTitle" value="${esc(cfg.servTitle)}" style="margin-bottom:.3rem">
+      <textarea class="field" data-k="servSub" rows="2">${esc(cfg.servSub)}</textarea>
+      <label>Titre Réalisations / sous-titre</label>
+      <input class="field" data-k="realTitle" value="${esc(cfg.realTitle)}" style="margin-bottom:.3rem">
+      <textarea class="field" data-k="realSub" rows="2">${esc(cfg.realSub)}</textarea>
+      <label>Titre Tarifs / sous-titre</label>
+      <input class="field" data-k="tarifTitle" value="${esc(cfg.tarifTitle)}" style="margin-bottom:.3rem">
+      <textarea class="field" data-k="tarifSub" rows="2">${esc(cfg.tarifSub)}</textarea>
+      <label>Titre Contact / sous-titre</label>
+      <input class="field" data-k="contactTitle" value="${esc(cfg.contactTitle)}" style="margin-bottom:.3rem">
+      <textarea class="field" data-k="contactSub" rows="2">${esc(cfg.contactSub)}</textarea>
+      <label>Texte footer</label><input class="field" data-k="footText" value="${esc(cfg.footText)}">`;
+  } else if (name === "services") {
+    let h = `<p class="msg" style="margin-bottom:.7rem">Modifie les 4 services (icône + titre + description).</p>`;
+    (cfg.services||[]).forEach((s,i) => {
+      h += `<div class="card" style="margin-bottom:.7rem;padding:1rem">
+        <label>Icône</label><input class="field" data-si="${i}" data-sk="icon" value="${esc(s.icon)}" maxlength="4">
+        <label>Titre</label><input class="field" data-si="${i}" data-sk="title" value="${esc(s.title)}">
+        <label>Description</label><textarea class="field" data-si="${i}" data-sk="desc" rows="2">${esc(s.desc)}</textarea>
+      </div>`;
+    });
+    cBody.innerHTML = h;
+  } else if (name === "tarifs") {
+    let h = `<p class="msg" style="margin-bottom:.7rem">Modifie les tarifs affichés.</p>`;
+    (cfg.tarifs||[]).forEach((t,i) => {
+      h += `<div class="card" style="margin-bottom:.7rem;padding:1rem">
+        <label>Tag</label><input class="field" data-ti="${i}" data-tk="tag" value="${esc(t.tag)}">
+        <label>Titre</label><input class="field" data-ti="${i}" data-tk="title" value="${esc(t.title)}">
+        <label>Prix</label><input class="field" data-ti="${i}" data-tk="price" value="${esc(t.price)}">
+        <label>Description</label><textarea class="field" data-ti="${i}" data-tk="desc" rows="2">${esc(t.desc)}</textarea>
+      </div>`;
+    });
+    cBody.innerHTML = h;
+  } else if (name === "contact") {
     cBody.innerHTML = `
-      <label>Téléphone</label><input class="field" data-k="phone" value="${esc(cfg.phone)}">
-      <label>Email</label><input class="field" data-k="email" value="${esc(cfg.email)}">
+      <label>Téléphone affiché</label><input class="field" data-k="phone" value="${esc(cfg.phone)}">
+      <label>Email affiché</label><input class="field" data-k="email" value="${esc(cfg.email)}">
+      <label>Email de notification (où tu reçois les demandes)</label><input class="field" data-k="notifEmail" value="${esc(cfg.notifEmail||cfg.email)}">
       <label>Zone d’intervention</label><input class="field" data-k="zone" value="${esc(cfg.zone)}">
-      <label>Horaires</label><input class="field" data-k="hours" value="${esc(cfg.hours)}">`;
-  } else if(name==="couleurs"){
+      <label>Horaires</label><input class="field" data-k="hours" value="${esc(cfg.hours)}">
+      <div class="ok-box">Les demandes du formulaire arrivent dans l’onglet <strong>Demandes</strong> + un email est envoyé à l’adresse de notification (via FormSubmit, si le site n’est pas en file://).</div>`;
+  } else if (name === "couleurs") {
     const c = cfg.colors || {};
     cBody.innerHTML = `
-      <p class="msg" style="margin-bottom:.8rem">Couleurs principales du site (appliquées en direct).</p>
-      <div class="color-row"><input type="color" data-color="sage" value="${c.sage||"#0f766e"}"><label>Sage (boutons / accents)</label></div>
-      <div class="color-row"><input type="color" data-color="clay" value="${c.clay||"#c4a574"}"><label>Clay (badges / détails)</label></div>
-      <div class="color-row"><input type="color" data-color="bg" value="${c.bg||"#faf7f2"}"><label>Fond de page</label></div>`;
-    cBody.querySelectorAll("[data-color]").forEach(inp=>{
-      inp.oninput = ()=>{
-        if(!cfg.colors) cfg.colors={};
+      <p class="msg" style="margin-bottom:.7rem">Couleurs appliquées en direct.</p>
+      <div class="color-row"><input type="color" data-color="sage" value="${c.sage||"#0f766e"}"><label>Sage (boutons)</label></div>
+      <div class="color-row"><input type="color" data-color="clay" value="${c.clay||"#c4a574"}"><label>Clay (badges)</label></div>
+      <div class="color-row"><input type="color" data-color="bg" value="${c.bg||"#faf7f2"}"><label>Fond de page</label></div>
+      <div class="color-row"><input type="color" data-color="ink" value="${c.ink||"#1c1917"}"><label>Texte principal</label></div>`;
+    cBody.querySelectorAll("[data-color]").forEach(inp => {
+      inp.oninput = () => {
+        if (!cfg.colors) cfg.colors = {};
         cfg.colors[inp.dataset.color] = inp.value;
         apply();
       };
     });
-  } else if(name==="demandes"){
-    if(!demandes.length) cBody.innerHTML = `<p class="msg">Aucune demande pour le moment.</p>`;
-    else cBody.innerHTML = demandes.map(d=>`
-      <div class="card" style="margin-bottom:.7rem;padding:1rem">
-        <strong>${esc(d.name)}</strong> · ${esc(d.type)}<br>
-        <span class="msg">${esc(d.date)} · ${esc(d.phone)}${d.email?" · "+esc(d.email):""}</span>
-        <p style="margin-top:.4rem;font-size:.9rem">${esc(d.msg||"—")}</p>
-        <button class="btn btn-secondary" style="margin-top:.5rem;padding:.3rem .7rem;font-size:.8rem" data-del="${d.id}">Supprimer</button>
-      </div>`).join("");
-    cBody.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{
-      demandes = demandes.filter(x=>String(x.id)!==b.dataset.del);
-      localStorage.setItem("clim_creator_demandes", JSON.stringify(demandes));
-      renderTab("demandes");
-    });
-  } else if(name==="compte"){
+  } else if (name === "demandes") {
+    if (!reqs.length) {
+      cBody.innerHTML = `<p class="msg">Aucune demande pour le moment.</p>`;
+    } else {
+      cBody.innerHTML = reqs.map(r => {
+        const msgs = r.messages || [];
+        const chat = msgs.map(m => `<div class="bubble ${m.from==="client"?"from-client":"from-admin"}">${esc(m.text)}</div>`).join("");
+        return `<div class="req-card ${r.read?"":"new"}" data-rid="${r.id}">
+          <div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
+            <strong>${esc(r.name)}</strong>
+            <span class="tag">${esc(r.type)}</span>
+          </div>
+          <p class="msg">${esc(r.date)} · ${esc(r.phone)} · ${esc(r.email||"")}</p>
+          <div class="chat">${chat || "<span class='msg'>Pas de messages</span>"}</div>
+          <textarea class="field" data-reply="${r.id}" rows="2" placeholder="Ta réponse…"></textarea>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem">
+            <button class="btn btn-primary" style="padding:.35rem .7rem;font-size:.8rem" data-send="${r.id}">Envoyer la réponse</button>
+            <button class="btn btn-secondary" style="padding:.35rem .7rem;font-size:.8rem" data-read="${r.id}">Marquer lu</button>
+            <button class="btn btn-secondary" style="padding:.35rem .7rem;font-size:.8rem" data-del="${r.id}">Supprimer</button>
+          </div>
+        </div>`;
+      }).join("");
+      cBody.querySelectorAll("[data-send]").forEach(b => b.onclick = () => {
+        const id = +b.dataset.send;
+        const ta = cBody.querySelector(`[data-reply="${id}"]`);
+        const text = (ta?.value || "").trim();
+        if (!text) return;
+        const r = reqs.find(x => x.id === id);
+        if (!r) return;
+        if (!r.messages) r.messages = [];
+        r.messages.push({ from: "admin", text, at: new Date().toISOString() });
+        r.read = true;
+        localStorage.setItem(REQ_KEY, JSON.stringify(reqs));
+        // optional email back to client
+        if (r.email && location.protocol !== "file:") {
+          fetch("https://formsubmit.co/ajax/" + encodeURIComponent(r.email), {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ _subject: "Réponse — Clim & Électricité", _captcha: "false", message: text })
+          }).catch(()=>{});
+        }
+        updateBadge();
+        renderTab("demandes");
+      });
+      cBody.querySelectorAll("[data-read]").forEach(b => b.onclick = () => {
+        const r = reqs.find(x => x.id === +b.dataset.read);
+        if (r) { r.read = true; localStorage.setItem(REQ_KEY, JSON.stringify(reqs)); updateBadge(); renderTab("demandes"); }
+      });
+      cBody.querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
+        reqs = reqs.filter(x => x.id !== +b.dataset.del);
+        localStorage.setItem(REQ_KEY, JSON.stringify(reqs));
+        updateBadge();
+        renderTab("demandes");
+      });
+    }
+  } else if (name === "compte") {
     cBody.innerHTML = `
-      <div class="ok-box">Connecté en tant que :<br><strong>${esc(currentUser?.email||"")}</strong></div>
-      <p class="msg" style="margin-top:1rem">Pour changer le mot de passe : Firebase Console → Authentication → Users.</p>
-      <button class="btn btn-primary" id="btnLogout2" style="width:100%;margin-top:1rem;background:#b91c1c">Se déconnecter</button>`;
-    document.getElementById("btnLogout2").onclick = ()=>auth.signOut();
+      <div class="ok-box">Connecté : <strong>${esc(currentUser?.email||"")}</strong></div>
+      <p class="msg" style="margin-top:1rem">Mot de passe : à changer dans Firebase Console → Authentication → Users.</p>
+      <button class="btn btn-primary" id="btnOut" style="width:100%;margin-top:1rem;background:#b91c1c">Se déconnecter</button>`;
+    document.getElementById("btnOut").onclick = () => auth.signOut();
   }
 }
-function esc(s){ return String(s??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
 
-auth.onAuthStateChanged(user=>{
+function collect() {
+  cBody.querySelectorAll("[data-k]").forEach(el => { cfg[el.dataset.k] = el.value; });
+  cBody.querySelectorAll("[data-si]").forEach(el => {
+    const i = +el.dataset.si, k = el.dataset.sk;
+    if (cfg.services[i]) cfg.services[i][k] = el.value;
+  });
+  cBody.querySelectorAll("[data-ti]").forEach(el => {
+    const i = +el.dataset.ti, k = el.dataset.tk;
+    if (cfg.tarifs[i]) cfg.tarifs[i][k] = el.value;
+  });
+}
+
+auth.onAuthStateChanged(user => {
   currentUser = user;
-  if(user){ if(creator.classList.contains("open")) showEditor(); }
-  else { if(creator.classList.contains("open")) showLogin(); }
+  if (user) { if (creator.classList.contains("open")) showEditor(); }
+  else { if (creator.classList.contains("open")) showLogin(); }
 });
 
-lockBtn.onclick = ()=>{ creator.classList.add("open"); if(currentUser) showEditor(); else showLogin(); };
-cClose.onclick = ()=>creator.classList.remove("open");
-cLogout.onclick = ()=>auth.signOut();
-cTabs.addEventListener("click", e=>{
+lockBtn.onclick = () => { creator.classList.add("open"); if (currentUser) showEditor(); else showLogin(); };
+cClose.onclick = () => creator.classList.remove("open");
+cLogout.onclick = () => auth.signOut();
+cTabs.addEventListener("click", e => {
   const btn = e.target.closest("[data-tab]");
-  if(btn) renderTab(btn.dataset.tab);
+  if (btn) { collect(); renderTab(btn.dataset.tab); }
 });
-cSave.onclick = ()=>{
-  cBody.querySelectorAll("[data-k]").forEach(el=>{ cfg[el.dataset.k] = el.value; });
+cSave.onclick = () => {
+  collect();
   localStorage.setItem(STORAGE, JSON.stringify(cfg));
   apply();
   cMsg.textContent = "✓ Enregistré";
-  setTimeout(()=>cMsg.textContent="",2000);
+  setTimeout(() => cMsg.textContent = "", 2000);
 };
-cReset.onclick = ()=>{
-  if(!confirm("Remettre les textes et couleurs par défaut ?")) return;
+cReset.onclick = () => {
+  if (!confirm("Remettre tous les textes / couleurs / services par défaut ?")) return;
   cfg = structuredClone(DEFAULTS);
   localStorage.removeItem(STORAGE);
   apply();
-  renderTab(document.querySelector("#cTabs button.on")?.dataset.tab || "textes");
+  renderTab(currentTab);
 };
 </script>
 </body>
