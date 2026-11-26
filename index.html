@@ -332,64 +332,81 @@ function helpForType(type, msg) {
 Demander : adresse, photos si possible, depuis quand, urgence ou non, accès au tableau / unité extérieure.</div>`;
 }
 
-document.getElementById("contactForm").addEventListener("submit", async function(e){
+document.getElementById("contactForm").addEventListener("submit", function(e){
   e.preventDefault();
   const btn = document.getElementById("submitBtn");
   const msgEl = document.getElementById("formMsg");
-  btn.disabled = true; btn.textContent = "Envoi…";
+  const form = this;
+
+  btn.disabled = true;
+  btn.textContent = "Envoi…";
   msgEl.textContent = "";
   msgEl.style.color = "";
 
   const d = {
     id: Date.now(),
     date: new Date().toLocaleString("fr-FR"),
-    name: cName.value.trim(),
-    phone: cPhone.value.trim(),
-    email: cEmail.value.trim(),
-    type: cType.value,
-    msg: cMsg.value.trim(),
+    name: document.getElementById("cName").value.trim(),
+    phone: document.getElementById("cPhone").value.trim(),
+    email: document.getElementById("cEmail").value.trim(),
+    type: document.getElementById("cType").value,
+    msg: document.getElementById("cMsg").value.trim(),
     read: false,
-    messages: [{ from:"client", text: cMsg.value.trim(), at: new Date().toISOString() }]
+    messages: [{ from: "client", text: document.getElementById("cMsg").value.trim(), at: new Date().toISOString() }]
   };
 
-  // 1) Toujours enregistrer localement d'abord
-  reqs.unshift(d);
-  saveReqs();
+  // 1) Toujours enregistrer localement EN PREMIER
+  try {
+    reqs.unshift(d);
+    saveReqs();
+  } catch (err) {
+    console.error(err);
+  }
 
-  // 2) Tentative email FormSubmit
+  function finish(okEmail) {
+    btn.disabled = false;
+    btn.textContent = "Envoyer la demande";
+    if (location.protocol === "file:") {
+      msgEl.innerHTML = "✅ Demande enregistrée sur cet appareil (onglet Demandes du 🔒).<br><span style=\"color:#9a3412\">Emails : hébergez le site + confirmez FormSubmit une fois.</span>";
+    } else if (okEmail) {
+      msgEl.textContent = "✅ Demande envoyée. Vous serez recontacté rapidement.";
+      msgEl.style.color = "#166534";
+    } else {
+      msgEl.innerHTML = "✅ Demande enregistrée sur le site (visible dans 🔒 → Demandes).<br><span style=\"color:#9a3412\">Email non confirmé : vérifiez l’adresse de notification ou le lien FormSubmit.</span>";
+    }
+    form.reset();
+    setTimeout(function(){ msgEl.textContent = ""; }, 10000);
+  }
+
+  // 2) Email en arrière-plan avec timeout (ne bloque jamais le bouton)
   const to = (cfg.notifEmail || cfg.email || "").trim();
-  let emailOk = false;
   if (to && location.protocol !== "file:") {
-    try {
-      const res = await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(to), {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          _subject: "Nouvelle demande — " + d.name + " (" + d.type + ")",
-          _captcha: "false",
-          _template: "table",
-          name: d.name,
-          phone: d.phone,
-          email: d.email,
-          type: d.type,
-          message: d.msg
-        })
-      });
-      emailOk = res.ok;
-    } catch (err) { emailOk = false; }
-  }
-
-  btn.disabled = false; btn.textContent = "Envoyer la demande";
-  if (location.protocol === "file:") {
-    msgEl.innerHTML = "✅ Demande enregistrée sur cet appareil.<br><span style='color:#9a3412'>Pour recevoir les emails, hébergez le site (Netlify/Vercel) et confirmez l’email FormSubmit.</span>";
-  } else if (emailOk) {
-    msgEl.textContent = "✅ Demande envoyée. Vous serez recontacté rapidement.";
-    msgEl.style.color = "#166534";
+    const controller = new AbortController();
+    const timer = setTimeout(function(){ controller.abort(); }, 6000);
+    fetch("https://formsubmit.co/ajax/" + encodeURIComponent(to), {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        _subject: "Nouvelle demande — " + d.name + " (" + d.type + ")",
+        _captcha: "false",
+        _template: "table",
+        name: d.name,
+        phone: d.phone,
+        email: d.email,
+        type: d.type,
+        message: d.msg
+      }),
+      signal: controller.signal
+    }).then(function(res){
+      clearTimeout(timer);
+      finish(res.ok);
+    }).catch(function(){
+      clearTimeout(timer);
+      finish(false);
+    });
   } else {
-    msgEl.innerHTML = "✅ Demande enregistrée sur le site.<br><span style='color:#9a3412'>Email non envoyé (vérifiez l’adresse de notification ou confirmez FormSubmit).</span>";
+    finish(false);
   }
-  this.reset();
-  setTimeout(()=>{ msgEl.textContent=""; }, 8000);
 });
 
 const creator = document.getElementById("creator");
