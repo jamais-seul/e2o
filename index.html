@@ -29,6 +29,7 @@ nav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 92%
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;font-family:inherit;font-weight:600;font-size:.95rem;padding:.7rem 1.3rem;border-radius:999px;border:none;cursor:pointer;text-decoration:none!important}
 .btn-primary{background:var(--sage);color:#fff}.btn-primary:hover{background:var(--sage-dark)}
 .btn-secondary{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn-sm{padding:.4rem .75rem;font-size:.82rem}
 .hero-card{background:var(--card);border-radius:24px;padding:1.6rem;box-shadow:var(--shadow);border:1px solid var(--line)}
 .hero-card .photo{aspect-ratio:4/5;background:linear-gradient(160deg,var(--blush),var(--sand));border-radius:16px;display:grid;place-items:center;margin-bottom:1.2rem}
 .hero-card .photo span{width:84px;height:84px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:2.1rem;box-shadow:var(--shadow)}
@@ -49,9 +50,9 @@ h2{font-family:var(--font-serif);font-size:clamp(1.7rem,3.5vw,2.2rem);font-weigh
 label{font-weight:600;font-size:.86rem}textarea.field{min-height:100px;resize:vertical}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:1.15rem}@media(max-width:700px){.two{grid-template-columns:1fr}}
 footer{background:var(--card);border-top:1px solid var(--line);text-align:center;padding:1.6rem 1rem;font-size:.84rem;color:var(--muted)}
-#lockBtn{position:fixed;left:14px;bottom:18px;z-index:9999;width:46px;height:46px;border-radius:50%;border:0;background:var(--ink);color:#fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
+#lockBtn{position:fixed;left:14px;bottom:18px;z-index:9999;width:46px;height:46px;border-radius:50%;border:0;background:var(--ink);color:#fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;position:fixed}
 #notifBadge{position:absolute;top:-4px;right:-4px;background:#dc2626;color:#fff;font-size:.65rem;font-weight:700;min-width:18px;height:18px;border-radius:999px;display:none;align-items:center;justify-content:center;padding:0 4px}
-#creator{position:fixed;top:0;right:0;width:min(460px,100vw);height:100vh;background:var(--card);border-left:1px solid var(--line);z-index:10000;display:none;flex-direction:column;box-shadow:-8px 0 28px rgba(0,0,0,.12)}
+#creator{position:fixed;top:0;right:0;width:min(480px,100vw);height:100vh;background:var(--card);border-left:1px solid var(--line);z-index:10000;display:none;flex-direction:column;box-shadow:-8px 0 28px rgba(0,0,0,.12)}
 #creator.open{display:flex}
 #creator .sh{display:flex;justify-content:space-between;align-items:center;padding:.85rem 1rem;background:var(--ink);color:#fff;font-weight:700;gap:.5rem}
 #creator .sh button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem}
@@ -64,14 +65,19 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
 .login-box{max-width:320px;margin:1.8rem auto;text-align:center}
 .warn-box{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:.65rem .85rem;font-size:.84rem;margin:.55rem 0;text-align:left}
 .ok-box{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:10px;padding:.65rem .85rem;font-size:.84rem;margin:.55rem 0;text-align:left}
+.err-box{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:10px;padding:.65rem .85rem;font-size:.84rem;margin:.55rem 0;text-align:left}
 .color-row{display:flex;align-items:center;gap:.55rem;margin:.35rem 0}
 .color-row input[type=color]{width:40px;height:34px;border:1px solid var(--line);border-radius:8px;padding:0;cursor:pointer}
 .req-card{border:1px solid var(--line);border-radius:12px;padding:1rem;margin-bottom:.7rem;background:var(--bg)}
 .req-card.new{border-color:var(--sage);box-shadow:0 0 0 2px color-mix(in srgb,var(--sage) 20%,transparent)}
-.chat{max-height:180px;overflow-y:auto;margin:.5rem 0;padding:.5rem;background:var(--card);border-radius:8px;border:1px solid var(--line);font-size:.88rem}
-.chat .bubble{margin:.3rem 0;padding:.4rem .6rem;border-radius:8px;max-width:90%}
-.chat .from-client{background:#e0f2fe;margin-right:auto}
-.chat .from-admin{background:#dcfce7;margin-left:auto}
+.chat{max-height:160px;overflow-y:auto;margin:.5rem 0;padding:.5rem;background:var(--card);border-radius:8px;border:1px solid var(--line);font-size:.88rem}
+.chat .bubble{margin:.3rem 0;padding:.4rem .6rem;border-radius:8px;max-width:92%}
+.chat .from-client{background:#e0f2fe}
+.chat .from-admin{background:#dcfce7}
+.style-btns{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0}
+.style-btns button{font-size:.75rem;padding:.3rem .55rem;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-family:inherit}
+.style-btns button:hover{border-color:var(--sage);background:var(--sand)}
+.help-box{background:var(--sand);border-radius:10px;padding:.7rem .85rem;font-size:.86rem;margin:.5rem 0;line-height:1.5}
 </style>
 </head>
 <body>
@@ -118,10 +124,8 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
   <div class="wrap">
     <div class="section-label" id="realLabel">Chantiers</div>
     <h2 id="realTitle">Réalisations</h2>
-    <p class="section-intro" id="realSub">Photos de chantiers (à ajouter depuis l’espace créateur).</p>
-    <div id="galleryBox" style="background:var(--card);border:1px solid var(--line);border-radius:16px;aspect-ratio:16/9;display:grid;place-items:center;color:var(--soft);box-shadow:var(--shadow)">
-      Ajoutez vos photos dans l’espace créateur
-    </div>
+    <p class="section-intro" id="realSub">Photos de chantiers.</p>
+    <div id="galleryBox" style="background:var(--card);border:1px solid var(--line);border-radius:16px;aspect-ratio:16/9;display:grid;place-items:center;color:var(--soft);box-shadow:var(--shadow)">Ajoutez vos photos dans l’espace créateur</div>
   </div>
 </section>
 
@@ -142,9 +146,9 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
     <div class="two">
       <div class="card">
         <form id="contactForm">
-          <label>Nom</label><input class="field" id="cName" required placeholder="Votre nom">
-          <label>Téléphone</label><input class="field" id="cPhone" type="tel" required placeholder="06 12 34 56 78">
-          <label>Email</label><input class="field" id="cEmail" type="email" required placeholder="vous@email.com">
+          <label>Nom *</label><input class="field" id="cName" required placeholder="Votre nom">
+          <label>Téléphone *</label><input class="field" id="cPhone" type="tel" required placeholder="06 12 34 56 78">
+          <label>Email *</label><input class="field" id="cEmail" type="email" required placeholder="vous@email.com">
           <label>Type de demande</label>
           <select class="field" id="cType">
             <option value="clim">Pose / entretien clim</option>
@@ -152,8 +156,8 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
             <option value="devis">Devis travaux</option>
             <option value="autre">Autre</option>
           </select>
-          <label>Message</label><textarea class="field" id="cMsg" required placeholder="Décrivez le besoin, l’adresse, la disponibilité…"></textarea>
-          <button class="btn btn-primary" type="submit" style="width:100%">Envoyer la demande</button>
+          <label>Message *</label><textarea class="field" id="cMsg" required placeholder="Décrivez le besoin, l’adresse, la disponibilité…"></textarea>
+          <button class="btn btn-primary" type="submit" id="submitBtn" style="width:100%">Envoyer la demande</button>
           <p id="formMsg" class="msg" style="margin-top:.55rem"></p>
         </form>
       </div>
@@ -170,10 +174,7 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
 
 <footer><strong id="footName">Clim & Électricité</strong> — <span id="footText">Pose de climatisation et dépannage électrique.</span></footer>
 
-<button id="lockBtn" type="button" title="Espace créateur" style="position:relative">
-  🔒
-  <span id="notifBadge">0</span>
-</button>
+<button id="lockBtn" type="button" title="Espace créateur">🔒<span id="notifBadge">0</span></button>
 
 <div id="creator">
   <div class="sh">
@@ -186,8 +187,8 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
   <div class="tabs" id="cTabs" style="display:none"></div>
   <div class="sb" id="cBody"></div>
   <div class="sf" id="cFoot" style="display:none">
-    <button class="btn btn-primary" id="cSave" style="padding:.45rem .9rem;font-size:.88rem">💾 Sauvegarder</button>
-    <button class="btn btn-secondary" id="cReset" style="padding:.45rem .9rem;font-size:.88rem">Réinit.</button>
+    <button class="btn btn-primary btn-sm" id="cSave">💾 Sauvegarder</button>
+    <button class="btn btn-secondary btn-sm" id="cReset">Réinit.</button>
     <span class="msg" id="cMsg"></span>
   </div>
 </div>
@@ -205,32 +206,25 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-const STORAGE = "clim_full_v1";
-const REQ_KEY = "clim_full_reqs";
+const STORAGE = "clim_v3_cfg";
+const REQ_KEY = "clim_v3_reqs";
 
 const DEFAULTS = {
-  siteName: "Clim & Électricité",
-  logoMark: "CÉ",
+  siteName: "Clim & Électricité", logoMark: "CÉ",
   heroTitle: "Pose de clim & dépannage électrique",
   heroSub: "Installation, entretien et dépannage. Intervention rapide, devis gratuit, travail soigné.",
-  heroBadge: "❄️ Pose · Dépannage · Entretien",
-  heroIcon: "❄️",
-  btnDevis: "Demander un devis",
-  btnTel: "📞 Appeler maintenant",
+  heroBadge: "❄️ Pose · Dépannage · Entretien", heroIcon: "❄️",
+  btnDevis: "Demander un devis", btnTel: "📞 Appeler maintenant",
   navServ: "Services", navReal: "Réalisations", navTarif: "Tarifs", navCta: "Devis gratuit",
   meta1Label: "Intervention rapide", meta1Text: "devis sous 24-48h",
   meta2Label: "Zone", meta3Label: "Horaires",
-  phone: "+33 0 00 00 00 00",
-  email: "contact@exemple.fr",
-  notifEmail: "contact@exemple.fr",
-  zone: "Votre ville et alentours",
-  hours: "Lun–Ven 8h–19h · Sam sur RDV",
+  phone: "+33 0 00 00 00 00", email: "contact@exemple.fr", notifEmail: "contact@exemple.fr",
+  zone: "Votre ville et alentours", hours: "Lun–Ven 8h–19h · Sam sur RDV",
   servLabel: "Ce que nous faisons", servTitle: "Nos services", servSub: "Climatisation et électricité pour particuliers et professionnels.",
-  realLabel: "Chantiers", realTitle: "Réalisations", realSub: "Photos de chantiers (à ajouter depuis l’espace créateur).",
+  realLabel: "Chantiers", realTitle: "Réalisations", realSub: "Photos de chantiers.",
   tarifLabel: "Tarifs", tarifTitle: "Tarifs indicatifs", tarifSub: "Devis gratuit et personnalisé.",
   contactLabel: "Contact", contactTitle: "Contact & devis", contactSub: "Décrivez votre besoin, on vous rappelle rapidement.",
-  coordTitle: "Coordonnées",
-  footText: "Pose de climatisation et dépannage électrique.",
+  coordTitle: "Coordonnées", footText: "Pose de climatisation et dépannage électrique.",
   services: [
     {icon:"❄️", title:"Pose de climatisation", desc:"Installation mono-split, multi-split, gainable."},
     {icon:"⚡", title:"Dépannage électrique", desc:"Panne, court-circuit, tableau électrique. Intervention rapide."},
@@ -250,66 +244,102 @@ let cfg = structuredClone(DEFAULTS);
 try { const s = localStorage.getItem(STORAGE); if (s) cfg = {...DEFAULTS, ...JSON.parse(s)}; } catch(e){}
 let reqs = [];
 try { reqs = JSON.parse(localStorage.getItem(REQ_KEY)||"[]"); } catch(e){}
-let currentUser = null;
-let currentTab = "textes";
+let currentUser = null, currentTab = "demandes";
 
 function esc(s){ return String(s??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
 function apply() {
-  const set = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.textContent = v; };
-  set("siteName", cfg.siteName); set("logoMark", cfg.logoMark);
-  set("heroTitle", cfg.heroTitle); set("heroSub", cfg.heroSub);
-  set("heroBadge", cfg.heroBadge); set("heroIcon", cfg.heroIcon);
-  set("btnDevis", cfg.btnDevis); 
-  const ht = document.getElementById("heroTel"); if (ht) ht.textContent = cfg.btnTel || "📞 Appeler maintenant";
-  set("navServ", cfg.navServ); set("navReal", cfg.navReal); set("navTarif", cfg.navTarif); set("navCta", cfg.navCta);
-  set("meta1Label", cfg.meta1Label); set("meta1Text", cfg.meta1Text);
-  set("meta2Label", cfg.meta2Label); set("meta3Label", cfg.meta3Label);
-  set("servLabel", cfg.servLabel); set("servTitle", cfg.servTitle); set("servSub", cfg.servSub);
-  set("realLabel", cfg.realLabel); set("realTitle", cfg.realTitle); set("realSub", cfg.realSub);
-  set("tarifLabel", cfg.tarifLabel); set("tarifTitle", cfg.tarifTitle); set("tarifSub", cfg.tarifSub);
-  set("contactLabel", cfg.contactLabel); set("contactTitle", cfg.contactTitle); set("contactSub", cfg.contactSub);
-  set("coordTitle", cfg.coordTitle); set("footName", cfg.siteName); set("footText", cfg.footText);
-  const tel = (cfg.phone||"").replace(/\s/g,"");
-  document.getElementById("infoTel").textContent = cfg.phone||"";
-  document.getElementById("infoTel").href = "tel:"+tel;
-  document.getElementById("heroTel").href = "tel:"+tel;
-  document.getElementById("infoEmail").textContent = cfg.email||"";
-  document.getElementById("infoZone").textContent = cfg.zone||"";
-  document.getElementById("infoZone2").textContent = cfg.zone||"";
-  document.getElementById("infoHours").textContent = cfg.hours||"";
-  document.getElementById("infoHours2").textContent = cfg.hours||"";
-
-  // services
-  const sg = document.getElementById("servGrid");
-  if (sg && cfg.services) {
-    sg.innerHTML = cfg.services.map(s => `<div class="card"><div class="card-icon">${esc(s.icon)}</div><h3>${esc(s.title)}</h3><p>${esc(s.desc)}</p></div>`).join("");
-  }
-  // tarifs
-  const tg = document.getElementById("tarifGrid");
-  if (tg && cfg.tarifs) {
-    tg.innerHTML = cfg.tarifs.map(t => `<div class="card"><span class="tag">${esc(t.tag)}</span><h3>${esc(t.title)}</h3><p class="price">${esc(t.price)}</p><p>${esc(t.desc)}</p></div>`).join("");
-  }
-  // colors
-  if (cfg.colors) {
-    if (cfg.colors.sage) document.documentElement.style.setProperty("--sage", cfg.colors.sage);
-    if (cfg.colors.clay) document.documentElement.style.setProperty("--clay", cfg.colors.clay);
-    if (cfg.colors.bg) document.documentElement.style.setProperty("--bg", cfg.colors.bg);
-    if (cfg.colors.ink) document.documentElement.style.setProperty("--ink", cfg.colors.ink);
+  const set = (id,v)=>{ const el=document.getElementById(id); if(el&&v!=null) el.textContent=v; };
+  set("siteName",cfg.siteName); set("logoMark",cfg.logoMark);
+  set("heroTitle",cfg.heroTitle); set("heroSub",cfg.heroSub);
+  set("heroBadge",cfg.heroBadge); set("heroIcon",cfg.heroIcon);
+  set("btnDevis",cfg.btnDevis);
+  const ht=document.getElementById("heroTel"); if(ht) ht.textContent=cfg.btnTel||"📞 Appeler";
+  set("navServ",cfg.navServ); set("navReal",cfg.navReal); set("navTarif",cfg.navTarif); set("navCta",cfg.navCta);
+  set("meta1Label",cfg.meta1Label); set("meta1Text",cfg.meta1Text);
+  set("meta2Label",cfg.meta2Label); set("meta3Label",cfg.meta3Label);
+  set("servLabel",cfg.servLabel); set("servTitle",cfg.servTitle); set("servSub",cfg.servSub);
+  set("realLabel",cfg.realLabel); set("realTitle",cfg.realTitle); set("realSub",cfg.realSub);
+  set("tarifLabel",cfg.tarifLabel); set("tarifTitle",cfg.tarifTitle); set("tarifSub",cfg.tarifSub);
+  set("contactLabel",cfg.contactLabel); set("contactTitle",cfg.contactTitle); set("contactSub",cfg.contactSub);
+  set("coordTitle",cfg.coordTitle); set("footName",cfg.siteName); set("footText",cfg.footText);
+  const tel=(cfg.phone||"").replace(/\s/g,"");
+  document.getElementById("infoTel").textContent=cfg.phone||"";
+  document.getElementById("infoTel").href="tel:"+tel;
+  document.getElementById("heroTel").href="tel:"+tel;
+  document.getElementById("infoEmail").textContent=cfg.email||"";
+  document.getElementById("infoZone").textContent=cfg.zone||"";
+  document.getElementById("infoZone2").textContent=cfg.zone||"";
+  document.getElementById("infoHours").textContent=cfg.hours||"";
+  document.getElementById("infoHours2").textContent=cfg.hours||"";
+  const sg=document.getElementById("servGrid");
+  if(sg&&cfg.services) sg.innerHTML=cfg.services.map(s=>`<div class="card"><div class="card-icon">${esc(s.icon)}</div><h3>${esc(s.title)}</h3><p>${esc(s.desc)}</p></div>`).join("");
+  const tg=document.getElementById("tarifGrid");
+  if(tg&&cfg.tarifs) tg.innerHTML=cfg.tarifs.map(t=>`<div class="card"><span class="tag">${esc(t.tag)}</span><h3>${esc(t.title)}</h3><p class="price">${esc(t.price)}</p><p>${esc(t.desc)}</p></div>`).join("");
+  if(cfg.colors){
+    if(cfg.colors.sage) document.documentElement.style.setProperty("--sage",cfg.colors.sage);
+    if(cfg.colors.clay) document.documentElement.style.setProperty("--clay",cfg.colors.clay);
+    if(cfg.colors.bg) document.documentElement.style.setProperty("--bg",cfg.colors.bg);
+    if(cfg.colors.ink) document.documentElement.style.setProperty("--ink",cfg.colors.ink);
   }
   updateBadge();
 }
 apply();
 
-function updateBadge() {
-  const n = reqs.filter(r => !r.read).length;
-  const b = document.getElementById("notifBadge");
-  if (n > 0) { b.style.display = "flex"; b.textContent = n; }
-  else b.style.display = "none";
+function updateBadge(){
+  const n=reqs.filter(r=>!r.read).length;
+  const b=document.getElementById("notifBadge");
+  if(n>0){b.style.display="flex";b.textContent=n;} else b.style.display="none";
 }
 
-document.getElementById("contactForm").addEventListener("submit", async function(e) {
+function saveReqs(){ localStorage.setItem(REQ_KEY, JSON.stringify(reqs)); updateBadge(); }
+
+/* ===== ASSISTANT RÉPONSES (5 styles) ===== */
+function suggestReplies(req) {
+  const name = (req.name||"").split(" ")[0] || "Bonjour";
+  const type = req.type || "";
+  const isElec = type === "elec";
+  const isClim = type === "clim";
+  return [
+    { label: "Pro & rapide", text: `Bonjour ${name},\n\nMerci pour votre message. Je vous propose un passage dès que possible pour diagnostiquer la situation. Pouvez-vous me confirmer votre adresse et vos créneaux de disponibilité ?\n\nCordialement` },
+    { label: "Rassurant", text: `Bonjour ${name},\n\nBien reçu. Pas d’inquiétude, on va regarder ça ensemble. Dites-moi quand vous êtes disponible et je m’organise pour intervenir rapidement.\n\nÀ très vite` },
+    { label: "Demande d’infos", text: `Bonjour ${name},\n\nMerci pour votre demande. Pour mieux préparer l’intervention, pouvez-vous me préciser :\n- Depuis quand le problème est apparu ?\n- Y a-t-il un disjoncteur qui saute / un code erreur sur la clim ?\n- Adresse exacte et créneaux possibles\n\nMerci !` },
+    { label: "Devis / tarifs", text: `Bonjour ${name},\n\nMerci pour votre intérêt. Je peux vous faire un devis gratuit après un court diagnostic (ou sur photos/description selon le cas). Indiquez-moi votre disponibilité pour un passage ou un échange téléphonique.\n\nCordialement` },
+    { label: "Urgence", text: `Bonjour ${name},\n\nMessage bien reçu. Je traite votre demande en priorité. Rappelez-moi au ${cfg.phone||""} si c’est urgent, sinon confirmez-moi un créneau aujourd’hui / demain.\n\nJe reste joignable` }
+  ];
+}
+
+/* ===== AIDE DÉPANNAGE (mémo pro) ===== */
+function helpForType(type, msg) {
+  const m = (msg||"").toLowerCase();
+  if (type === "elec" || /disjonct|prise|tableau|court|panne|électrique/.test(m)) {
+    return `<div class="help-box"><strong>💡 Aide dépannage électrique</strong><br>
+• Disjoncteur qui saute → surcharge ou court-circuit. Isoler les circuits un par un.<br>
+• Plus de courant dans une pièce → vérifier différentiel + bornes de la prise.<br>
+• Prise qui chauffe → desserrage / mauvais contact : couper le courant avant toute intervention.<br>
+• Tableau ancien → penser mise aux normes NF C 15-100.<br>
+<strong>Question utile au client :</strong> « Le disjoncteur général saute-t-il, ou seulement un disjoncteur divisionnaire ? »</div>`;
+  }
+  if (type === "clim" || /clim|froid|chaud|split|gaz|fuite|climati/.test(m)) {
+    return `<div class="help-box"><strong>❄️ Aide clim</strong><br>
+• Ne refroidit plus → filtres encrassés, manque de gaz, sonde, carte.<br>
+• Fuit de l’eau → évacuation bouchée / mauvaise pente.<br>
+• Bruit inhabituel → ventilateur, support, détente.<br>
+• Code erreur affiché → noter le code avant reset.<br>
+<strong>Question utile :</strong> « La clim affiche-t-elle un code erreur ? Les filtres ont-ils été nettoyés récemment ? »</div>`;
+  }
+  return `<div class="help-box"><strong>🛠️ Aide générale</strong><br>
+Demander : adresse, photos si possible, depuis quand, urgence ou non, accès au tableau / unité extérieure.</div>`;
+}
+
+document.getElementById("contactForm").addEventListener("submit", async function(e){
   e.preventDefault();
+  const btn = document.getElementById("submitBtn");
+  const msgEl = document.getElementById("formMsg");
+  btn.disabled = true; btn.textContent = "Envoi…";
+  msgEl.textContent = "";
+  msgEl.style.color = "";
+
   const d = {
     id: Date.now(),
     date: new Date().toLocaleString("fr-FR"),
@@ -319,22 +349,25 @@ document.getElementById("contactForm").addEventListener("submit", async function
     type: cType.value,
     msg: cMsg.value.trim(),
     read: false,
-    messages: [{ from: "client", text: cMsg.value.trim(), at: new Date().toISOString() }]
+    messages: [{ from:"client", text: cMsg.value.trim(), at: new Date().toISOString() }]
   };
-  reqs.unshift(d);
-  localStorage.setItem(REQ_KEY, JSON.stringify(reqs));
-  updateBadge();
 
-  // Notification email via FormSubmit
+  // 1) Toujours enregistrer localement d'abord
+  reqs.unshift(d);
+  saveReqs();
+
+  // 2) Tentative email FormSubmit
   const to = (cfg.notifEmail || cfg.email || "").trim();
+  let emailOk = false;
   if (to && location.protocol !== "file:") {
     try {
-      await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(to), {
+      const res = await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(to), {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          _subject: "Nouvelle demande Clim — " + d.name,
+          _subject: "Nouvelle demande — " + d.name + " (" + d.type + ")",
           _captcha: "false",
+          _template: "table",
           name: d.name,
           phone: d.phone,
           email: d.email,
@@ -342,238 +375,256 @@ document.getElementById("contactForm").addEventListener("submit", async function
           message: d.msg
         })
       });
-    } catch (err) {}
+      emailOk = res.ok;
+    } catch (err) { emailOk = false; }
   }
 
-  formMsg.textContent = "✅ Demande envoyée. Nous vous recontactons rapidement.";
+  btn.disabled = false; btn.textContent = "Envoyer la demande";
+  if (location.protocol === "file:") {
+    msgEl.innerHTML = "✅ Demande enregistrée sur cet appareil.<br><span style='color:#9a3412'>Pour recevoir les emails, hébergez le site (Netlify/Vercel) et confirmez l’email FormSubmit.</span>";
+  } else if (emailOk) {
+    msgEl.textContent = "✅ Demande envoyée. Vous serez recontacté rapidement.";
+    msgEl.style.color = "#166534";
+  } else {
+    msgEl.innerHTML = "✅ Demande enregistrée sur le site.<br><span style='color:#9a3412'>Email non envoyé (vérifiez l’adresse de notification ou confirmez FormSubmit).</span>";
+  }
   this.reset();
-  setTimeout(() => formMsg.textContent = "", 5000);
+  setTimeout(()=>{ msgEl.textContent=""; }, 8000);
 });
 
 const creator = document.getElementById("creator");
 const cBody = document.getElementById("cBody");
 const cTabs = document.getElementById("cTabs");
 const cFoot = document.getElementById("cFoot");
+const TABS = [["demandes","Demandes"],["textes","Textes"],["services","Services"],["tarifs","Tarifs"],["contact","Contact"],["couleurs","Couleurs"],["aide","Aide pro"],["compte","Compte"]];
 
-const TABS = [
-  ["textes","Textes"],["services","Services"],["tarifs","Tarifs"],
-  ["contact","Contact"],["couleurs","Couleurs"],["demandes","Demandes"],["compte","Compte"]
-];
-
-function showLogin() {
-  cTabs.style.display = "none"; cFoot.style.display = "none"; cLogout.style.display = "none";
-  cBody.innerHTML = `<div class="login-box">
+function showLogin(){
+  cTabs.style.display="none"; cFoot.style.display="none"; cLogout.style.display="none";
+  cBody.innerHTML=`<div class="login-box">
     <h3 style="font-family:var(--font-serif);margin-bottom:1rem">Connexion créateur</h3>
     <input type="email" id="authEmail" class="field" placeholder="ton@email.com" autocomplete="username">
     <input type="password" id="authPass" class="field" placeholder="Mot de passe" autocomplete="current-password">
     <button class="btn btn-primary" id="authGo" style="width:100%;margin-top:.5rem">Se connecter</button>
     <p class="msg" id="authMsg" style="margin-top:.55rem;color:#b91c1c"></p>
   </div>`;
-  authGo.onclick = async () => {
-    const email = authEmail.value.trim(), pass = authPass.value;
-    if (!email || !pass) { authMsg.textContent = "Email et mot de passe obligatoires."; return; }
-    authMsg.textContent = "Connexion…";
-    try { await auth.signInWithEmailAndPassword(email, pass); }
-    catch (err) {
-      let m = "Erreur de connexion.";
-      if (["auth/user-not-found","auth/wrong-password","auth/invalid-credential"].includes(err.code)) m = "Email ou mot de passe incorrect.";
-      else if (err.code === "auth/invalid-email") m = "Email invalide.";
-      else m = err.message || m;
-      authMsg.textContent = "❌ " + m;
+  authGo.onclick=async()=>{
+    const email=authEmail.value.trim(), pass=authPass.value;
+    if(!email||!pass){authMsg.textContent="Email et mot de passe obligatoires.";return;}
+    authMsg.textContent="Connexion…";
+    try{ await auth.signInWithEmailAndPassword(email,pass); }
+    catch(err){
+      let m="Erreur de connexion.";
+      if(["auth/user-not-found","auth/wrong-password","auth/invalid-credential"].includes(err.code)) m="Email ou mot de passe incorrect.";
+      else m=err.message||m;
+      authMsg.textContent="❌ "+m;
     }
   };
-  authPass.onkeydown = e => { if (e.key === "Enter") authGo.click(); };
+  authPass.onkeydown=e=>{ if(e.key==="Enter") authGo.click(); };
 }
 
-function showEditor() {
-  cTabs.style.display = "flex"; cFoot.style.display = "flex"; cLogout.style.display = "inline-block";
-  cTabs.innerHTML = TABS.map(([id,lab]) => `<button type="button" data-tab="${id}" class="${id===currentTab?"on":""}">${lab}</button>`).join("");
+function showEditor(){
+  cTabs.style.display="flex"; cFoot.style.display="flex"; cLogout.style.display="inline-block";
+  cTabs.innerHTML=TABS.map(([id,lab])=>`<button type="button" data-tab="${id}" class="${id===currentTab?"on":""}">${lab}</button>`).join("");
   renderTab(currentTab);
 }
 
-function renderTab(name) {
-  currentTab = name;
-  document.querySelectorAll("#cTabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
-  if (name === "textes") {
-    cBody.innerHTML = `
+function renderTab(name){
+  currentTab=name;
+  document.querySelectorAll("#cTabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
+
+  if(name==="demandes"){
+    if(!reqs.length){
+      cBody.innerHTML=`<p class="msg">Aucune demande pour le moment.</p>
+      <div class="warn-box"><strong>Test</strong> : remplis le formulaire public puis reviens ici (même navigateur). Les demandes sont stockées en local sur cet appareil.</div>`;
+    } else {
+      cBody.innerHTML = reqs.map(r=>{
+        const msgs=r.messages||[];
+        const chat=msgs.map(m=>`<div class="bubble ${m.from==="client"?"from-client":"from-admin"}">${esc(m.text)}</div>`).join("");
+        const styles=suggestReplies(r);
+        const styleBtns=styles.map((s,i)=>`<button type="button" data-style="${r.id}" data-si="${i}">${esc(s.label)}</button>`).join("");
+        return `<div class="req-card ${r.read?"":"new"}">
+          <div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
+            <strong>${esc(r.name)}</strong><span class="tag">${esc(r.type)}</span>
+          </div>
+          <p class="msg">${esc(r.date)} · ${esc(r.phone)} · ${esc(r.email||"")}</p>
+          ${helpForType(r.type, r.msg)}
+          <div class="chat">${chat||"<span class='msg'>—</span>"}</div>
+          <p class="msg" style="margin:.3rem 0 .2rem">Assistant — choisir un style de réponse :</p>
+          <div class="style-btns">${styleBtns}</div>
+          <textarea class="field" data-reply="${r.id}" rows="3" placeholder="Ta réponse…"></textarea>
+          <div style="display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.25rem">
+            <button class="btn btn-primary btn-sm" data-send="${r.id}">Envoyer</button>
+            <button class="btn btn-secondary btn-sm" data-read="${r.id}">Lu</button>
+            <button class="btn btn-secondary btn-sm" data-del="${r.id}">Suppr.</button>
+          </div>
+        </div>`;
+      }).join("");
+
+      // style buttons
+      cBody.querySelectorAll("[data-style]").forEach(b=>{
+        b.onclick=()=>{
+          const id=+b.dataset.style, si=+b.dataset.si;
+          const r=reqs.find(x=>x.id===id);
+          if(!r) return;
+          const styles=suggestReplies(r);
+          const ta=cBody.querySelector(`[data-reply="${id}"]`);
+          if(ta && styles[si]) ta.value=styles[si].text;
+        };
+      });
+      cBody.querySelectorAll("[data-send]").forEach(b=>b.onclick=async()=>{
+        const id=+b.dataset.send;
+        const ta=cBody.querySelector(`[data-reply="${id}"]`);
+        const text=(ta?.value||"").trim();
+        if(!text) return;
+        const r=reqs.find(x=>x.id===id);
+        if(!r) return;
+        if(!r.messages) r.messages=[];
+        r.messages.push({from:"admin", text, at:new Date().toISOString()});
+        r.read=true;
+        saveReqs();
+        // email client
+        if(r.email && location.protocol!=="file:"){
+          try{
+            await fetch("https://formsubmit.co/ajax/"+encodeURIComponent(r.email),{
+              method:"POST",
+              headers:{"Content-Type":"application/json",Accept:"application/json"},
+              body:JSON.stringify({_subject:"Réponse — Clim & Électricité",_captcha:"false",message:text})
+            });
+          }catch(e){}
+        }
+        renderTab("demandes");
+      });
+      cBody.querySelectorAll("[data-read]").forEach(b=>b.onclick=()=>{
+        const r=reqs.find(x=>x.id===+b.dataset.read);
+        if(r){ r.read=true; saveReqs(); renderTab("demandes"); }
+      });
+      cBody.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{
+        reqs=reqs.filter(x=>x.id!==+b.dataset.del);
+        saveReqs(); renderTab("demandes");
+      });
+    }
+  } else if(name==="aide"){
+    cBody.innerHTML=`
+      <h3 style="font-family:var(--font-serif);margin-bottom:.6rem">Aide pro — électricité & clim</h3>
+      <div class="help-box"><strong>Électricité — disjoncteur qui saute</strong><br>
+      1. Tout débrancher / ouvrir les divisionnaires.<br>
+      2. Remonter le général puis un circuit à la fois.<br>
+      3. Le circuit fautif est identifié → vérifier prises, luminaires, appareils.<br>
+      4. Court-circuit souvent aux boîtes de dérivation ou appareils défectueux.</div>
+      <div class="help-box"><strong>Électricité — plus de courant dans une zone</strong><br>
+      Vérifier différentiel 30 mA, serrage des bornes, continuity neutre/phase. Couper avant d’ouvrir.</div>
+      <div class="help-box"><strong>Clim — ne refroidit plus</strong><br>
+      Filtres, flux d’air unité extérieure, mode (cool), consigne, manque de gaz (manomètres), sonde ambiance, carte.</div>
+      <div class="help-box"><strong>Clim — fuite d’eau intérieure</strong><br>
+      Bac + tuyau d’évacuation bouchés, pente insuffisante, isolation du tube froid.</div>
+      <div class="help-box"><strong>Questions types au client</strong><br>
+      • Depuis quand ? Progressif ou brutal ?<br>
+      • Code erreur affiché ?<br>
+      • Disjoncteur / différentiel a-t-il sauté ?<br>
+      • Accès tableau / unité extérieure ?</div>
+      <p class="msg">Ces mémos s’affichent aussi automatiquement dans l’onglet Demandes selon le type de message.</p>`;
+  } else if(name==="textes"){
+    cBody.innerHTML=`
       <label>Nom du site</label><input class="field" data-k="siteName" value="${esc(cfg.siteName)}">
       <label>Initiales logo</label><input class="field" data-k="logoMark" value="${esc(cfg.logoMark)}" maxlength="3">
-      <label>Badge hero</label><input class="field" data-k="heroBadge" value="${esc(cfg.heroBadge)}">
-      <label>Icône hero (emoji)</label><input class="field" data-k="heroIcon" value="${esc(cfg.heroIcon)}" maxlength="4">
-      <label>Titre d’accueil</label><input class="field" data-k="heroTitle" value="${esc(cfg.heroTitle)}">
-      <label>Sous-titre</label><textarea class="field" data-k="heroSub" rows="3">${esc(cfg.heroSub)}</textarea>
-      <label>Texte bouton devis</label><input class="field" data-k="btnDevis" value="${esc(cfg.btnDevis)}">
-      <label>Texte bouton téléphone</label><input class="field" data-k="btnTel" value="${esc(cfg.btnTel)}">
-      <label>Nav Services</label><input class="field" data-k="navServ" value="${esc(cfg.navServ)}">
-      <label>Nav Réalisations</label><input class="field" data-k="navReal" value="${esc(cfg.navReal)}">
-      <label>Nav Tarifs</label><input class="field" data-k="navTarif" value="${esc(cfg.navTarif)}">
-      <label>Nav CTA</label><input class="field" data-k="navCta" value="${esc(cfg.navCta)}">
-      <label>Meta 1 label / texte</label>
-      <input class="field" data-k="meta1Label" value="${esc(cfg.meta1Label)}" style="margin-bottom:.3rem">
-      <input class="field" data-k="meta1Text" value="${esc(cfg.meta1Text)}">
-      <label>Label Zone / Horaires</label>
-      <input class="field" data-k="meta2Label" value="${esc(cfg.meta2Label)}" style="margin-bottom:.3rem">
-      <input class="field" data-k="meta3Label" value="${esc(cfg.meta3Label)}">
-      <label>Titre Services / sous-titre</label>
+      <label>Badge / icône hero</label>
+      <input class="field" data-k="heroBadge" value="${esc(cfg.heroBadge)}" style="margin-bottom:.3rem">
+      <input class="field" data-k="heroIcon" value="${esc(cfg.heroIcon)}" maxlength="4">
+      <label>Titre / sous-titre</label>
+      <input class="field" data-k="heroTitle" value="${esc(cfg.heroTitle)}" style="margin-bottom:.3rem">
+      <textarea class="field" data-k="heroSub" rows="3">${esc(cfg.heroSub)}</textarea>
+      <label>Boutons</label>
+      <input class="field" data-k="btnDevis" value="${esc(cfg.btnDevis)}" style="margin-bottom:.3rem">
+      <input class="field" data-k="btnTel" value="${esc(cfg.btnTel)}">
+      <label>Navigation</label>
+      <input class="field" data-k="navServ" value="${esc(cfg.navServ)}" style="margin-bottom:.3rem">
+      <input class="field" data-k="navReal" value="${esc(cfg.navReal)}" style="margin-bottom:.3rem">
+      <input class="field" data-k="navTarif" value="${esc(cfg.navTarif)}" style="margin-bottom:.3rem">
+      <input class="field" data-k="navCta" value="${esc(cfg.navCta)}">
+      <label>Sections titres</label>
       <input class="field" data-k="servTitle" value="${esc(cfg.servTitle)}" style="margin-bottom:.3rem">
       <textarea class="field" data-k="servSub" rows="2">${esc(cfg.servSub)}</textarea>
-      <label>Titre Réalisations / sous-titre</label>
-      <input class="field" data-k="realTitle" value="${esc(cfg.realTitle)}" style="margin-bottom:.3rem">
-      <textarea class="field" data-k="realSub" rows="2">${esc(cfg.realSub)}</textarea>
-      <label>Titre Tarifs / sous-titre</label>
       <input class="field" data-k="tarifTitle" value="${esc(cfg.tarifTitle)}" style="margin-bottom:.3rem">
       <textarea class="field" data-k="tarifSub" rows="2">${esc(cfg.tarifSub)}</textarea>
-      <label>Titre Contact / sous-titre</label>
       <input class="field" data-k="contactTitle" value="${esc(cfg.contactTitle)}" style="margin-bottom:.3rem">
       <textarea class="field" data-k="contactSub" rows="2">${esc(cfg.contactSub)}</textarea>
-      <label>Texte footer</label><input class="field" data-k="footText" value="${esc(cfg.footText)}">`;
-  } else if (name === "services") {
-    let h = `<p class="msg" style="margin-bottom:.7rem">Modifie les 4 services (icône + titre + description).</p>`;
-    (cfg.services||[]).forEach((s,i) => {
-      h += `<div class="card" style="margin-bottom:.7rem;padding:1rem">
+      <label>Footer</label><input class="field" data-k="footText" value="${esc(cfg.footText)}">`;
+  } else if(name==="services"){
+    let h=`<p class="msg" style="margin-bottom:.6rem">Icônes + titres + descriptions</p>`;
+    (cfg.services||[]).forEach((s,i)=>{
+      h+=`<div class="card" style="margin-bottom:.6rem;padding:.9rem">
         <label>Icône</label><input class="field" data-si="${i}" data-sk="icon" value="${esc(s.icon)}" maxlength="4">
         <label>Titre</label><input class="field" data-si="${i}" data-sk="title" value="${esc(s.title)}">
         <label>Description</label><textarea class="field" data-si="${i}" data-sk="desc" rows="2">${esc(s.desc)}</textarea>
       </div>`;
     });
-    cBody.innerHTML = h;
-  } else if (name === "tarifs") {
-    let h = `<p class="msg" style="margin-bottom:.7rem">Modifie les tarifs affichés.</p>`;
-    (cfg.tarifs||[]).forEach((t,i) => {
-      h += `<div class="card" style="margin-bottom:.7rem;padding:1rem">
+    cBody.innerHTML=h;
+  } else if(name==="tarifs"){
+    let h=`<p class="msg" style="margin-bottom:.6rem">Tarifs affichés</p>`;
+    (cfg.tarifs||[]).forEach((t,i)=>{
+      h+=`<div class="card" style="margin-bottom:.6rem;padding:.9rem">
         <label>Tag</label><input class="field" data-ti="${i}" data-tk="tag" value="${esc(t.tag)}">
         <label>Titre</label><input class="field" data-ti="${i}" data-tk="title" value="${esc(t.title)}">
         <label>Prix</label><input class="field" data-ti="${i}" data-tk="price" value="${esc(t.price)}">
         <label>Description</label><textarea class="field" data-ti="${i}" data-tk="desc" rows="2">${esc(t.desc)}</textarea>
       </div>`;
     });
-    cBody.innerHTML = h;
-  } else if (name === "contact") {
-    cBody.innerHTML = `
+    cBody.innerHTML=h;
+  } else if(name==="contact"){
+    cBody.innerHTML=`
       <label>Téléphone affiché</label><input class="field" data-k="phone" value="${esc(cfg.phone)}">
       <label>Email affiché</label><input class="field" data-k="email" value="${esc(cfg.email)}">
       <label>Email de notification (où tu reçois les demandes)</label><input class="field" data-k="notifEmail" value="${esc(cfg.notifEmail||cfg.email)}">
-      <label>Zone d’intervention</label><input class="field" data-k="zone" value="${esc(cfg.zone)}">
+      <label>Zone</label><input class="field" data-k="zone" value="${esc(cfg.zone)}">
       <label>Horaires</label><input class="field" data-k="hours" value="${esc(cfg.hours)}">
-      <div class="ok-box">Les demandes du formulaire arrivent dans l’onglet <strong>Demandes</strong> + un email est envoyé à l’adresse de notification (via FormSubmit, si le site n’est pas en file://).</div>`;
-  } else if (name === "couleurs") {
-    const c = cfg.colors || {};
-    cBody.innerHTML = `
-      <p class="msg" style="margin-bottom:.7rem">Couleurs appliquées en direct.</p>
+      <div class="ok-box">Les demandes s’enregistrent toujours dans l’onglet Demandes (même navigateur).<br>
+      Les emails partent via FormSubmit <strong>uniquement si le site est hébergé</strong> (pas en file://). La 1ʳᵉ fois, FormSubmit envoie un lien de confirmation à ton email.</div>`;
+  } else if(name==="couleurs"){
+    const c=cfg.colors||{};
+    cBody.innerHTML=`
       <div class="color-row"><input type="color" data-color="sage" value="${c.sage||"#0f766e"}"><label>Sage (boutons)</label></div>
-      <div class="color-row"><input type="color" data-color="clay" value="${c.clay||"#c4a574"}"><label>Clay (badges)</label></div>
-      <div class="color-row"><input type="color" data-color="bg" value="${c.bg||"#faf7f2"}"><label>Fond de page</label></div>
-      <div class="color-row"><input type="color" data-color="ink" value="${c.ink||"#1c1917"}"><label>Texte principal</label></div>`;
-    cBody.querySelectorAll("[data-color]").forEach(inp => {
-      inp.oninput = () => {
-        if (!cfg.colors) cfg.colors = {};
-        cfg.colors[inp.dataset.color] = inp.value;
-        apply();
-      };
+      <div class="color-row"><input type="color" data-color="clay" value="${c.clay||"#c4a574"}"><label>Clay</label></div>
+      <div class="color-row"><input type="color" data-color="bg" value="${c.bg||"#faf7f2"}"><label>Fond</label></div>
+      <div class="color-row"><input type="color" data-color="ink" value="${c.ink||"#1c1917"}"><label>Texte</label></div>`;
+    cBody.querySelectorAll("[data-color]").forEach(inp=>{
+      inp.oninput=()=>{ if(!cfg.colors) cfg.colors={}; cfg.colors[inp.dataset.color]=inp.value; apply(); };
     });
-  } else if (name === "demandes") {
-    if (!reqs.length) {
-      cBody.innerHTML = `<p class="msg">Aucune demande pour le moment.</p>`;
-    } else {
-      cBody.innerHTML = reqs.map(r => {
-        const msgs = r.messages || [];
-        const chat = msgs.map(m => `<div class="bubble ${m.from==="client"?"from-client":"from-admin"}">${esc(m.text)}</div>`).join("");
-        return `<div class="req-card ${r.read?"":"new"}" data-rid="${r.id}">
-          <div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
-            <strong>${esc(r.name)}</strong>
-            <span class="tag">${esc(r.type)}</span>
-          </div>
-          <p class="msg">${esc(r.date)} · ${esc(r.phone)} · ${esc(r.email||"")}</p>
-          <div class="chat">${chat || "<span class='msg'>Pas de messages</span>"}</div>
-          <textarea class="field" data-reply="${r.id}" rows="2" placeholder="Ta réponse…"></textarea>
-          <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.3rem">
-            <button class="btn btn-primary" style="padding:.35rem .7rem;font-size:.8rem" data-send="${r.id}">Envoyer la réponse</button>
-            <button class="btn btn-secondary" style="padding:.35rem .7rem;font-size:.8rem" data-read="${r.id}">Marquer lu</button>
-            <button class="btn btn-secondary" style="padding:.35rem .7rem;font-size:.8rem" data-del="${r.id}">Supprimer</button>
-          </div>
-        </div>`;
-      }).join("");
-      cBody.querySelectorAll("[data-send]").forEach(b => b.onclick = () => {
-        const id = +b.dataset.send;
-        const ta = cBody.querySelector(`[data-reply="${id}"]`);
-        const text = (ta?.value || "").trim();
-        if (!text) return;
-        const r = reqs.find(x => x.id === id);
-        if (!r) return;
-        if (!r.messages) r.messages = [];
-        r.messages.push({ from: "admin", text, at: new Date().toISOString() });
-        r.read = true;
-        localStorage.setItem(REQ_KEY, JSON.stringify(reqs));
-        // optional email back to client
-        if (r.email && location.protocol !== "file:") {
-          fetch("https://formsubmit.co/ajax/" + encodeURIComponent(r.email), {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Accept: "application/json" },
-            body: JSON.stringify({ _subject: "Réponse — Clim & Électricité", _captcha: "false", message: text })
-          }).catch(()=>{});
-        }
-        updateBadge();
-        renderTab("demandes");
-      });
-      cBody.querySelectorAll("[data-read]").forEach(b => b.onclick = () => {
-        const r = reqs.find(x => x.id === +b.dataset.read);
-        if (r) { r.read = true; localStorage.setItem(REQ_KEY, JSON.stringify(reqs)); updateBadge(); renderTab("demandes"); }
-      });
-      cBody.querySelectorAll("[data-del]").forEach(b => b.onclick = () => {
-        reqs = reqs.filter(x => x.id !== +b.dataset.del);
-        localStorage.setItem(REQ_KEY, JSON.stringify(reqs));
-        updateBadge();
-        renderTab("demandes");
-      });
-    }
-  } else if (name === "compte") {
-    cBody.innerHTML = `
+  } else if(name==="compte"){
+    cBody.innerHTML=`
       <div class="ok-box">Connecté : <strong>${esc(currentUser?.email||"")}</strong></div>
-      <p class="msg" style="margin-top:1rem">Mot de passe : à changer dans Firebase Console → Authentication → Users.</p>
+      <p class="msg" style="margin-top:.8rem">Demandes stockées localement sur cet appareil. Pour synchroniser multi-appareils, il faudrait Firestore (prochaine étape possible).</p>
       <button class="btn btn-primary" id="btnOut" style="width:100%;margin-top:1rem;background:#b91c1c">Se déconnecter</button>`;
-    document.getElementById("btnOut").onclick = () => auth.signOut();
+    document.getElementById("btnOut").onclick=()=>auth.signOut();
   }
 }
 
-function collect() {
-  cBody.querySelectorAll("[data-k]").forEach(el => { cfg[el.dataset.k] = el.value; });
-  cBody.querySelectorAll("[data-si]").forEach(el => {
-    const i = +el.dataset.si, k = el.dataset.sk;
-    if (cfg.services[i]) cfg.services[i][k] = el.value;
+function collect(){
+  cBody.querySelectorAll("[data-k]").forEach(el=>{ cfg[el.dataset.k]=el.value; });
+  cBody.querySelectorAll("[data-si]").forEach(el=>{
+    const i=+el.dataset.si, k=el.dataset.sk;
+    if(cfg.services[i]) cfg.services[i][k]=el.value;
   });
-  cBody.querySelectorAll("[data-ti]").forEach(el => {
-    const i = +el.dataset.ti, k = el.dataset.tk;
-    if (cfg.tarifs[i]) cfg.tarifs[i][k] = el.value;
+  cBody.querySelectorAll("[data-ti]").forEach(el=>{
+    const i=+el.dataset.ti, k=el.dataset.tk;
+    if(cfg.tarifs[i]) cfg.tarifs[i][k]=el.value;
   });
 }
 
-auth.onAuthStateChanged(user => {
-  currentUser = user;
-  if (user) { if (creator.classList.contains("open")) showEditor(); }
-  else { if (creator.classList.contains("open")) showLogin(); }
+auth.onAuthStateChanged(user=>{
+  currentUser=user;
+  if(user){ if(creator.classList.contains("open")) showEditor(); }
+  else { if(creator.classList.contains("open")) showLogin(); }
 });
 
-lockBtn.onclick = () => { creator.classList.add("open"); if (currentUser) showEditor(); else showLogin(); };
-cClose.onclick = () => creator.classList.remove("open");
-cLogout.onclick = () => auth.signOut();
-cTabs.addEventListener("click", e => {
-  const btn = e.target.closest("[data-tab]");
-  if (btn) { collect(); renderTab(btn.dataset.tab); }
+lockBtn.onclick=()=>{ creator.classList.add("open"); if(currentUser) showEditor(); else showLogin(); };
+cClose.onclick=()=>creator.classList.remove("open");
+cLogout.onclick=()=>auth.signOut();
+cTabs.addEventListener("click",e=>{
+  const btn=e.target.closest("[data-tab]");
+  if(btn){ collect(); renderTab(btn.dataset.tab); }
 });
-cSave.onclick = () => {
-  collect();
-  localStorage.setItem(STORAGE, JSON.stringify(cfg));
-  apply();
-  cMsg.textContent = "✓ Enregistré";
-  setTimeout(() => cMsg.textContent = "", 2000);
-};
-cReset.onclick = () => {
-  if (!confirm("Remettre tous les textes / couleurs / services par défaut ?")) return;
-  cfg = structuredClone(DEFAULTS);
-  localStorage.removeItem(STORAGE);
-  apply();
-  renderTab(currentTab);
-};
+cSave.onclick=()=>{ collect(); localStorage.setItem(STORAGE, JSON.stringify(cfg)); apply(); cMsg.textContent="✓ Enregistré"; setTimeout(()=>cMsg.textContent="",2000); };
+cReset.onclick=()=>{ if(!confirm("Réinitialiser textes / couleurs / services ?")) return; cfg=structuredClone(DEFAULTS); localStorage.removeItem(STORAGE); apply(); renderTab(currentTab); };
 </script>
 </body>
 </html>
