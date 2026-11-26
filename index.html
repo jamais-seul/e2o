@@ -8,6 +8,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+
 <style>
 :root {
   --ink: #1c1917; --muted: #57534e; --soft: #78716c;
@@ -22,66 +27,55 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; scroll-padding-top: 84px; }
 body { font-family: var(--font-sans); background: var(--bg); color: var(--ink); line-height: 1.65; font-size: 17px; -webkit-font-smoothing: antialiased; }
-img { max-width: 100%; display: block; }
 a { color: var(--sage-dark); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 nav { position: sticky; top: 0; z-index: 100; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); padding: .85rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.brand { font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600; color: var(--ink); letter-spacing: .02em; text-decoration: none !important; display: flex; align-items: center; gap: .55rem; }
-.brand-mark { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(145deg, var(--clay), var(--sage)); display: grid; place-items: center; color: #fff; font-size: .95rem; font-weight: 700; flex-shrink: 0; }
+.brand { font-family: var(--font-serif); font-size: 1.35rem; font-weight: 600; color: var(--ink); text-decoration: none !important; display: flex; align-items: center; gap: .55rem; }
+.brand-mark { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(145deg, var(--clay), var(--sage)); display: grid; place-items: center; color: #fff; font-size: .95rem; font-weight: 700; }
 .nav-links { display: flex; gap: .15rem; flex-wrap: wrap; justify-content: flex-end; }
 .nav-links a { color: var(--muted); font-weight: 500; font-size: .9rem; padding: .4rem .7rem; border-radius: 8px; text-decoration: none !important; }
 .nav-links a:hover { background: var(--sand); color: var(--ink); }
 .nav-cta { background: var(--sage) !important; color: #fff !important; padding: .45rem 1rem !important; border-radius: 999px !important; font-weight: 600 !important; }
-.nav-cta:hover { background: var(--sage-dark) !important; }
 
 .hero { padding: 4.25rem 1.5rem 3.25rem; max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.15fr .85fr; gap: 3rem; align-items: center; }
 @media (max-width: 800px) { .hero { grid-template-columns: 1fr; } }
-.hero-badge { display: inline-flex; align-items: center; gap: .4rem; background: var(--sand); color: var(--sage-dark); font-size: .82rem; font-weight: 600; padding: .35rem .85rem; border-radius: 999px; margin-bottom: 1.1rem; }
-.hero h1 { font-family: var(--font-serif); font-size: clamp(2.2rem, 5vw, 3.1rem); font-weight: 600; line-height: 1.15; letter-spacing: -.02em; margin-bottom: .9rem; }
+.hero-badge { display: inline-flex; background: var(--sand); color: var(--sage-dark); font-size: .82rem; font-weight: 600; padding: .35rem .85rem; border-radius: 999px; margin-bottom: 1.1rem; }
+.hero h1 { font-family: var(--font-serif); font-size: clamp(2.2rem, 5vw, 3.1rem); font-weight: 600; line-height: 1.15; margin-bottom: .9rem; }
 .hero .lead { font-size: 1.12rem; color: var(--muted); max-width: 34rem; margin-bottom: 1.8rem; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; }
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; font-family: inherit; font-weight: 600; font-size: .95rem; padding: .75rem 1.35rem; border-radius: 999px; border: none; cursor: pointer; text-decoration: none !important; transition: transform .15s, box-shadow .15s, background .15s; }
-.btn:hover { transform: translateY(-1px); }
-.btn-primary { background: var(--sage); color: #fff; box-shadow: 0 4px 14px color-mix(in srgb, var(--sage) 25%, transparent); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; font-family: inherit; font-weight: 600; font-size: .95rem; padding: .75rem 1.35rem; border-radius: 999px; border: none; cursor: pointer; text-decoration: none !important; }
+.btn-primary { background: var(--sage); color: #fff; }
 .btn-primary:hover { background: var(--sage-dark); }
 .btn-secondary { background: var(--card); color: var(--ink); border: 1px solid var(--line); }
-.btn-secondary:hover { border-color: var(--clay); }
 .hero-card { background: var(--card); border-radius: 24px; padding: 1.75rem; box-shadow: var(--shadow); border: 1px solid var(--line); }
-.hero-card .photo { aspect-ratio: 4/5; background: linear-gradient(160deg, var(--blush), var(--sand)); border-radius: 16px; display: grid; place-items: center; color: var(--soft); font-size: .9rem; margin-bottom: 1.25rem; overflow: hidden; }
+.hero-card .photo { aspect-ratio: 4/5; background: linear-gradient(160deg, var(--blush), var(--sand)); border-radius: 16px; display: grid; place-items: center; margin-bottom: 1.25rem; }
 .hero-card .photo span { width: 88px; height: 88px; border-radius: 50%; background: var(--card); display: grid; place-items: center; font-size: 2.2rem; box-shadow: var(--shadow); }
-.hero-meta { display: flex; flex-direction: column; gap: .5rem; }
-.hero-meta div { display: flex; align-items: center; gap: .55rem; font-size: .92rem; color: var(--muted); }
-.hero-meta strong { color: var(--ink); font-weight: 600; }
+.hero-meta { display: flex; flex-direction: column; gap: .5rem; font-size: .92rem; color: var(--muted); }
+.hero-meta strong { color: var(--ink); }
 
 section { padding: 3.4rem 1.5rem; }
 .wrap { max-width: 1000px; margin: 0 auto; }
 .section-label { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--clay-dark); margin-bottom: .5rem; }
-h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 3.5vw, 2.35rem); font-weight: 600; line-height: 1.2; margin-bottom: .75rem; }
+h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 3.5vw, 2.35rem); font-weight: 600; margin-bottom: .75rem; }
 .section-intro { color: var(--muted); font-size: 1.05rem; max-width: 38rem; margin-bottom: 2rem; }
 .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem 1.4rem; box-shadow: var(--shadow); transition: border-color .2s, transform .2s; }
-.card:hover { border-color: var(--clay); transform: translateY(-2px); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem 1.4rem; box-shadow: var(--shadow); }
 .card-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--sand); display: grid; place-items: center; font-size: 1.4rem; margin-bottom: 1rem; }
 .card h3 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; margin-bottom: .45rem; }
 .card p { color: var(--muted); font-size: .95rem; }
-
 .band { background: var(--sand); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .price { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 600; color: var(--sage); }
-.price small { font-size: .85rem; font-weight: 500; color: var(--muted); }
 .tag { display: inline-block; background: var(--sand); color: var(--sage-dark); font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin-bottom: .5rem; }
-
 .field { width: 100%; padding: .7rem .85rem; margin: .3rem 0 .75rem; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font-size: .95rem; font-family: inherit; }
 label { font-weight: 600; font-size: .88rem; }
 textarea.field { min-height: 110px; resize: vertical; }
 .two { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
 @media (max-width: 700px) { .two { grid-template-columns: 1fr; } }
-
-footer { background: var(--card); border-top: 1px solid var(--line); text-align: center; padding: 1.8rem 1rem; font-size: .85rem; color: var(--muted); margin-top: 1rem; }
+footer { background: var(--card); border-top: 1px solid var(--line); text-align: center; padding: 1.8rem 1rem; font-size: .85rem; color: var(--muted); }
 
 #lockBtn { position: fixed; left: 14px; bottom: 18px; z-index: 9999; width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--ink); color: #fff; font-size: 1.2rem; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.25); display: flex; align-items: center; justify-content: center; }
 
-/* Creator panel */
 #creator { position: fixed; top: 0; right: 0; width: min(420px, 100vw); height: 100vh; background: var(--card); border-left: 1px solid var(--line); z-index: 10000; display: none; flex-direction: column; box-shadow: -8px 0 28px rgba(0,0,0,.12); }
 #creator.open { display: flex; }
 #creator .sh { display: flex; justify-content: space-between; align-items: center; padding: .9rem 1rem; background: var(--ink); color: #fff; font-weight: 700; }
@@ -93,9 +87,8 @@ footer { background: var(--card); border-top: 1px solid var(--line); text-align:
 #creator .sf { padding: .75rem 1rem; border-top: 1px solid var(--line); display: flex; gap: .5rem; align-items: center; }
 .msg { font-size: .85rem; color: var(--muted); }
 .login-box { max-width: 320px; margin: 2rem auto; text-align: center; }
-.login-box input { width: 100%; margin: .4rem 0; }
-.warn-box { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; border-radius: 10px; padding: .7rem .9rem; font-size: .85rem; margin: .6rem 0; }
-.ok-box { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; border-radius: 10px; padding: .7rem .9rem; font-size: .85rem; margin: .6rem 0; }
+.warn-box { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; border-radius: 10px; padding: .7rem .9rem; font-size: .85rem; margin: .6rem 0; text-align: left; }
+.ok-box { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; border-radius: 10px; padding: .7rem .9rem; font-size: .85rem; margin: .6rem 0; text-align: left; }
 </style>
 </head>
 <body>
@@ -114,7 +107,7 @@ footer { background: var(--card); border-top: 1px solid var(--line); text-align:
   <div>
     <div class="hero-badge">❄️ Pose · Dépannage · Entretien</div>
     <h1 id="heroTitle">Pose de clim &amp; dépannage électrique</h1>
-    <p class="lead" id="heroSub">Installation, entretien et dépannage. Intervention rapide, devis gratuit, travail soigné pour particuliers et professionnels.</p>
+    <p class="lead" id="heroSub">Installation, entretien et dépannage. Intervention rapide, devis gratuit, travail soigné.</p>
     <div class="hero-actions">
       <a class="btn btn-primary" href="#contact">Demander un devis</a>
       <a class="btn btn-secondary" href="tel:+33000000000" id="heroTel">📞 Appeler maintenant</a>
@@ -133,13 +126,13 @@ footer { background: var(--card); border-top: 1px solid var(--line); text-align:
 <section id="services">
   <div class="wrap">
     <div class="section-label">Ce que nous faisons</div>
-    <h2 id="servTitle">Nos services</h2>
-    <p class="section-intro" id="servSub">Climatisation et électricité pour particuliers et professionnels. Un interlocuteur unique, un travail soigné.</p>
-    <div class="grid-3" id="servGrid">
-      <div class="card"><div class="card-icon">❄️</div><h3>Pose de climatisation</h3><p>Installation mono-split, multi-split, gainable. Conseils sur la puissance adaptée à votre logement.</p></div>
-      <div class="card"><div class="card-icon">⚡</div><h3>Dépannage électrique</h3><p>Panne, court-circuit, tableau électrique, prises, éclairage. Intervention rapide.</p></div>
-      <div class="card"><div class="card-icon">🔧</div><h3>Entretien & maintenance</h3><p>Nettoyage, recharge de gaz, contrôle d’étanchéité et mise en conformité.</p></div>
-      <div class="card"><div class="card-icon">🏠</div><h3>Rénovation électrique</h3><p>Mise aux normes NF C 15-100, ajout de circuits, éclairage LED, domotique simple.</p></div>
+    <h2>Nos services</h2>
+    <p class="section-intro">Climatisation et électricité pour particuliers et professionnels.</p>
+    <div class="grid-3">
+      <div class="card"><div class="card-icon">❄️</div><h3>Pose de climatisation</h3><p>Installation mono-split, multi-split, gainable.</p></div>
+      <div class="card"><div class="card-icon">⚡</div><h3>Dépannage électrique</h3><p>Panne, court-circuit, tableau électrique. Intervention rapide.</p></div>
+      <div class="card"><div class="card-icon">🔧</div><h3>Entretien & maintenance</h3><p>Nettoyage, recharge de gaz, contrôle d’étanchéité.</p></div>
+      <div class="card"><div class="card-icon">🏠</div><h3>Rénovation électrique</h3><p>Mise aux normes NF C 15-100, éclairage LED.</p></div>
     </div>
   </div>
 </section>
@@ -148,7 +141,7 @@ footer { background: var(--card); border-top: 1px solid var(--line); text-align:
   <div class="wrap">
     <div class="section-label">Chantiers</div>
     <h2>Réalisations</h2>
-    <p class="section-intro">Les photos peuvent être ajoutées depuis l’espace créateur.</p>
+    <p class="section-intro">Photos à ajouter depuis l’espace créateur.</p>
     <div style="background:var(--card);border:1px solid var(--line);border-radius:16px;aspect-ratio:16/9;display:grid;place-items:center;color:var(--soft);box-shadow:var(--shadow)">
       Ajoutez vos photos dans l’espace créateur (🔒)
     </div>
@@ -159,12 +152,11 @@ footer { background: var(--card); border-top: 1px solid var(--line); text-align:
   <div class="wrap">
     <div class="section-label">Tarifs</div>
     <h2>Tarifs indicatifs</h2>
-    <p class="section-intro">Devis gratuit et personnalisé.</p>
-    <div class="grid-3" id="tarifGrid">
+    <div class="grid-3">
       <div class="card"><span class="tag">Clim</span><h3>Pose mono-split</h3><p class="price">dès 890 € <small>TTC</small></p><p>Fourniture et pose d’un split mural standard.</p></div>
-      <div class="card"><span class="tag">Clim</span><h3>Entretien annuel</h3><p class="price">dès 120 € <small>TTC</small></p><p>Nettoyage, contrôle, vérification des performances.</p></div>
-      <div class="card"><span class="tag">Électricité</span><h3>Dépannage</h3><p class="price">dès 70 € <small>TTC</small></p><p>Déplacement + 1ère heure de diagnostic.</p></div>
-      <div class="card"><span class="tag">Électricité</span><h3>Mise aux normes</h3><p class="price">Sur devis</p><p>Diagnostic et mise en conformité.</p></div>
+      <div class="card"><span class="tag">Clim</span><h3>Entretien annuel</h3><p class="price">dès 120 € <small>TTC</small></p><p>Nettoyage et contrôle.</p></div>
+      <div class="card"><span class="tag">Électricité</span><h3>Dépannage</h3><p class="price">dès 70 € <small>TTC</small></p><p>Déplacement + 1ère heure.</p></div>
+      <div class="card"><span class="tag">Électricité</span><h3>Mise aux normes</h3><p class="price">Sur devis</p><p>Diagnostic et conformité.</p></div>
     </div>
   </div>
 </section>
@@ -173,7 +165,6 @@ footer { background: var(--card); border-top: 1px solid var(--line); text-align:
   <div class="wrap">
     <div class="section-label">Contact</div>
     <h2>Contact & devis</h2>
-    <p class="section-intro">Décrivez votre besoin, on vous rappelle rapidement.</p>
     <div class="two">
       <div class="card">
         <form id="contactForm">
@@ -208,7 +199,7 @@ footer { background: var(--card); border-top: 1px solid var(--line); text-align:
 </section>
 
 <footer>
-  <strong id="footName">Clim & Électricité</strong> — Pose de climatisation et dépannage électrique.
+  <strong>Clim & Électricité</strong> — Pose de climatisation et dépannage électrique.
 </footer>
 
 <button id="lockBtn" type="button" title="Espace créateur">🔒</button>
@@ -222,8 +213,7 @@ footer { background: var(--card); border-top: 1px solid var(--line); text-align:
     </span>
   </div>
   <div class="tabs" id="cTabs" style="display:none">
-    <button type="button" data-tab="guide" class="on">Guide Firebase</button>
-    <button type="button" data-tab="textes">Textes</button>
+    <button type="button" data-tab="textes" class="on">Textes</button>
     <button type="button" data-tab="contact">Contact</button>
     <button type="button" data-tab="demandes">Demandes</button>
   </div>
@@ -235,12 +225,28 @@ footer { background: var(--card); border-top: 1px solid var(--line); text-align:
 </div>
 
 <script>
-const STORAGE = "clim_psy_cfg_v1";
-const PASS_KEY = "clim_psy_pass";
-let unlocked = sessionStorage.getItem("clim_unlocked") === "1";
+/* ============================================================
+   🔥 COLLE ICI TON firebaseConfig (celui de ta console Firebase)
+   ============================================================ */
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDVn-yNq8oJZ_e6nXbRpnFbIvr5sOh7otM",
+  authDomain: "e2o-5602a.firebaseapp.com",
+  projectId: "e2o-5602a",
+  storageBucket: "e2o-5602a.firebasestorage.app",
+  messagingSenderId: "732295186075",
+  appId: "1:732295186075:web:6cc5c9c7d762a1b626683e",
+  measurementId: "G-VYJRCPD0YQ"
+};
+/* ============================================================ */
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+const STORAGE = "clim_fb_cfg_v1";
 let cfg = {
   heroTitle: "Pose de clim & dépannage électrique",
-  heroSub: "Installation, entretien et dépannage. Intervention rapide, devis gratuit, travail soigné pour particuliers et professionnels.",
+  heroSub: "Installation, entretien et dépannage. Intervention rapide, devis gratuit, travail soigné.",
   phone: "+33 0 00 00 00 00",
   email: "contact@exemple.fr",
   zone: "Votre ville et alentours",
@@ -249,20 +255,22 @@ let cfg = {
 try { const s = localStorage.getItem(STORAGE); if (s) cfg = {...cfg, ...JSON.parse(s)}; } catch(e){}
 
 let demandes = [];
-try { demandes = JSON.parse(localStorage.getItem("clim_psy_demandes") || "[]"); } catch(e){}
+try { demandes = JSON.parse(localStorage.getItem("clim_fb_demandes") || "[]"); } catch(e){}
+
+let currentUser = null;
 
 function apply() {
   document.getElementById("heroTitle").textContent = cfg.heroTitle || "";
   document.getElementById("heroSub").textContent = cfg.heroSub || "";
+  const tel = (cfg.phone || "").replace(/\s/g, "");
   document.getElementById("infoTel").textContent = cfg.phone || "";
-  document.getElementById("infoTel").href = "tel:" + (cfg.phone||"").replace(/\\s/g,"");
-  document.getElementById("heroTel").href = "tel:" + (cfg.phone||"").replace(/\\s/g,"");
+  document.getElementById("infoTel").href = "tel:" + tel;
+  document.getElementById("heroTel").href = "tel:" + tel;
   document.getElementById("infoEmail").textContent = cfg.email || "";
   document.getElementById("infoZone").textContent = cfg.zone || "";
   document.getElementById("infoZone2").textContent = cfg.zone || "";
   document.getElementById("infoHours").textContent = cfg.hours || "";
   document.getElementById("infoHours2").textContent = cfg.hours || "";
-  document.getElementById("footName").textContent = "Clim & Électricité";
 }
 apply();
 
@@ -278,10 +286,10 @@ document.getElementById("contactForm").addEventListener("submit", function(e) {
     msg: document.getElementById("cMsg").value.trim()
   };
   demandes.unshift(d);
-  localStorage.setItem("clim_psy_demandes", JSON.stringify(demandes));
-  document.getElementById("formMsg").textContent = "✅ Demande enregistrée. Nous vous rappelons rapidement.";
+  localStorage.setItem("clim_fb_demandes", JSON.stringify(demandes));
+  document.getElementById("formMsg").textContent = "✅ Demande enregistrée.";
   this.reset();
-  setTimeout(() => document.getElementById("formMsg").textContent = "", 5000);
+  setTimeout(() => document.getElementById("formMsg").textContent = "", 4000);
 });
 
 const creator = document.getElementById("creator");
@@ -295,67 +303,51 @@ function showLogin() {
   document.getElementById("cLogout").style.display = "none";
   cBody.innerHTML = `
     <div class="login-box">
-      <h3 style="font-family:var(--font-serif);margin-bottom:1rem">Espace créateur</h3>
-      <p class="msg" style="margin-bottom:1rem">Mot de passe simple (stocké localement). Pour Firebase, vois l’onglet Guide une fois connecté.</p>
-      <input type="password" id="loginPass" class="field" placeholder="Mot de passe" style="text-align:center">
-      <button class="btn btn-primary" id="loginBtn" style="width:100%;margin-top:.5rem">Entrer</button>
-      <p class="msg" id="loginErr" style="color:#b91c1c;margin-top:.6rem"></p>
-      <div class="warn-box" style="text-align:left;margin-top:1.2rem">
-        <strong>Premier accès ?</strong><br>
-        Tape n’importe quel mot de passe : il sera enregistré comme mot de passe de l’espace créateur sur cet appareil.
+      <h3 style="font-family:var(--font-serif);margin-bottom:1rem">Connexion créateur</h3>
+      <p class="msg" style="margin-bottom:1rem">Utilise l’email + mot de passe que tu as créés dans Firebase Authentication.</p>
+      <input type="email" id="authEmail" class="field" placeholder="ton@email.com" autocomplete="username">
+      <input type="password" id="authPass" class="field" placeholder="Mot de passe" autocomplete="current-password">
+      <button class="btn btn-primary" id="authGo" style="width:100%;margin-top:.5rem">Se connecter</button>
+      <p class="msg" id="authMsg" style="margin-top:.6rem;color:#b91c1c"></p>
+      <div class="warn-box">
+        <strong>Important</strong><br>
+        Remplace d’abord le <code>firebaseConfig</code> en haut du fichier par tes vraies clés Firebase, sinon la connexion échouera.
       </div>
     </div>`;
-  document.getElementById("loginBtn").onclick = () => {
-    const p = document.getElementById("loginPass").value;
-    if (!p) { document.getElementById("loginErr").textContent = "Indique un mot de passe."; return; }
-    const saved = localStorage.getItem(PASS_KEY);
-    if (!saved) {
-      localStorage.setItem(PASS_KEY, p);
-      unlocked = true;
-      sessionStorage.setItem("clim_unlocked", "1");
-      showEditor();
-    } else if (saved === p) {
-      unlocked = true;
-      sessionStorage.setItem("clim_unlocked", "1");
-      showEditor();
-    } else {
-      document.getElementById("loginErr").textContent = "Mot de passe incorrect.";
+  document.getElementById("authGo").onclick = async () => {
+    const email = document.getElementById("authEmail").value.trim();
+    const pass = document.getElementById("authPass").value;
+    if (!email || !pass) {
+      document.getElementById("authMsg").textContent = "Email et mot de passe obligatoires.";
+      return;
+    }
+    document.getElementById("authMsg").textContent = "Connexion…";
+    try {
+      await auth.signInWithEmailAndPassword(email, pass);
+      // onAuthStateChanged va ouvrir l’éditeur
+    } catch (err) {
+      let msg = "Erreur de connexion.";
+      if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential")
+        msg = "Email ou mot de passe incorrect.";
+      else if (err.code === "auth/invalid-email") msg = "Email invalide.";
+      else if (err.code === "auth/too-many-requests") msg = "Trop de tentatives. Réessaie plus tard.";
+      else msg = err.message || msg;
+      document.getElementById("authMsg").textContent = "❌ " + msg;
     }
   };
-  document.getElementById("loginPass").onkeydown = e => { if (e.key === "Enter") document.getElementById("loginBtn").click(); };
+  document.getElementById("authPass").onkeydown = e => { if (e.key === "Enter") document.getElementById("authGo").click(); };
 }
 
 function showEditor() {
   cTabs.style.display = "flex";
   cFoot.style.display = "flex";
   document.getElementById("cLogout").style.display = "inline-block";
-  renderTab("guide");
+  renderTab("textes");
 }
 
 function renderTab(name) {
   document.querySelectorAll("#cTabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
-  if (name === "guide") {
-    cBody.innerHTML = `
-      <h3 style="font-family:var(--font-serif);margin-bottom:.8rem">Marche à suivre — Firebase</h3>
-      <div class="ok-box">
-        <strong>Pour connecter Firebase Auth (comme sur ton autre site) :</strong>
-      </div>
-      <ol style="margin:1rem 0 1rem 1.2rem;font-size:.92rem;line-height:1.7">
-        <li>Va sur <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a></li>
-        <li>Crée un projet (ou ouvre un existant)</li>
-        <li>Menu <strong>Authentication</strong> → onglet <strong>Sign-in method</strong> → active <strong>Email/Password</strong></li>
-        <li>Toujours dans Authentication → onglet <strong>Users</strong> → <strong>Add user</strong> → crée ton email + mot de passe</li>
-        <li>Menu <strong>Project settings</strong> (engrenage) → onglet <strong>General</strong> → section <strong>Your apps</strong> → ajoute une app Web</li>
-        <li>Copie l’objet <code>firebaseConfig</code> (apiKey, authDomain, projectId…)</li>
-        <li>Dans le code HTML du site, remplace le bloc <code>firebaseConfig</code> par tes vraies clés</li>
-        <li>Recharge la page → le bouton 🔒 demandera alors email + mot de passe Firebase</li>
-      </ol>
-      <div class="warn-box">
-        <strong>Version actuelle</strong> : protection par mot de passe local (simple et immédiat).<br>
-        Firebase est prêt à être branché dès que tu colles tes clés.
-      </div>
-      <p class="msg" style="margin-top:1rem">Mot de passe local actuel enregistré sur cet appareil. Pour le changer : déconnecte-toi puis choisis-en un nouveau au prochain login (si tu supprimes la clé dans le localStorage).</p>`;
-  } else if (name === "textes") {
+  if (name === "textes") {
     cBody.innerHTML = `
       <label>Titre d’accueil</label>
       <input class="field" data-k="heroTitle" value="${(cfg.heroTitle||"").replace(/"/g,"&quot;")}">
@@ -372,30 +364,32 @@ function renderTab(name) {
       <label>Horaires</label>
       <input class="field" data-k="hours" value="${(cfg.hours||"").replace(/"/g,"&quot;")}">`;
   } else if (name === "demandes") {
-    if (!demandes.length) {
-      cBody.innerHTML = `<p class="msg">Aucune demande pour le moment.</p>`;
-    } else {
-      cBody.innerHTML = demandes.map(d => `
-        <div class="card" style="margin-bottom:.7rem;padding:1rem">
-          <strong>${d.name}</strong> · ${d.type}<br>
-          <span class="msg">${d.date} · ${d.phone}${d.email ? " · "+d.email : ""}</span>
-          <p style="margin-top:.4rem;font-size:.9rem">${d.msg||"—"}</p>
-        </div>`).join("");
-    }
+    if (!demandes.length) cBody.innerHTML = `<p class="msg">Aucune demande pour le moment.</p>`;
+    else cBody.innerHTML = demandes.map(d => `
+      <div class="card" style="margin-bottom:.7rem;padding:1rem">
+        <strong>${d.name}</strong> · ${d.type}<br>
+        <span class="msg">${d.date} · ${d.phone}${d.email ? " · "+d.email : ""}</span>
+        <p style="margin-top:.4rem;font-size:.9rem">${d.msg||"—"}</p>
+      </div>`).join("");
   }
 }
 
+auth.onAuthStateChanged(user => {
+  currentUser = user;
+  if (user) {
+    if (creator.classList.contains("open")) showEditor();
+  } else {
+    if (creator.classList.contains("open")) showLogin();
+  }
+});
+
 document.getElementById("lockBtn").onclick = () => {
   creator.classList.add("open");
-  if (unlocked) showEditor();
+  if (currentUser) showEditor();
   else showLogin();
 };
 document.getElementById("cClose").onclick = () => creator.classList.remove("open");
-document.getElementById("cLogout").onclick = () => {
-  unlocked = false;
-  sessionStorage.removeItem("clim_unlocked");
-  creator.classList.remove("open");
-};
+document.getElementById("cLogout").onclick = () => { auth.signOut(); };
 document.getElementById("cTabs").addEventListener("click", e => {
   const btn = e.target.closest("[data-tab]");
   if (btn) renderTab(btn.dataset.tab);
