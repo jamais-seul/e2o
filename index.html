@@ -52,8 +52,12 @@ label{font-weight:600;font-size:.86rem}textarea.field{min-height:100px;resize:ve
 footer{background:var(--card);border-top:1px solid var(--line);text-align:center;padding:1.6rem 1rem;font-size:.84rem;color:var(--muted)}
 #lockBtn{position:fixed;left:14px;bottom:18px;z-index:9999;width:46px;height:46px;border-radius:50%;border:0;background:var(--ink);color:#fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;position:fixed}
 #notifBadge{position:absolute;top:-4px;right:-4px;background:#dc2626;color:#fff;font-size:.65rem;font-weight:700;min-width:18px;height:18px;border-radius:999px;display:none;align-items:center;justify-content:center;padding:0 4px}
-#creator{position:fixed;top:0;right:0;width:min(480px,100vw);height:100vh;background:var(--card);border-left:1px solid var(--line);z-index:10000;display:none;flex-direction:column;box-shadow:-8px 0 28px rgba(0,0,0,.12)}
+#creator{position:fixed;top:0;right:0;width:min(560px,96vw);height:100vh;background:var(--card);border-left:1px solid var(--line);z-index:10000;display:none;flex-direction:column;box-shadow:-8px 0 28px rgba(0,0,0,.12)}
 #creator.open{display:flex}
+#creator.wide{width:min(920px,98vw)}
+#resizeHandle{position:absolute;left:0;top:0;bottom:0;width:8px;cursor:ew-resize;background:transparent;z-index:2}
+#resizeHandle:hover,#resizeHandle.active{background:color-mix(in srgb,var(--sage) 35%,transparent)}
+#expandBtn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem}
 #creator .sh{display:flex;justify-content:space-between;align-items:center;padding:.85rem 1rem;background:var(--ink);color:#fff;font-weight:700;gap:.5rem}
 #creator .sh button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem}
 #creator .tabs{display:flex;flex-wrap:wrap;gap:.3rem;padding:.55rem .8rem;border-bottom:1px solid var(--line);background:var(--sand)}
@@ -177,9 +181,11 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
 <button id="lockBtn" type="button" title="Espace créateur">🔒<span id="notifBadge">0</span></button>
 
 <div id="creator">
+  <div id="resizeHandle" title="Glisser pour redimensionner"></div>
   <div class="sh">
     <span>Espace créateur</span>
     <span>
+      <button type="button" id="expandBtn" title="Agrandir / réduire">⟷</button>
       <button type="button" id="cLogout" style="display:none">Déconnexion</button>
       <button type="button" id="cClose">✕</button>
     </span>
@@ -296,17 +302,101 @@ function saveReqs(){ localStorage.setItem(REQ_KEY, JSON.stringify(reqs)); update
 
 /* ===== ASSISTANT RÉPONSES (5 styles) ===== */
 function suggestReplies(req) {
-  const name = (req.name||"").split(" ")[0] || "Bonjour";
+  const name = (req.name||"").split(" ")[0] || "";
+  const hello = name ? ("Bonjour " + name) : "Bonjour";
+  const msg = (req.msg||"").toLowerCase();
   const type = req.type || "";
-  const isElec = type === "elec";
-  const isClim = type === "clim";
+  const phone = cfg.phone || "";
+  const isElec = type === "elec" || /disjonct|prise|tableau|court|panne|électrique|électrique/.test(msg);
+  const isClim = type === "clim" || /clim|froid|chaud|split|gaz|fuite|climati|pose/.test(msg);
+  const wantsFriday = /vendredi/.test(msg);
+  const wantsPose = /pose|install/.test(msg);
+  const isUrgent = /urgent|tout de suite|immédiat|plus de courant|plus de froid/.test(msg);
+
+  let diagnostic = "";
+  if (isElec) diagnostic = "Pour l’électrique, je regarde en priorité le tableau, les différentiels et le circuit concerné.";
+  else if (isClim && wantsPose) diagnostic = "Pour une pose de clim, je vérifie la puissance adaptée, l’emplacement des unités et le passage des liaisons.";
+  else if (isClim) diagnostic = "Pour la clim, je contrôle filtres, évacuation, codes erreur et fonctionnement des unités.";
+  else diagnostic = "Je prépare un diagnostic adapté à votre description.";
+
+  const dispo = wantsFriday
+    ? "Vous mentionnez vendredi : dites-moi le créneau précis (matin / après-midi) et l’adresse exacte."
+    : "Indiquez-moi vos créneaux et l’adresse exacte pour que je m’organise.";
+
   return [
-    { label: "Pro & rapide", text: `Bonjour ${name},\n\nMerci pour votre message. Je vous propose un passage dès que possible pour diagnostiquer la situation. Pouvez-vous me confirmer votre adresse et vos créneaux de disponibilité ?\n\nCordialement` },
-    { label: "Rassurant", text: `Bonjour ${name},\n\nBien reçu. Pas d’inquiétude, on va regarder ça ensemble. Dites-moi quand vous êtes disponible et je m’organise pour intervenir rapidement.\n\nÀ très vite` },
-    { label: "Demande d’infos", text: `Bonjour ${name},\n\nMerci pour votre demande. Pour mieux préparer l’intervention, pouvez-vous me préciser :\n- Depuis quand le problème est apparu ?\n- Y a-t-il un disjoncteur qui saute / un code erreur sur la clim ?\n- Adresse exacte et créneaux possibles\n\nMerci !` },
-    { label: "Devis / tarifs", text: `Bonjour ${name},\n\nMerci pour votre intérêt. Je peux vous faire un devis gratuit après un court diagnostic (ou sur photos/description selon le cas). Indiquez-moi votre disponibilité pour un passage ou un échange téléphonique.\n\nCordialement` },
-    { label: "Urgence", text: `Bonjour ${name},\n\nMessage bien reçu. Je traite votre demande en priorité. Rappelez-moi au ${cfg.phone||""} si c’est urgent, sinon confirmez-moi un créneau aujourd’hui / demain.\n\nJe reste joignable` }
+    { label: "Analyse + RDV", text: hello + ",
+
+Merci pour votre message. " + diagnostic + "
+
+" + dispo + "
+
+Je vous confirme ensuite le passage.
+
+Cordialement" },
+    { label: "Pro & clair", text: hello + ",
+
+Bien reçu. Je peux intervenir pour un diagnostic / devis. Confirmez adresse + disponibilité, et si possible une photo du tableau ou de l’unité intérieure/extérieure.
+
+Cordialement" },
+    { label: "Questions utiles", text: hello + ",
+
+Pour préparer au mieux :
+1) Depuis quand ?
+2) Y a-t-il un code erreur / un disjoncteur qui saute ?
+3) Adresse et créneaux
+
+Dès que j’ai ces infos, je vous propose un passage.
+
+Merci" },
+    { label: "Rassurant", text: hello + ",
+
+Pas d’inquiétude, on va traiter ça. " + (isUrgent ? "Je priorise votre demande. " : "") + "Donnez-moi un créneau et je m’organise au plus vite.
+
+À très vite" },
+    { label: "Urgence / appel", text: hello + ",
+
+Message bien reçu. Si c’est urgent, rappelez-moi au " + phone + ". Sinon confirmez un créneau aujourd’hui ou demain et l’adresse.
+
+Je reste joignable" }
   ];
+}
+
+function aiAssist(req) {
+  const msg = (req.msg||"").toLowerCase();
+  const type = req.type || "";
+  let analysis = "Demande générale.";
+  let steps = [];
+  if (type === "elec" || /disjonct|prise|tableau|court|panne/.test(msg)) {
+    analysis = "Probable souci électrique (circuit, disjoncteur, prise ou tableau).";
+    steps = [
+      "Demander si le général ou un divisionnaire saute",
+      "Vérifier différentiel 30 mA",
+      "Isoler les circuits un par un",
+      "Contrôler serrages / boîtes de dérivation si besoin",
+      "Prévoir multimètre + outillage tableau"
+    ];
+  } else if (type === "clim" || /clim|pose|froid|split/.test(msg)) {
+    if (/pose|install/.test(msg)) {
+      analysis = "Demande de pose / installation clim.";
+      steps = [
+        "Demander surface / pièces à traiter",
+        "Vérifier emplacement unité extérieure + évacuation condensats",
+        "Estimer longueur de liaisons frigorifiques",
+        "Prévoir support, perçage, mise en service",
+        "Proposer créneau visite technique si besoin"
+      ];
+    } else {
+      analysis = "Dépannage / entretien clim probable.";
+      steps = [
+        "Demander code erreur si affiché",
+        "Filtres nettoyés récemment ?",
+        "Unité extérieure dégagée ?",
+        "Fuite d’eau ou bruit particulier ?",
+        "Prévoir nettoyage / contrôle gaz selon symptôme"
+      ];
+    }
+  }
+  return { analysis, steps };
 }
 
 /* ===== AIDE DÉPANNAGE (mémo pro) ===== */
@@ -465,6 +555,7 @@ function renderTab(name){
           </div>
           <p class="msg">${esc(r.date)} · ${esc(r.phone)} · ${esc(r.email||"")}</p>
           ${helpForType(r.type, r.msg)}
+          ${(() => { const a = aiAssist(r); return `<div class="help-box"><strong>🤖 Assistant IA (local)</strong><br><em>${esc(a.analysis)}</em><br>` + a.steps.map(s=>"• "+esc(s)).join("<br>") + `</div>`; })()}
           <div class="chat">${chat||"<span class='msg'>—</span>"}</div>
           <p class="msg" style="margin:.3rem 0 .2rem">Assistant — choisir un style de réponse :</p>
           <div class="style-btns">${styleBtns}</div>
@@ -642,6 +733,29 @@ cTabs.addEventListener("click",e=>{
 });
 cSave.onclick=()=>{ collect(); localStorage.setItem(STORAGE, JSON.stringify(cfg)); apply(); cMsg.textContent="✓ Enregistré"; setTimeout(()=>cMsg.textContent="",2000); };
 cReset.onclick=()=>{ if(!confirm("Réinitialiser textes / couleurs / services ?")) return; cfg=structuredClone(DEFAULTS); localStorage.removeItem(STORAGE); apply(); renderTab(currentTab); };
+
+/* Resize + expand creator */
+(function(){
+  const panel = document.getElementById("creator");
+  const handle = document.getElementById("resizeHandle");
+  const exp = document.getElementById("expandBtn");
+  if (exp) exp.onclick = () => panel.classList.toggle("wide");
+  if (!handle) return;
+  let dragging = false, startX = 0, startW = 0;
+  handle.addEventListener("mousedown", e => {
+    dragging = true; startX = e.clientX; startW = panel.getBoundingClientRect().width;
+    handle.classList.add("active"); e.preventDefault();
+  });
+  window.addEventListener("mousemove", e => {
+    if (!dragging) return;
+    const dx = startX - e.clientX;
+    const w = Math.min(Math.max(320, startW + dx), window.innerWidth * 0.98);
+    panel.style.width = w + "px";
+    panel.classList.remove("wide");
+  });
+  window.addEventListener("mouseup", () => { dragging = false; handle.classList.remove("active"); });
+})();
+
 </script>
 </body>
 </html>
