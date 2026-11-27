@@ -231,6 +231,9 @@ const EMAILJS_TEMPLATE_CLIENT = "template_2zqa4qf";  // e-mail au client
 try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); } catch(e) { console.warn("EmailJS init", e); }
 
 function emailjsSend(templateId, params) {
+  if (typeof emailjs === "undefined") {
+    return Promise.reject(new Error("EmailJS SDK absent"));
+  }
   return emailjs.send(EMAILJS_SERVICE_ID, templateId, params);
 }
 
@@ -420,28 +423,51 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
   e.preventDefault();
   const btn = document.getElementById("submitBtn");
   const msgEl = document.getElementById("formMsg");
-  btn.disabled = true; btn.textContent = "Envoi…";
+  const form = this;
+  btn.disabled = true;
+  btn.textContent = "Envoi…";
+  msgEl.textContent = "";
+  msgEl.style.color = "";
+
   const d = {
     id: Date.now(),
     date: new Date().toLocaleString("fr-FR"),
-    name: cName.value.trim(),
-    phone: cPhone.value.trim(),
-    email: cEmail.value.trim().toLowerCase(),
-    type: cType.value,
-    msg: cMsg.value.trim(),
+    name: document.getElementById("cName").value.trim(),
+    phone: document.getElementById("cPhone").value.trim(),
+    email: document.getElementById("cEmail").value.trim().toLowerCase(),
+    type: document.getElementById("cType").value,
+    msg: document.getElementById("cMsg").value.trim(),
     read: false,
-    messages: [{ from:"client", text: cMsg.value.trim(), at: new Date().toISOString() }]
+    messages: [{ from: "client", text: document.getElementById("cMsg").value.trim(), at: new Date().toISOString() }]
   };
-  reqs.unshift(d);
-  saveReqs();
 
-  function done(mailOk){
-    btn.disabled = false; btn.textContent = "Envoyer la demande";
-    msgEl.textContent = mailOk ? "✅ Demande envoyée. Vous pouvez suivre la réponse dans « Suivi demande »." : "✅ Demande enregistrée. Suivi disponible avec votre e-mail dans « Suivi demande ».";
-    msgEl.style.color = "#166534";
-    contactForm.reset();
-    setTimeout(function(){ msgEl.textContent=""; }, 9000);
+  // Toujours enregistrer localement d'abord
+  try {
+    reqs.unshift(d);
+    saveReqs();
+  } catch (err) {
+    console.error(err);
   }
+
+  var finished = false;
+  function done(mailOk, detail) {
+    if (finished) return;
+    finished = true;
+    btn.disabled = false;
+    btn.textContent = "Envoyer la demande";
+    if (mailOk) {
+      msgEl.textContent = "✅ Demande envoyée. Suivi disponible avec votre e-mail.";
+      msgEl.style.color = "#166534";
+    } else {
+      msgEl.innerHTML = "✅ Demande enregistrée sur le site (Suivi demande)." +
+        (detail ? "<br><span style=\"color:#9a3412\">" + detail + "</span>" : "<br><span style=\"color:#9a3412\">E-mail non envoyé (voir console F12).</span>");
+    }
+    form.reset();
+    setTimeout(function(){ msgEl.textContent = ""; }, 10000);
+  }
+
+  // Timeout de sécurité : ne jamais rester bloqué
+  setTimeout(function(){ done(false, "Délai dépassé — demande quand même enregistrée."); }, 8000);
 
   var params = {
     name: d.name,
@@ -451,13 +477,20 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
     message: d.msg
   };
 
-  // 1) Notification pour toi + 2) confirmation client (EmailJS)
+  if (typeof emailjs === "undefined" || typeof emailjsSend !== "function") {
+    done(false, "EmailJS non chargé. Ouvre le site via http (pas file://) ou héberge-le.");
+    return;
+  }
+
   Promise.all([
     emailjsSend(EMAILJS_TEMPLATE_NOTIFY, params),
     emailjsSend(EMAILJS_TEMPLATE_CLIENT, params)
-  ]).then(function(){ done(true); }).catch(function(err){
-    console.warn("EmailJS", err);
-    done(false);
+  ]).then(function(){
+    done(true);
+  }).catch(function(err){
+    console.warn("EmailJS error", err);
+    var m = (err && (err.text || err.message)) ? String(err.text || err.message) : "Erreur EmailJS";
+    done(false, m);
   });
 });
 
@@ -544,18 +577,26 @@ function renderTab(name){
         r.read = true;
         saveReqs();
         // Direct-looking email to client (FormSubmit still powers delivery)
-        if (r.email) {
+        var mailNote = "";
+        if (r.email && typeof emailjsSend === "function") {
           try {
-            await emailjsSend(EMAILJS_TEMPLATE_CLIENT, {
-              name: r.name || "",
-              phone: cfg.phone || "",
-              email: r.email,
-              type: r.type || "",
-              message: text
-            });
-          } catch(e) { console.warn("EmailJS reply", e); }
+            await Promise.race([
+              emailjsSend(EMAILJS_TEMPLATE_CLIENT, {
+                name: r.name || "",
+                phone: cfg.phone || "",
+                email: r.email,
+                type: r.type || "",
+                message: text
+              }),
+              new Promise(function(_, rej){ setTimeout(function(){ rej(new Error("timeout")); }, 8000); })
+            ]);
+            mailNote = " E-mail envoyé au client.";
+          } catch(e) {
+            console.warn("EmailJS reply", e);
+            mailNote = " E-mail non envoyé (demande visible dans Suivi).";
+          }
         }
-        alert("Réponse enregistrée. Le client la voit dans « Suivi demande » et reçoit l'e-mail.");
+        alert("Réponse enregistrée." + mailNote);
         renderTab("demandes");
       };
     });
