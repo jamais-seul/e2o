@@ -292,7 +292,7 @@ function updateBadge(){
   if (n > 0) { b.style.display = "flex"; b.textContent = String(n); }
   else b.style.display = "none";
 }
-
+let cfg = JSON.parse(localStorage.getItem("site_cfg") || "{}";
 function apply(){
   const set=(id,v)=>{ const el=document.getElementById(id); if(el&&v!=null) el.textContent=v; };
   set("siteName", cfg.siteName); set("logoMark", cfg.logoMark);
