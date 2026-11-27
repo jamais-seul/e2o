@@ -8,16 +8,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <style>
 :root{--ink:#1c1917;--muted:#57534e;--soft:#78716c;--bg:#faf7f2;--card:#fff;--sand:#f5f0e8;--clay:#c4a574;--clay-dark:#a68b5b;--sage:#0f766e;--sage-dark:#0d5c56;--blush:#e8d5c4;--line:#e7e0d5;--shadow:0 4px 24px rgba(28,25,23,.06);--radius:16px;--font-serif:"Cormorant Garamond",Georgia,serif;--font-sans:"Source Sans 3",system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;scroll-padding-top:84px}
 body{font-family:var(--font-sans);background:var(--bg);color:var(--ink);line-height:1.65;font-size:17px}
 a{color:var(--sage-dark);text-decoration:none}a:hover{text-decoration:underline}
-nav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+nav{position:sticky;top:0;z-index:100;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
 .brand{font-family:var(--font-serif);font-size:1.35rem;font-weight:600;color:var(--ink);text-decoration:none!important;display:flex;align-items:center;gap:.55rem}
 .brand-mark{width:36px;height:36px;border-radius:50%;background:linear-gradient(145deg,var(--clay),var(--sage));display:grid;place-items:center;color:#fff;font-size:.95rem;font-weight:700}
-.nav-links{display:flex;gap:.15rem;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.nav-links{display:flex;gap:.15rem;flex-wrap:wrap;justify-content:flex-end}
 .nav-links a{color:var(--muted);font-weight:500;font-size:.9rem;padding:.4rem .7rem;border-radius:8px;text-decoration:none!important}
 .nav-links a:hover{background:var(--sand);color:var(--ink)}
 .nav-cta{background:var(--sage)!important;color:#fff!important;padding:.45rem 1rem!important;border-radius:999px!important;font-weight:600!important}
@@ -48,15 +47,17 @@ h2{font-family:var(--font-serif);font-size:clamp(1.7rem,3.5vw,2.2rem);font-weigh
 .price{font-family:var(--font-serif);font-size:1.5rem;font-weight:600;color:var(--sage)}
 .tag{display:inline-block;background:var(--sand);color:var(--sage-dark);font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:6px;margin-bottom:.45rem}
 .field{width:100%;padding:.65rem .8rem;margin:.25rem 0 .7rem;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font-size:.95rem;font-family:inherit}
-label{font-weight:600;font-size:.86rem}textarea.field{min-height:90px;resize:vertical}
+label{font-weight:600;font-size:.86rem}textarea.field{min-height:100px;resize:vertical}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:1.15rem}@media(max-width:700px){.two{grid-template-columns:1fr}}
 footer{background:var(--card);border-top:1px solid var(--line);text-align:center;padding:1.6rem 1rem;font-size:.84rem;color:var(--muted)}
-#lockBtn{position:fixed;left:14px;bottom:18px;z-index:9999;width:46px;height:46px;border-radius:50%;border:0;background:var(--ink);color:#fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
+#lockBtn{position:fixed;left:14px;bottom:18px;z-index:9999;width:46px;height:46px;border-radius:50%;border:0;background:var(--ink);color:#fff;font-size:1.2rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;position:fixed}
 #notifBadge{position:absolute;top:-4px;right:-4px;background:#dc2626;color:#fff;font-size:.65rem;font-weight:700;min-width:18px;height:18px;border-radius:999px;display:none;align-items:center;justify-content:center;padding:0 4px}
 #creator{position:fixed;top:0;right:0;width:min(560px,96vw);height:100vh;background:var(--card);border-left:1px solid var(--line);z-index:10000;display:none;flex-direction:column;box-shadow:-8px 0 28px rgba(0,0,0,.12)}
-#creator.open{display:flex}#creator.wide{width:min(920px,98vw)}
-#resizeHandle{position:absolute;left:0;top:0;bottom:0;width:8px;cursor:ew-resize;z-index:2}
+#creator.open{display:flex}
+#creator.wide{width:min(920px,98vw)}
+#resizeHandle{position:absolute;left:0;top:0;bottom:0;width:8px;cursor:ew-resize;background:transparent;z-index:2}
 #resizeHandle:hover,#resizeHandle.active{background:color-mix(in srgb,var(--sage) 35%,transparent)}
+#expandBtn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem}
 #creator .sh{display:flex;justify-content:space-between;align-items:center;padding:.85rem 1rem;background:var(--ink);color:#fff;font-weight:700;gap:.5rem}
 #creator .sh button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:.3rem .6rem;cursor:pointer;font-size:.82rem}
 #creator .tabs{display:flex;flex-wrap:wrap;gap:.3rem;padding:.55rem .8rem;border-bottom:1px solid var(--line);background:var(--sand)}
@@ -66,38 +67,31 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
 #creator .sf{padding:.7rem 1rem;border-top:1px solid var(--line);display:flex;gap:.45rem;align-items:center;flex-wrap:wrap}
 .msg{font-size:.84rem;color:var(--muted)}
 .login-box{max-width:320px;margin:1.8rem auto;text-align:center}
-.help-box{background:var(--sand);border-radius:10px;padding:.7rem .85rem;font-size:.86rem;margin:.5rem 0;line-height:1.5}
-.ok-box{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:10px;padding:.65rem .85rem;font-size:.84rem;margin:.55rem 0;text-align:left}
 .warn-box{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:.65rem .85rem;font-size:.84rem;margin:.55rem 0;text-align:left}
+.ok-box{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:10px;padding:.65rem .85rem;font-size:.84rem;margin:.55rem 0;text-align:left}
+.err-box{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;border-radius:10px;padding:.65rem .85rem;font-size:.84rem;margin:.55rem 0;text-align:left}
+.color-row{display:flex;align-items:center;gap:.55rem;margin:.35rem 0}
+.color-row input[type=color]{width:40px;height:34px;border:1px solid var(--line);border-radius:8px;padding:0;cursor:pointer}
 .req-card{border:1px solid var(--line);border-radius:12px;padding:1rem;margin-bottom:.7rem;background:var(--bg)}
-.req-card.new{border-color:var(--sage)}
-.chat{max-height:200px;overflow-y:auto;margin:.5rem 0;padding:.5rem;background:var(--card);border-radius:8px;border:1px solid var(--line);font-size:.88rem}
-.chat .bubble{margin:.3rem 0;padding:.45rem .65rem;border-radius:8px;max-width:92%;white-space:pre-wrap}
+.req-card.new{border-color:var(--sage);box-shadow:0 0 0 2px color-mix(in srgb,var(--sage) 20%,transparent)}
+.chat{max-height:160px;overflow-y:auto;margin:.5rem 0;padding:.5rem;background:var(--card);border-radius:8px;border:1px solid var(--line);font-size:.88rem}
+.chat .bubble{margin:.3rem 0;padding:.4rem .6rem;border-radius:8px;max-width:92%}
 .chat .from-client{background:#e0f2fe}
 .chat .from-admin{background:#dcfce7}
 .style-btns{display:flex;flex-wrap:wrap;gap:.35rem;margin:.4rem 0}
 .style-btns button{font-size:.75rem;padding:.3rem .55rem;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-family:inherit}
 .style-btns button:hover{border-color:var(--sage);background:var(--sand)}
-.ia-chat{border:1px solid var(--line);border-radius:12px;padding:.75rem;background:var(--bg);max-height:340px;overflow-y:auto;margin-bottom:.6rem}
-.ia-chat .row{margin:.45rem 0;font-size:.9rem}
-.ia-chat .q{color:var(--muted)}.ia-chat .a{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.55rem .7rem;margin-top:.25rem}
-.quick{display:flex;flex-wrap:wrap;gap:.35rem;margin:.5rem 0}
-.quick button{font-size:.78rem;padding:.35rem .65rem;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-family:inherit}
-.quick button:hover{background:var(--sand)}
-#portal{position:fixed;inset:0;background:rgba(28,25,23,.45);z-index:10001;display:none;align-items:center;justify-content:center;padding:1rem}
-#portal.open{display:flex}
-#portal .box{background:var(--card);border-radius:16px;width:min(520px,100%);max-height:90vh;overflow:auto;padding:1.25rem;box-shadow:var(--shadow)}
-.visits{font-size:.8rem;color:var(--muted);margin-left:.5rem}
+.help-box{background:var(--sand);border-radius:10px;padding:.7rem .85rem;font-size:.86rem;margin:.5rem 0;line-height:1.5}
 </style>
 </head>
 <body>
 <nav>
   <a class="brand" href="#top"><span class="brand-mark" id="logoMark">CÉ</span> <span id="siteName">Clim & Électricité</span></a>
   <div class="nav-links">
-    <a href="#services">Services</a>
-    <a href="#tarifs">Tarifs</a>
-    <a href="#suivi">Suivi demande</a>
-    <a href="#contact" class="nav-cta">Devis gratuit</a>
+    <a href="#services" id="navServ">Services</a>
+    <a href="#realisations" id="navReal">Réalisations</a>
+    <a href="#tarifs" id="navTarif">Tarifs</a>
+    <a href="#contact" class="nav-cta" id="navCta">Devis gratuit</a>
   </div>
 </nav>
 
@@ -105,96 +99,93 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
   <div>
     <div class="hero-badge" id="heroBadge">❄️ Pose · Dépannage · Entretien</div>
     <h1 id="heroTitle">Pose de clim &amp; dépannage électrique</h1>
-    <p class="lead" id="heroSub">Installation, entretien et dépannage. Intervention rapide, devis gratuit.</p>
+    <p class="lead" id="heroSub">Installation, entretien et dépannage. Intervention rapide, devis gratuit, travail soigné.</p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="#contact">Demander un devis</a>
-      <a class="btn btn-secondary" href="tel:+33000000000" id="heroTel">📞 Appeler</a>
+      <a class="btn btn-primary" href="#contact" id="btnDevis">Demander un devis</a>
+      <a class="btn btn-secondary" href="tel:+33000000000" id="heroTel">📞 Appeler maintenant</a>
     </div>
   </div>
   <div class="hero-card">
     <div class="photo"><span id="heroIcon">❄️</span></div>
     <div class="hero-meta">
-      <div><strong>Intervention rapide</strong> — devis sous 24-48h</div>
-      <div><strong>Zone</strong> — <span id="infoZone">Votre ville et alentours</span></div>
-      <div><strong>Horaires</strong> — <span id="infoHours">Lun–Ven 8h–19h · Sam sur RDV</span></div>
+      <div><strong id="meta1Label">Intervention rapide</strong> — <span id="meta1Text">devis sous 24-48h</span></div>
+      <div><strong id="meta2Label">Zone</strong> — <span id="infoZone">Votre ville et alentours</span></div>
+      <div><strong id="meta3Label">Horaires</strong> — <span id="infoHours">Lun–Ven 8h–19h · Sam sur RDV</span></div>
     </div>
   </div>
 </header>
 
-<section id="services"><div class="wrap">
-  <div class="section-label">Services</div><h2 id="servTitle">Nos services</h2>
-  <p class="section-intro" id="servSub">Climatisation et électricité.</p>
-  <div class="grid-3" id="servGrid"></div>
-</div></section>
-
-<section id="tarifs" class="band"><div class="wrap">
-  <div class="section-label">Tarifs</div><h2 id="tarifTitle">Tarifs indicatifs</h2>
-  <div class="grid-3" id="tarifGrid"></div>
-</div></section>
-
-<section id="suivi"><div class="wrap">
-  <div class="section-label">Espace client</div>
-  <h2>Suivi de votre demande</h2>
-  <p class="section-intro">Entrez l’e-mail utilisé lors de votre demande pour voir la conversation (uniquement la vôtre).</p>
-  <div class="card" style="max-width:480px">
-    <label>Votre e-mail</label>
-    <input class="field" id="suiviEmail" type="email" placeholder="vous@email.com">
-    <button class="btn btn-primary" type="button" id="suiviBtn">Voir mon suivi</button>
-    <p class="msg" id="suiviErr" style="color:#b91c1c;margin-top:.5rem"></p>
+<section id="services">
+  <div class="wrap">
+    <div class="section-label" id="servLabel">Ce que nous faisons</div>
+    <h2 id="servTitle">Nos services</h2>
+    <p class="section-intro" id="servSub">Climatisation et électricité pour particuliers et professionnels.</p>
+    <div class="grid-3" id="servGrid"></div>
   </div>
-</div></section>
+</section>
 
-<section id="contact" class="band"><div class="wrap">
-  <div class="section-label">Contact</div><h2 id="contactTitle">Contact & devis</h2>
-  <div class="two">
-    <div class="card">
-      <form id="contactForm">
-        <label>Nom *</label><input class="field" id="cName" required>
-        <label>Téléphone *</label><input class="field" id="cPhone" type="tel" required>
-        <label>Email *</label><input class="field" id="cEmail" type="email" required>
-        <label>Type</label>
-        <select class="field" id="cType">
-          <option value="clim">Pose / entretien clim</option>
-          <option value="elec">Dépannage électrique</option>
-          <option value="devis">Devis travaux</option>
-          <option value="autre">Autre</option>
-        </select>
-        <label>Message *</label><textarea class="field" id="cMsg" required></textarea>
-        <button class="btn btn-primary" type="submit" id="submitBtn" style="width:100%">Envoyer la demande</button>
-        <p id="formMsg" class="msg" style="margin-top:.5rem"></p>
-      </form>
+<section class="band" id="realisations">
+  <div class="wrap">
+    <div class="section-label" id="realLabel">Chantiers</div>
+    <h2 id="realTitle">Réalisations</h2>
+    <p class="section-intro" id="realSub">Photos de chantiers.</p>
+    <div id="galleryBox" style="background:var(--card);border:1px solid var(--line);border-radius:16px;aspect-ratio:16/9;display:grid;place-items:center;color:var(--soft);box-shadow:var(--shadow)">Ajoutez vos photos dans l’espace créateur</div>
+  </div>
+</section>
+
+<section id="tarifs">
+  <div class="wrap">
+    <div class="section-label" id="tarifLabel">Tarifs</div>
+    <h2 id="tarifTitle">Tarifs indicatifs</h2>
+    <p class="section-intro" id="tarifSub">Devis gratuit et personnalisé.</p>
+    <div class="grid-3" id="tarifGrid"></div>
+  </div>
+</section>
+
+<section id="contact" class="band">
+  <div class="wrap">
+    <div class="section-label" id="contactLabel">Contact</div>
+    <h2 id="contactTitle">Contact & devis</h2>
+    <p class="section-intro" id="contactSub">Décrivez votre besoin, on vous rappelle rapidement.</p>
+    <div class="two">
+      <div class="card">
+        <form id="contactForm">
+          <label>Nom *</label><input class="field" id="cName" required placeholder="Votre nom">
+          <label>Téléphone *</label><input class="field" id="cPhone" type="tel" required placeholder="06 12 34 56 78">
+          <label>Email *</label><input class="field" id="cEmail" type="email" required placeholder="vous@email.com">
+          <label>Type de demande</label>
+          <select class="field" id="cType">
+            <option value="clim">Pose / entretien clim</option>
+            <option value="elec">Dépannage électrique</option>
+            <option value="devis">Devis travaux</option>
+            <option value="autre">Autre</option>
+          </select>
+          <label>Message *</label><textarea class="field" id="cMsg" required placeholder="Décrivez le besoin, l’adresse, la disponibilité…"></textarea>
+          <button class="btn btn-primary" type="submit" id="submitBtn" style="width:100%">Envoyer la demande</button>
+          <p id="formMsg" class="msg" style="margin-top:.55rem"></p>
+        </form>
+      </div>
+      <div class="card">
+        <h3 style="font-family:var(--font-serif);margin-bottom:.7rem" id="coordTitle">Coordonnées</h3>
+        <p style="margin-bottom:.45rem"><strong>📞 Téléphone</strong><br><a href="tel:+33000000000" id="infoTel">+33 0 00 00 00 00</a></p>
+        <p style="margin-bottom:.45rem"><strong>✉️ Email</strong><br><span id="infoEmail">contact@exemple.fr</span></p>
+        <p style="margin-bottom:.45rem"><strong>📍 Zone</strong><br><span id="infoZone2">Votre ville et alentours</span></p>
+        <p style="margin-bottom:.45rem"><strong>🕒 Horaires</strong><br><span id="infoHours2">Lun–Ven 8h–19h · Sam sur RDV</span></p>
+      </div>
     </div>
-    <div class="card">
-      <h3 style="font-family:var(--font-serif);margin-bottom:.7rem">Coordonnées</h3>
-      <p style="margin-bottom:.45rem"><strong>📞</strong> <a href="tel:+33000000000" id="infoTel">+33 0 00 00 00 00</a></p>
-      <p style="margin-bottom:.45rem"><strong>✉️</strong> <span id="infoEmail">contact@exemple.fr</span></p>
-      <p style="margin-bottom:.45rem"><strong>📍</strong> <span id="infoZone2">Votre ville</span></p>
-      <p><strong>🕒</strong> <span id="infoHours2">Lun–Ven 8h–19h</span></p>
-    </div>
   </div>
-</div></section>
+</section>
 
-<footer>
-  <strong id="footName">Clim & Électricité</strong> — <span id="footText">Pose et dépannage.</span>
-  <span class="visits" id="visitLabel"></span>
-</footer>
+<footer><strong id="footName">Clim & Électricité</strong> — <span id="footText">Pose de climatisation et dépannage électrique.</span></footer>
 
-<button id="lockBtn" type="button">🔒<span id="notifBadge">0</span></button>
-
-<div id="portal"><div class="box">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem">
-    <strong style="font-family:var(--font-serif);font-size:1.2rem">Votre suivi</strong>
-    <button class="btn btn-secondary btn-sm" type="button" id="portalClose">Fermer</button>
-  </div>
-  <div id="portalBody"></div>
-</div></div>
+<button id="lockBtn" type="button" title="Espace créateur">🔒<span id="notifBadge">0</span></button>
 
 <div id="creator">
-  <div id="resizeHandle"></div>
+  <div id="resizeHandle" title="Glisser pour redimensionner"></div>
   <div class="sh">
     <span>Espace créateur</span>
     <span>
-      <button type="button" id="expandBtn">⟷</button>
+      <button type="button" id="expandBtn" title="Agrandir / réduire">⟷</button>
       <button type="button" id="cLogout" style="display:none">Déconnexion</button>
       <button type="button" id="cClose">✕</button>
     </span>
@@ -202,7 +193,8 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
   <div class="tabs" id="cTabs" style="display:none"></div>
   <div class="sb" id="cBody"></div>
   <div class="sf" id="cFoot" style="display:none">
-    <button class="btn btn-primary btn-sm" id="cSave">💾 Sauver</button>
+    <button class="btn btn-primary btn-sm" id="cSave">💾 Sauvegarder</button>
+    <button class="btn btn-secondary btn-sm" id="cReset">Réinit.</button>
     <span class="msg" id="cMsg"></span>
   </div>
 </div>
@@ -219,184 +211,196 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-let db = null;
-try { db = firebase.firestore(); } catch(e) {}
 
-/* ===== EmailJS ===== */
-const EMAILJS_PUBLIC_KEY = "9eNMtdUBT78dTSrkT";
-const EMAILJS_SERVICE_ID = "service_ld451te";
-const EMAILJS_TEMPLATE_NOTIFY = "template_90u3dvn";  // notification pour toi
-const EMAILJS_TEMPLATE_CLIENT = "template_2zqa4qf";  // e-mail au client
-function emailjsSend(templateId, params) {
-  // API REST EmailJS — pas besoin du SDK navigateur
-  var payload = {
-    service_id: EMAILJS_SERVICE_ID,
-    template_id: templateId,
-    user_id: EMAILJS_PUBLIC_KEY,
-    template_params: params
-  };
-  return fetch("https://api.emailjs.com/api/v1.0/email/send", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  }).then(function(res) {
-    return res.text().then(function(text) {
-      if (!res.ok) {
-        var err = new Error(text || ("HTTP " + res.status));
-        err.status = res.status;
-        err.text = text;
-        throw err;
-      }
-      return text;
-    });
-  });
-}
+const STORAGE = "clim_v3_cfg";
+const REQ_KEY = "clim_v3_reqs";
 
+const DEFAULTS = {
+  siteName: "Clim & Électricité", logoMark: "CÉ",
+  heroTitle: "Pose de clim & dépannage électrique",
+  heroSub: "Installation, entretien et dépannage. Intervention rapide, devis gratuit, travail soigné.",
+  heroBadge: "❄️ Pose · Dépannage · Entretien", heroIcon: "❄️",
+  btnDevis: "Demander un devis", btnTel: "📞 Appeler maintenant",
+  navServ: "Services", navReal: "Réalisations", navTarif: "Tarifs", navCta: "Devis gratuit",
+  meta1Label: "Intervention rapide", meta1Text: "devis sous 24-48h",
+  meta2Label: "Zone", meta3Label: "Horaires",
+  phone: "+33 0 00 00 00 00", email: "contact@exemple.fr", notifEmail: "vincent.legall974@gmail.com",
+  zone: "Votre ville et alentours", hours: "Lun–Ven 8h–19h · Sam sur RDV",
+  servLabel: "Ce que nous faisons", servTitle: "Nos services", servSub: "Climatisation et électricité pour particuliers et professionnels.",
+  realLabel: "Chantiers", realTitle: "Réalisations", realSub: "Photos de chantiers.",
+  tarifLabel: "Tarifs", tarifTitle: "Tarifs indicatifs", tarifSub: "Devis gratuit et personnalisé.",
+  contactLabel: "Contact", contactTitle: "Contact & devis", contactSub: "Décrivez votre besoin, on vous rappelle rapidement.",
+  coordTitle: "Coordonnées", footText: "Pose de climatisation et dépannage électrique.",
+  services: [
+    {icon:"❄️", title:"Pose de climatisation", desc:"Installation mono-split, multi-split, gainable."},
+    {icon:"⚡", title:"Dépannage électrique", desc:"Panne, court-circuit, tableau électrique. Intervention rapide."},
+    {icon:"🔧", title:"Entretien & maintenance", desc:"Nettoyage, recharge de gaz, contrôle d’étanchéité."},
+    {icon:"🏠", title:"Rénovation électrique", desc:"Mise aux normes NF C 15-100, éclairage LED."}
+  ],
+  tarifs: [
+    {tag:"Clim", title:"Pose mono-split", price:"dès 890 €", desc:"Fourniture et pose d’un split mural standard."},
+    {tag:"Clim", title:"Entretien annuel", price:"dès 120 €", desc:"Nettoyage et contrôle."},
+    {tag:"Électricité", title:"Dépannage", price:"dès 70 €", desc:"Déplacement + 1ère heure."},
+    {tag:"Électricité", title:"Mise aux normes", price:"Sur devis", desc:"Diagnostic et conformité."}
+  ],
+  colors: { sage:"#0f766e", clay:"#c4a574", bg:"#faf7f2", ink:"#1c1917" }
+};
 
-function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-function saveReqs(){ localStorage.setItem(REQ_KEY, JSON.stringify(reqs)); updateBadge(); syncReqToCloud(); }
+let cfg = structuredClone(DEFAULTS);
+try { const s = localStorage.getItem(STORAGE); if (s) cfg = {...DEFAULTS, ...JSON.parse(s)}; } catch(e){}
+let reqs = [];
+try { reqs = JSON.parse(localStorage.getItem(REQ_KEY)||"[]"); } catch(e){}
+let currentUser = null, currentTab = "demandes";
 
-function updateBadge(){
-  const b = document.getElementById("notifBadge");
-  if (!currentUser) { b.style.display = "none"; return; }
-  const n = reqs.filter(r => !r.read).length;
-  if (n > 0) { b.style.display = "flex"; b.textContent = String(n); }
-  else b.style.display = "none";
-}
+function esc(s){ return String(s??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
-function apply(){
-  const set=(id,v)=>{ const el=document.getElementById(id); if(el&&v!=null) el.textContent=v; };
-  set("siteName", cfg.siteName); set("logoMark", cfg.logoMark);
-  set("heroTitle", cfg.heroTitle); set("heroSub", cfg.heroSub);
-  set("heroBadge", cfg.heroBadge); set("heroIcon", cfg.heroIcon);
-  set("servTitle", cfg.servTitle); set("servSub", cfg.servSub);
-  set("tarifTitle", cfg.tarifTitle); set("contactTitle", cfg.contactTitle);
-  set("footName", cfg.siteName); set("footText", cfg.footText);
+function apply() {
+  const set = (id,v)=>{ const el=document.getElementById(id); if(el&&v!=null) el.textContent=v; };
+  set("siteName",cfg.siteName); set("logoMark",cfg.logoMark);
+  set("heroTitle",cfg.heroTitle); set("heroSub",cfg.heroSub);
+  set("heroBadge",cfg.heroBadge); set("heroIcon",cfg.heroIcon);
+  set("btnDevis",cfg.btnDevis);
+  const ht=document.getElementById("heroTel"); if(ht) ht.textContent=cfg.btnTel||"📞 Appeler";
+  set("navServ",cfg.navServ); set("navReal",cfg.navReal); set("navTarif",cfg.navTarif); set("navCta",cfg.navCta);
+  set("meta1Label",cfg.meta1Label); set("meta1Text",cfg.meta1Text);
+  set("meta2Label",cfg.meta2Label); set("meta3Label",cfg.meta3Label);
+  set("servLabel",cfg.servLabel); set("servTitle",cfg.servTitle); set("servSub",cfg.servSub);
+  set("realLabel",cfg.realLabel); set("realTitle",cfg.realTitle); set("realSub",cfg.realSub);
+  set("tarifLabel",cfg.tarifLabel); set("tarifTitle",cfg.tarifTitle); set("tarifSub",cfg.tarifSub);
+  set("contactLabel",cfg.contactLabel); set("contactTitle",cfg.contactTitle); set("contactSub",cfg.contactSub);
+  set("coordTitle",cfg.coordTitle); set("footName",cfg.siteName); set("footText",cfg.footText);
   const tel=(cfg.phone||"").replace(/\s/g,"");
-  document.getElementById("infoTel").textContent = cfg.phone||"";
-  document.getElementById("infoTel").href = "tel:"+tel;
-  document.getElementById("heroTel").href = "tel:"+tel;
-  document.getElementById("infoEmail").textContent = cfg.email||"";
-  document.getElementById("infoZone").textContent = cfg.zone||"";
-  document.getElementById("infoZone2").textContent = cfg.zone||"";
-  document.getElementById("infoHours").textContent = cfg.hours||"";
-  document.getElementById("infoHours2").textContent = cfg.hours||"";
-  document.getElementById("servGrid").innerHTML = (cfg.services||[]).map(s=>'<div class="card"><div class="card-icon">'+esc(s.icon)+'</div><h3>'+esc(s.title)+'</h3><p>'+esc(s.desc)+'</p></div>').join("");
-  document.getElementById("tarifGrid").innerHTML = (cfg.tarifs||[]).map(t=>'<div class="card"><span class="tag">'+esc(t.tag)+'</span><h3>'+esc(t.title)+'</h3><p class="price">'+esc(t.price)+'</p><p>'+esc(t.desc)+'</p></div>').join("");
-  if (cfg.colors) {
-    if (cfg.colors.sage) document.documentElement.style.setProperty("--sage", cfg.colors.sage);
-    if (cfg.colors.clay) document.documentElement.style.setProperty("--clay", cfg.colors.clay);
-    if (cfg.colors.bg) document.documentElement.style.setProperty("--bg", cfg.colors.bg);
-    if (cfg.colors.ink) document.documentElement.style.setProperty("--ink", cfg.colors.ink);
+  document.getElementById("infoTel").textContent=cfg.phone||"";
+  document.getElementById("infoTel").href="tel:"+tel;
+  document.getElementById("heroTel").href="tel:"+tel;
+  document.getElementById("infoEmail").textContent=cfg.email||"";
+  document.getElementById("infoZone").textContent=cfg.zone||"";
+  document.getElementById("infoZone2").textContent=cfg.zone||"";
+  document.getElementById("infoHours").textContent=cfg.hours||"";
+  document.getElementById("infoHours2").textContent=cfg.hours||"";
+  const sg=document.getElementById("servGrid");
+  if(sg&&cfg.services) sg.innerHTML=cfg.services.map(s=>`<div class="card"><div class="card-icon">${esc(s.icon)}</div><h3>${esc(s.title)}</h3><p>${esc(s.desc)}</p></div>`).join("");
+  const tg=document.getElementById("tarifGrid");
+  if(tg&&cfg.tarifs) tg.innerHTML=cfg.tarifs.map(t=>`<div class="card"><span class="tag">${esc(t.tag)}</span><h3>${esc(t.title)}</h3><p class="price">${esc(t.price)}</p><p>${esc(t.desc)}</p></div>`).join("");
+  if(cfg.colors){
+    if(cfg.colors.sage) document.documentElement.style.setProperty("--sage",cfg.colors.sage);
+    if(cfg.colors.clay) document.documentElement.style.setProperty("--clay",cfg.colors.clay);
+    if(cfg.colors.bg) document.documentElement.style.setProperty("--bg",cfg.colors.bg);
+    if(cfg.colors.ink) document.documentElement.style.setProperty("--ink",cfg.colors.ink);
   }
   updateBadge();
 }
 apply();
 
-/* Unique visitor: 1 device = 1 count */
-async function trackVisit(){
-  let vid = localStorage.getItem(VID_KEY);
-  if (!vid) {
-    vid = (crypto.randomUUID && crypto.randomUUID()) || ("v"+Date.now()+"_"+Math.random().toString(16).slice(2));
-    localStorage.setItem(VID_KEY, vid);
-  }
-  let total = parseInt(localStorage.getItem("clim_v5_visits_local")||"0",10);
-  if (!localStorage.getItem("clim_v5_counted")) {
-    localStorage.setItem("clim_v5_counted", "1");
-    total += 1;
-    localStorage.setItem("clim_v5_visits_local", String(total));
-    if (db) {
-      try {
-        const ref = db.collection("stats").doc("visits");
-        await db.runTransaction(async (tx) => {
-          const snap = await tx.get(ref);
-          const data = snap.exists ? snap.data() : { count: 0, ids: {} };
-          if (!data.ids) data.ids = {};
-          if (!data.ids[vid]) {
-            data.ids[vid] = true;
-            data.count = (data.count||0) + 1;
-            tx.set(ref, data, { merge: true });
-          }
-        });
-      } catch(e) {}
-    }
-  }
-  try {
-    if (db) {
-      const snap = await db.collection("stats").doc("visits").get();
-      if (snap.exists && snap.data().count) total = snap.data().count;
-    }
-  } catch(e) {}
-  const lab = document.getElementById("visitLabel");
-  if (lab) lab.textContent = " · " + total + " visiteur" + (total>1?"s":"") + " unique" + (total>1?"s":"");
-}
-trackVisit();
-
-async function syncReqToCloud(){
-  if (!db || !currentUser) return;
-  try {
-    for (const r of reqs) {
-      await db.collection("demandes").doc(String(r.id)).set(r, { merge: true });
-    }
-  } catch(e) {}
+function updateBadge(){
+  const n=reqs.filter(r=>!r.read).length;
+  const b=document.getElementById("notifBadge");
+  if(n>0){b.style.display="flex";b.textContent=n;} else b.style.display="none";
 }
 
-async function loadReqsFromCloud(){
-  if (!db || !currentUser) return;
-  try {
-    const snap = await db.collection("demandes").orderBy("id","desc").limit(100).get();
-    if (!snap.empty) {
-      const cloud = snap.docs.map(d => d.data());
-      const map = {};
-      reqs.forEach(r => map[r.id] = r);
-      cloud.forEach(r => { map[r.id] = Object.assign({}, map[r.id]||{}, r); });
-      reqs = Object.keys(map).map(k => map[k]).sort((a,b)=>b.id-a.id);
-      localStorage.setItem(REQ_KEY, JSON.stringify(reqs));
-      updateBadge();
-    }
-  } catch(e) {}
-}
+function saveReqs(){ localStorage.setItem(REQ_KEY, JSON.stringify(reqs)); updateBadge(); }
 
-function suggestReplies(req){
-  const name = (req.name||"").split(" ")[0] || "";
+/* ===== ASSISTANT RÉPONSES (5 styles) ===== */
+function suggestReplies(req) {
+  const name = (req.name || "").split(" ")[0] || "";
   const hello = name ? ("Bonjour " + name) : "Bonjour";
-  const msg = (req.msg||"").toLowerCase();
+  const msg = (req.msg || "").toLowerCase();
+  const type = req.type || "";
   const phone = cfg.phone || "";
+  const isElec = type === "elec" || /disjonct|prise|tableau|court|panne|électrique/.test(msg);
+  const isClim = type === "clim" || /clim|froid|chaud|split|gaz|fuite|climati|pose/.test(msg);
   const wantsFriday = /vendredi/.test(msg);
-  const isPose = /pose|install/.test(msg) || req.type==="clim";
-  const isElec = req.type==="elec" || /disjonct|prise|tableau|panne/.test(msg);
-  let focus = isElec ? "le diagnostic électrique" : (isPose ? "la pose / le devis clim" : "votre demande");
-  const dispo = wantsFriday ? "Vous avez cité vendredi : confirmez le créneau (matin/après-midi) et l'adresse exacte." : "Indiquez adresse exacte et créneaux possibles.";
+  const wantsPose = /pose|install/.test(msg);
+  const isUrgent = /urgent|tout de suite|immédiat|plus de courant|plus de froid/.test(msg);
+
+  let diagnostic = "";
+  if (isElec) diagnostic = "Pour l'électrique, je regarde en priorité le tableau, les différentiels et le circuit concerné.";
+  else if (isClim && wantsPose) diagnostic = "Pour une pose de clim, je vérifie la puissance adaptée, l'emplacement des unités et le passage des liaisons.";
+  else if (isClim) diagnostic = "Pour la clim, je contrôle filtres, évacuation, codes erreur et fonctionnement des unités.";
+  else diagnostic = "Je prépare un diagnostic adapté à votre description.";
+
+  const dispo = wantsFriday
+    ? "Vous mentionnez vendredi : dites-moi le créneau précis (matin / après-midi) et l'adresse exacte."
+    : "Indiquez-moi vos créneaux et l'adresse exacte pour que je m'organise.";
+
   return [
-    { label: "Confirm + RDV", text: hello+",\n\nMerci pour votre message concernant "+focus+".\n"+dispo+"\n\nDès validation, je vous confirme le passage.\n\nCordialement" },
-    { label: "Pro & infos", text: hello+",\n\nBien reçu. Pour préparer l'intervention, merci de préciser : adresse, disponibilité, et si possible une photo (tableau / unité).\n\nJe reviens vers vous rapidement.\n\nCordialement" },
-    { label: "Questions", text: hello+",\n\nQuelques précisions utiles :\n1) Depuis quand ?\n2) Code erreur / disjoncteur qui saute ?\n3) Créneaux et adresse\n\nMerci !" },
-    { label: "Rassurant", text: hello+",\n\nPas d'inquiétude, on traite ça. Donnez-moi un créneau et je m'organise.\n\nÀ très vite" },
-    { label: "Appel", text: hello+",\n\nMessage bien reçu. Vous pouvez aussi me joindre au "+phone+". Sinon confirmez un créneau et l'adresse.\n\nCordialement" }
+    { label: "Analyse + RDV", text: hello + ",\n\nMerci pour votre message. " + diagnostic + "\n\n" + dispo + "\n\nJe vous confirme ensuite le passage.\n\nCordialement" },
+    { label: "Pro & clair", text: hello + ",\n\nBien reçu. Je peux intervenir pour un diagnostic / devis. Confirmez adresse + disponibilité, et si possible une photo du tableau ou de l'unité intérieure/extérieure.\n\nCordialement" },
+    { label: "Questions utiles", text: hello + ",\n\nPour préparer au mieux :\n1) Depuis quand ?\n2) Y a-t-il un code erreur / un disjoncteur qui saute ?\n3) Adresse et créneaux\n\nDès que j'ai ces infos, je vous propose un passage.\n\nMerci" },
+    { label: "Rassurant", text: hello + ",\n\nPas d'inquiétude, on va traiter ça. " + (isUrgent ? "Je priorise votre demande. " : "") + "Donnez-moi un créneau et je m'organise au plus vite.\n\nÀ très vite" },
+    { label: "Urgence / appel", text: hello + ",\n\nMessage bien reçu. Si c'est urgent, rappelez-moi au " + phone + ". Sinon confirmez un créneau aujourd'hui ou demain et l'adresse.\n\nJe reste joignable" }
   ];
 }
 
-/* Interactive pro assistant (chat-like) */
-const IA_KB = [
-  { keys: ["disjoncteur","saute","différentiel"], a: "Disjoncteur qui saute : 1) Tout couper. 2) Remonter le général. 3) Remonter les divisionnaires un par un. Le circuit qui refait sauter est le fautif. Vérifier surcharge (trop d'appareils) ou court-circuit (prise/luminaire). Différentiel 30 mA qui saute souvent = défaut d'isolement (humidité, appareil HS)." },
-  { keys: ["prise","chauffe","brûlé"], a: "Prise qui chauffe : couper le courant au tableau avant toute manip. Souvent mauvais serrage ou contact oxydé. Remplacer la prise et vérifier la section du câble. Ne jamais laisser une prise chaude en service." },
-  { keys: ["plus de courant","coupure","panne générale"], a: "Plus de courant : vérifier si voisinage aussi touché (réseau). Sinon tableau : position du général + différentiels. Tester en isolant les départs. Multimètre utile sur arrivée et départs." },
-  { keys: ["pose","installer","installation","mono-split","multi"], a: "Pose clim : estimer puissance (volume, isolation, exposition). Prévoir unité extérieure (support, distances, nuisances), perçage, liaisons cuivre, évacuation condensats, raccordement électrique dédié, mise sous vide + charge, mise en service. Visite technique conseillée." },
-  { keys: ["ne refroidit","pas froid","plus froid"], a: "Clim ne refroidit plus : filtres sales, mode incorrect, unité extérieure obstruée, manque de fluide (manomètres), sonde d'ambiance, carte électronique. Noter tout code erreur avant reset." },
-  { keys: ["fuite","eau","condensa"], a: "Fuite d'eau unité intérieure : bac ou tuyau d'évacuation bouché, pente insuffisante, isolation du tube frigorifique insuffisante (condensats). Nettoyer la ligne d'évacuation en priorité." },
-  { keys: ["bruit","vibration"], a: "Bruit clim : support unité extérieure mal calé, ventilateur, détente, corps étranger. Vérifier fixations et niveau. Bruit électrique (tableau) : desserrage possible → couper et contrôler." },
-  { keys: ["gaz","fluide","r32","r410"], a: "Fluide : intervention sur circuit frigorifique réservée aux certifiés (attestation de capacité). Contrôle d'étanchéité, vide, charge au poids. Pas de recharge au 'feeling'." },
-  { keys: ["norme","nfc","c15","tableau"], a: "NF C 15-100 : protection par circuit, différentiels 30 mA adaptés, sections, GTL, repérage. Avant travaux, diagnostiquer le tableau existant et la terre." },
-  { keys: ["devis","prix","tarif"], a: "Devis : décrire clairement fournitures vs main-d'œuvre, éventuels devis complémentaires (échafaudage, gaine, électricité dédiée). Pour un mono-split standard, afficher un 'à partir de' et confirmer après visite." },
-  { keys: ["urgence","urgent"], a: "Urgence : sécuriser (couper le circuit), rappeler les consignes au client (ne pas réenclencher en boucle). Prioriser absence totale de courant, odeur de brûlé, ou clim en local sensible (personne fragile)." },
-  { keys: ["filtre","entretien","maintenance"], a: "Entretien clim : nettoyer filtres régulièrement, vérifier unités, évacuation, performances. Contrat d'entretien annuel recommandé pour garantir perf et limiter les pannes." }
-];
+function aiBox(r) {
+  try {
+    const a = aiAssist(r);
+    const steps = (a.steps || []).map(function(s){ return "• " + esc(s); }).join("<br>");
+    return '<div class="help-box"><strong>🤖 Assistant IA (local)</strong><br><em>' + esc(a.analysis) + '</em><br>' + steps + '</div>';
+  } catch (e) {
+    return '';
+  }
+}
 
-function iaAnswer(question){
-  const q = (question||"").toLowerCase();
-  const hits = IA_KB.filter(item => item.keys.some(k => q.indexOf(k) !== -1));
-  if (hits.length) return hits.map(h => h.a).join("\n\n");
-  return "Je n'ai pas une fiche exacte sur ce point. Reformule avec un mot-clé (ex : disjoncteur, pose split, fuite d'eau, norme tableau, gaz R32, prise qui chauffe…). Tu peux aussi décrire le symptôme client mot pour mot.";
+function aiAssist(req) {
+  const msg = (req.msg || "").toLowerCase();
+  const type = req.type || "";
+  let analysis = "Demande générale.";
+  let steps = [];
+  if (type === "elec" || /disjonct|prise|tableau|court|panne/.test(msg)) {
+    analysis = "Probable souci électrique (circuit, disjoncteur, prise ou tableau).";
+    steps = [
+      "Demander si le général ou un divisionnaire saute",
+      "Vérifier différentiel 30 mA",
+      "Isoler les circuits un par un",
+      "Contrôler serrages / boîtes de dérivation si besoin",
+      "Prévoir multimètre + outillage tableau"
+    ];
+  } else if (type === "clim" || /clim|pose|froid|split/.test(msg)) {
+    if (/pose|install/.test(msg)) {
+      analysis = "Demande de pose / installation clim.";
+      steps = [
+        "Demander surface / pièces à traiter",
+        "Vérifier emplacement unité extérieure + évacuation condensats",
+        "Estimer longueur de liaisons frigorifiques",
+        "Prévoir support, perçage, mise en service",
+        "Proposer créneau visite technique si besoin"
+      ];
+    } else {
+      analysis = "Dépannage / entretien clim probable.";
+      steps = [
+        "Demander code erreur si affiché",
+        "Filtres nettoyés récemment ?",
+        "Unité extérieure dégagée ?",
+        "Fuite d'eau ou bruit particulier ?",
+        "Prévoir nettoyage / contrôle gaz selon symptôme"
+      ];
+    }
+  }
+  return { analysis: analysis, steps: steps };
+}
+
+
+function helpForType(type, msg) {
+  const m = (msg||"").toLowerCase();
+  if (type === "elec" || /disjonct|prise|tableau|court|panne|électrique/.test(m)) {
+    return `<div class="help-box"><strong>💡 Aide dépannage électrique</strong><br>
+• Disjoncteur qui saute → surcharge ou court-circuit. Isoler les circuits un par un.<br>
+• Plus de courant dans une pièce → vérifier différentiel + bornes de la prise.<br>
+• Prise qui chauffe → desserrage / mauvais contact : couper le courant avant toute intervention.<br>
+• Tableau ancien → penser mise aux normes NF C 15-100.<br>
+<strong>Question utile au client :</strong> « Le disjoncteur général saute-t-il, ou seulement un disjoncteur divisionnaire ? »</div>`;
+  }
+  if (type === "clim" || /clim|froid|chaud|split|gaz|fuite|climati/.test(m)) {
+    return `<div class="help-box"><strong>❄️ Aide clim</strong><br>
+• Ne refroidit plus → filtres encrassés, manque de gaz, sonde, carte.<br>
+• Fuit de l’eau → évacuation bouchée / mauvaise pente.<br>
+• Bruit inhabituel → ventilateur, support, détente.<br>
+• Code erreur affiché → noter le code avant reset.<br>
+<strong>Question utile :</strong> « La clim affiche-t-elle un code erreur ? Les filtres ont-ils été nettoyés récemment ? »</div>`;
+  }
+  return `<div class="help-box"><strong>🛠️ Aide générale</strong><br>
+Demander : adresse, photos si possible, depuis quand, urgence ou non, accès au tableau / unité extérieure.</div>`;
 }
 
 document.getElementById("contactForm").addEventListener("submit", function(e){
@@ -404,6 +408,7 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
   const btn = document.getElementById("submitBtn");
   const msgEl = document.getElementById("formMsg");
   const form = this;
+
   btn.disabled = true;
   btn.textContent = "Envoi…";
   msgEl.textContent = "";
@@ -414,14 +419,14 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
     date: new Date().toLocaleString("fr-FR"),
     name: document.getElementById("cName").value.trim(),
     phone: document.getElementById("cPhone").value.trim(),
-    email: document.getElementById("cEmail").value.trim().toLowerCase(),
+    email: document.getElementById("cEmail").value.trim(),
     type: document.getElementById("cType").value,
     msg: document.getElementById("cMsg").value.trim(),
     read: false,
     messages: [{ from: "client", text: document.getElementById("cMsg").value.trim(), at: new Date().toISOString() }]
   };
 
-  // Toujours enregistrer localement d'abord
+  // 1) Toujours enregistrer localement EN PREMIER
   try {
     reqs.unshift(d);
     saveReqs();
@@ -429,225 +434,326 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
     console.error(err);
   }
 
-  var finished = false;
-  function done(mailOk, detail) {
-    if (finished) return;
-    finished = true;
+  function finish(okEmail) {
     btn.disabled = false;
     btn.textContent = "Envoyer la demande";
-    if (mailOk) {
-      msgEl.textContent = "✅ Demande envoyée. Suivi disponible avec votre e-mail.";
+    if (location.protocol === "file:") {
+      msgEl.innerHTML = "✅ Demande enregistrée sur cet appareil (onglet Demandes du 🔒).<br><span style=\"color:#9a3412\">Si pas de mail : regarde spams Gmail + console Web3Forms.</span>";
+    } else if (okEmail) {
+      msgEl.textContent = "✅ Demande envoyée. Vous serez recontacté rapidement.";
       msgEl.style.color = "#166534";
     } else {
-      msgEl.innerHTML = "✅ Demande enregistrée sur le site (Suivi demande)." +
-        (detail ? "<br><span style=\"color:#9a3412\">" + detail + "</span>" : "<br><span style=\"color:#9a3412\">E-mail non envoyé (voir console F12).</span>");
+      msgEl.innerHTML = "✅ Demande enregistrée sur le site (visible dans 🔒 → Demandes).<br><span style=\"color:#9a3412\">E-mail non reçu — regarde spams ou la console (Web3Forms).</span>";
     }
     form.reset();
     setTimeout(function(){ msgEl.textContent = ""; }, 10000);
   }
 
-  // Timeout de sécurité : ne jamais rester bloqué
-  setTimeout(function(){ done(false, "Délai dépassé — demande quand même enregistrée."); }, 8000);
-
-  var params = {
-    name: d.name,
-    phone: d.phone,
-    email: d.email,
-    type: d.type,
-    message: d.msg
-  };
-
-  if (typeof emailjs === "undefined" || typeof emailjsSend !== "function") {
-    done(false, "EmailJS non chargé. Ouvre le site via http (pas file://) ou héberge-le.");
-    return;
-  }
-
-  // Envoi séparé pour voir quelle étape échoue
-  emailjsSend(EMAILJS_TEMPLATE_NOTIFY, params)
-    .then(function(res){
-      console.log("EmailJS notify OK", res);
-      return emailjsSend(EMAILJS_TEMPLATE_CLIENT, params);
+  // 2) Web3Forms → notification Gmail (ne bloque jamais le bouton)
+  const WEB3FORMS_KEY = "100000ed-8d22-4090-8a0e-7b2007680766";
+  const controller = new AbortController();
+  const timer = setTimeout(function(){ controller.abort(); }, 8000);
+  fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    signal: controller.signal,
+    body: JSON.stringify({
+      access_key: WEB3FORMS_KEY,
+      subject: "Nouvelle demande — " + d.name + " (" + d.type + ")",
+      from_name: "Site Clim & Electricite",
+      name: d.name,
+      phone: d.phone,
+      email: d.email,
+      type: d.type,
+      message: d.msg
     })
-    .then(function(res){
-      console.log("EmailJS client OK", res);
-      done(true);
-    })
-    .catch(function(err){
-      console.warn("EmailJS error", err);
-      var m = "Erreur EmailJS";
-      if (err) {
-        if (err.status) m += " " + err.status;
-        if (err.text) m += " — " + err.text;
-        else if (err.message) m += " — " + err.message;
-      }
-      m += " | Vérifie Email History sur emailjs.com";
-      done(false, m);
+  }).then(function(res){
+    return res.json().then(function(j){
+      clearTimeout(timer);
+      console.log("Web3Forms", res.status, j);
+      finish(!!(j && j.success));
     });
+  }).catch(function(err){
+    clearTimeout(timer);
+    console.warn("Web3Forms error", err);
+    finish(false);
+  });
 });
 
-/* Client portal */
-document.getElementById("suiviBtn").onclick = function(){
-  const email = (suiviEmail.value||"").trim().toLowerCase();
-  const err = document.getElementById("suiviErr");
-  if (!email || email.indexOf("@")<0) { err.textContent = "Indiquez l'e-mail utilisé pour la demande."; return; }
-  err.textContent = "";
-  const mine = reqs.filter(r => (r.email||"").toLowerCase() === email);
-  const portal = document.getElementById("portal");
-  const body = document.getElementById("portalBody");
-  if (!mine.length) {
-    body.innerHTML = '<p class="msg">Aucune demande trouvée pour cet e-mail sur cet appareil / base.</p>';
-  } else {
-    body.innerHTML = mine.map(function(r){
-      const chat = (r.messages||[]).map(function(m){
-        return '<div class="bubble '+(m.from==="client"?"from-client":"from-admin")+'"><strong>'+(m.from==="client"?"Vous":"L'équipe")+'</strong><br>'+esc(m.text)+'</div>';
-      }).join("");
-      return '<div class="req-card"><strong>'+esc(r.type)+'</strong> · '+esc(r.date)+'<div class="chat">'+chat+'</div></div>';
-    }).join("");
-  }
-  portal.classList.add("open");
-};
-document.getElementById("portalClose").onclick = function(){ document.getElementById("portal").classList.remove("open"); };
-
-/* Creator */
 const creator = document.getElementById("creator");
 const cBody = document.getElementById("cBody");
 const cTabs = document.getElementById("cTabs");
 const cFoot = document.getElementById("cFoot");
-const TABS = [["demandes","Demandes"],["assistant","Assistant"],["textes","Textes"],["contact","Contact"],["stats","Stats"],["compte","Compte"]];
+const TABS = [["demandes","Demandes"],["textes","Textes"],["services","Services"],["tarifs","Tarifs"],["contact","Contact"],["couleurs","Couleurs"],["aide","Aide pro"],["compte","Compte"]];
 
 function showLogin(){
   cTabs.style.display="none"; cFoot.style.display="none"; cLogout.style.display="none";
-  cBody.innerHTML = '<div class="login-box"><h3 style="font-family:var(--font-serif);margin-bottom:1rem">Connexion</h3><input type="email" id="authEmail" class="field" placeholder="Email"><input type="password" id="authPass" class="field" placeholder="Mot de passe"><button class="btn btn-primary" id="authGo" style="width:100%">Entrer</button><p class="msg" id="authMsg" style="color:#b91c1c;margin-top:.5rem"></p></div>';
-  authGo.onclick = async function(){
-    try {
-      authMsg.textContent = "Connexion…";
-      await auth.signInWithEmailAndPassword(authEmail.value.trim(), authPass.value);
-    } catch(err) {
-      authMsg.textContent = "❌ " + (err.message||"Erreur");
+  cBody.innerHTML=`<div class="login-box">
+    <h3 style="font-family:var(--font-serif);margin-bottom:1rem">Connexion créateur</h3>
+    <input type="email" id="authEmail" class="field" placeholder="ton@email.com" autocomplete="username">
+    <input type="password" id="authPass" class="field" placeholder="Mot de passe" autocomplete="current-password">
+    <button class="btn btn-primary" id="authGo" style="width:100%;margin-top:.5rem">Se connecter</button>
+    <p class="msg" id="authMsg" style="margin-top:.55rem;color:#b91c1c"></p>
+  </div>`;
+  authGo.onclick=async()=>{
+    const email=authEmail.value.trim(), pass=authPass.value;
+    if(!email||!pass){authMsg.textContent="Email et mot de passe obligatoires.";return;}
+    authMsg.textContent="Connexion…";
+    try{ await auth.signInWithEmailAndPassword(email,pass); }
+    catch(err){
+      let m="Erreur de connexion.";
+      if(["auth/user-not-found","auth/wrong-password","auth/invalid-credential"].includes(err.code)) m="Email ou mot de passe incorrect.";
+      else m=err.message||m;
+      authMsg.textContent="❌ "+m;
     }
   };
+  authPass.onkeydown=e=>{ if(e.key==="Enter") authGo.click(); };
 }
+
 function showEditor(){
   cTabs.style.display="flex"; cFoot.style.display="flex"; cLogout.style.display="inline-block";
-  cTabs.innerHTML = TABS.map(function(t){ return '<button type="button" data-tab="'+t[0]+'" class="'+(t[0]===currentTab?"on":"")+'">'+t[1]+'</button>'; }).join("");
-  loadReqsFromCloud().then(function(){ renderTab(currentTab); });
-  updateBadge();
+  cTabs.innerHTML=TABS.map(([id,lab])=>`<button type="button" data-tab="${id}" class="${id===currentTab?"on":""}">${lab}</button>`).join("");
+  renderTab(currentTab);
 }
 
 function renderTab(name){
-  currentTab = name;
-  document.querySelectorAll("#cTabs button").forEach(function(b){ b.classList.toggle("on", b.dataset.tab===name); });
+  currentTab=name;
+  document.querySelectorAll("#cTabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
 
-  if (name==="demandes") {
-    if (!reqs.length) { cBody.innerHTML = '<p class="msg">Aucune demande.</p>'; return; }
-    cBody.innerHTML = reqs.map(function(r){
-      const chat = (r.messages||[]).map(function(m){ return '<div class="bubble '+(m.from==="client"?"from-client":"from-admin")+'">'+esc(m.text)+'</div>'; }).join("");
-      const styles = suggestReplies(r).map(function(s,i){ return '<button type="button" data-style="'+r.id+'" data-si="'+i+'">'+esc(s.label)+'</button>'; }).join("");
-      return '<div class="req-card '+(r.read?"":"new")+'"><div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap"><strong>'+esc(r.name)+'</strong><span class="tag">'+esc(r.type)+'</span></div><p class="msg">'+esc(r.date)+' · '+esc(r.phone)+' · '+esc(r.email)+'</p><div class="chat">'+chat+'</div><p class="msg">Suggestions :</p><div class="style-btns">'+styles+'</div><textarea class="field" data-reply="'+r.id+'" rows="4" placeholder="Écrire ta réponse ici…"></textarea><div style="display:flex;gap:.35rem;flex-wrap:wrap"><button class="btn btn-primary btn-sm" data-send="'+r.id+'">Envoyer au client</button><button class="btn btn-secondary btn-sm" data-read="'+r.id+'">Lu</button><button class="btn btn-secondary btn-sm" data-del="'+r.id+'">Suppr.</button></div></div>';
-    }).join("");
+  if(name==="demandes"){
+    if(!reqs.length){
+      cBody.innerHTML=`<p class="msg">Aucune demande pour le moment.</p>
+      <div class="warn-box"><strong>Test</strong> : remplis le formulaire public puis reviens ici (même navigateur). Les demandes sont stockées en local sur cet appareil.</div>`;
+    } else {
+      cBody.innerHTML = reqs.map(r=>{
+        const msgs=r.messages||[];
+        const chat=msgs.map(m=>`<div class="bubble ${m.from==="client"?"from-client":"from-admin"}">${esc(m.text)}</div>`).join("");
+        const styles=suggestReplies(r);
+        const styleBtns=styles.map((s,i)=>`<button type="button" data-style="${r.id}" data-si="${i}">${esc(s.label)}</button>`).join("");
+        return `<div class="req-card ${r.read?"":"new"}">
+          <div style="display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap">
+            <strong>${esc(r.name)}</strong><span class="tag">${esc(r.type)}</span>
+          </div>
+          <p class="msg">${esc(r.date)} · ${esc(r.phone)} · ${esc(r.email||"")}</p>
+          ${helpForType(r.type, r.msg)}
+          ${aiBox(r)}
+          <div class="chat">${chat||"<span class=\'msg\'>—</span>"}</div>
+          <p class="msg" style="margin:.3rem 0 .2rem">Assistant — choisir un style de réponse :</p>
+          <div class="style-btns">${styleBtns}</div>
+          <textarea class="field" data-reply="${r.id}" rows="3" placeholder="Ta réponse…"></textarea>
+          <div style="display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.25rem">
+            <button class="btn btn-primary btn-sm" data-send="${r.id}">Envoyer</button>
+            <button class="btn btn-secondary btn-sm" data-read="${r.id}">Lu</button>
+            <button class="btn btn-secondary btn-sm" data-del="${r.id}">Suppr.</button>
+          </div>
+        </div>`;
+      }).join("");
 
-    cBody.querySelectorAll("[data-style]").forEach(function(b){
-      b.onclick = function(){
-        const r = reqs.find(function(x){ return x.id===+b.dataset.style; });
-        if (!r) return;
-        const styles = suggestReplies(r);
-        const ta = cBody.querySelector('[data-reply="'+r.id+'"]');
-        if (ta && styles[+b.dataset.si]) ta.value = styles[+b.dataset.si].text;
-      };
-    });
-    cBody.querySelectorAll("[data-send]").forEach(function(b){
-      b.onclick = async function(){
-        const id = +b.dataset.send;
-        const ta = cBody.querySelector('[data-reply="'+id+'"]');
-        const text = (ta && ta.value || "").trim();
-        if (!text) return;
-        const r = reqs.find(function(x){ return x.id===id; });
-        if (!r) return;
-        if (!r.messages) r.messages = [];
-        r.messages.push({ from:"admin", text: text, at: new Date().toISOString() });
-        r.read = true;
+      // style buttons
+      cBody.querySelectorAll("[data-style]").forEach(b=>{
+        b.onclick=()=>{
+          const id=+b.dataset.style, si=+b.dataset.si;
+          const r=reqs.find(x=>x.id===id);
+          if(!r) return;
+          const styles=suggestReplies(r);
+          const ta=cBody.querySelector(`[data-reply="${id}"]`);
+          if(ta && styles[si]) ta.value=styles[si].text;
+        };
+      });
+      cBody.querySelectorAll("[data-send]").forEach(b=>b.onclick=async()=>{
+        const id=+b.dataset.send;
+        const ta=cBody.querySelector(`[data-reply="${id}"]`);
+        const text=(ta?.value||"").trim();
+        if(!text) return;
+        const r=reqs.find(x=>x.id===id);
+        if(!r) return;
+        if(!r.messages) r.messages=[];
+        r.messages.push({from:"admin", text, at:new Date().toISOString()});
+        r.read=true;
         saveReqs();
-        // Direct-looking email to client (FormSubmit still powers delivery)
-        var mailNote = "";
-        if (r.email && typeof emailjsSend === "function") {
-          try {
-            await Promise.race([
-              emailjsSend(EMAILJS_TEMPLATE_CLIENT, {
-                name: r.name || "",
-                phone: cfg.phone || "",
-                email: r.email,
-                type: r.type || "",
-                message: text
-              }),
-              new Promise(function(_, rej){ setTimeout(function(){ rej(new Error("timeout")); }, 8000); })
-            ]);
-            mailNote = " E-mail envoyé au client.";
-          } catch(e) {
-            console.warn("EmailJS reply", e);
-            mailNote = " E-mail non envoyé (demande visible dans Suivi).";
-          }
+        // email client
+        if(r.email && location.protocol!=="file:"){
+          try{
+            await fetch("https://formsubmit.co/ajax/"+encodeURIComponent(r.email),{
+              method:"POST",
+              headers:{"Content-Type":"application/json",Accept:"application/json"},
+              body:JSON.stringify({_subject:"Réponse — Clim & Électricité",_captcha:"false",message:text})
+            });
+          }catch(e){}
         }
-        alert("Réponse enregistrée." + mailNote);
         renderTab("demandes");
-      };
-    });
-    cBody.querySelectorAll("[data-read]").forEach(function(b){ b.onclick=function(){ const r=reqs.find(function(x){return x.id===+b.dataset.read;}); if(r){r.read=true;saveReqs();renderTab("demandes");} }; });
-    cBody.querySelectorAll("[data-del]").forEach(function(b){ b.onclick=function(){ reqs=reqs.filter(function(x){return x.id!==+b.dataset.del;}); saveReqs(); renderTab("demandes"); }; });
-  }
-  else if (name==="assistant") {
-    cBody.innerHTML = '<p class="msg">Assistant pro — pose une question (comme avec une IA). Exemples rapides ci-dessous.</p><div class="quick" id="iaQuick"></div><div class="ia-chat" id="iaChat"></div><label>Ta question</label><textarea class="field" id="iaInput" rows="2" placeholder="Ex : disjoncteur qui saute le soir, fuite d\'eau split, puissance pour 30m²…"></textarea><button class="btn btn-primary btn-sm" type="button" id="iaSend">Demander</button>';
-    const quicks = ["Disjoncteur qui saute","Prise qui chauffe","Pose mono-split étapes","Clim ne refroidit plus","Fuite d'eau clim","Norme NF C 15-100","Manque de gaz R32","Urgence plus de courant","Entretien filtres","Comment chiffrer un devis"];
-    const qbox = document.getElementById("iaQuick");
-    qbox.innerHTML = quicks.map(function(q){ return '<button type="button" data-q="'+esc(q)+'">'+esc(q)+'</button>'; }).join("");
-    function addIA(q,a){
-      iaHistory.push({q:q,a:a});
-      const box = document.getElementById("iaChat");
-      box.innerHTML = iaHistory.map(function(h){ return '<div class="row"><div class="q"><strong>Toi :</strong> '+esc(h.q)+'</div><div class="a"><strong>Assistant :</strong><br>'+esc(h.a)+'</div></div>'; }).join("");
-      box.scrollTop = box.scrollHeight;
+      });
+      cBody.querySelectorAll("[data-read]").forEach(b=>b.onclick=()=>{
+        const r=reqs.find(x=>x.id===+b.dataset.read);
+        if(r){ r.read=true; saveReqs(); renderTab("demandes"); }
+      });
+      cBody.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{
+        reqs=reqs.filter(x=>x.id!==+b.dataset.del);
+        saveReqs(); renderTab("demandes");
+      });
     }
-    qbox.querySelectorAll("[data-q]").forEach(function(b){ b.onclick=function(){ const q=b.getAttribute("data-q"); addIA(q, iaAnswer(q)); }; });
-    document.getElementById("iaSend").onclick=function(){ const q=(iaInput.value||"").trim(); if(!q) return; addIA(q, iaAnswer(q)); iaInput.value=""; };
-  }
-  else if (name==="textes") {
-    cBody.innerHTML = '<label>Nom du site</label><input class="field" data-k="siteName" value="'+esc(cfg.siteName)+'"><label>Titre</label><input class="field" data-k="heroTitle" value="'+esc(cfg.heroTitle)+'"><label>Sous-titre</label><textarea class="field" data-k="heroSub" rows="3">'+esc(cfg.heroSub)+'</textarea><label>Badge</label><input class="field" data-k="heroBadge" value="'+esc(cfg.heroBadge)+'">';
-  }
-  else if (name==="contact") {
-    cBody.innerHTML = '<label>Téléphone</label><input class="field" data-k="phone" value="'+esc(cfg.phone)+'"><label>Email affiché</label><input class="field" data-k="email" value="'+esc(cfg.email)+'"><label>Email notification (tes alertes)</label><input class="field" data-k="notifEmail" value="'+esc(cfg.notifEmail||cfg.email)+'"><label>Zone</label><input class="field" data-k="zone" value="'+esc(cfg.zone)+'"><label>Horaires</label><input class="field" data-k="hours" value="'+esc(cfg.hours)+'"><div class="ok-box">E-mails via EmailJS (Gmail). Notification pour toi + message au client, sans confirmation FormSubmit.</div>';
-  }
-  else if (name==="stats") {
-    const unread = reqs.filter(function(r){return !r.read;}).length;
-    cBody.innerHTML = '<div class="ok-box"><strong>Demandes</strong> : '+reqs.length+' au total · '+unread+' non lue(s)</div><div class="help-box"><strong>Visiteurs uniques</strong><br>1 ordinateur / navigateur = 1 visite (même s\'il revient 10 fois). Compteur local + synchro Firebase <code>stats/visits</code> si les règles Firestore le permettent.</div><p class="msg" id="statsVisits">Chargement…</p>';
-    trackVisit().then(function(){ document.getElementById("statsVisits").textContent = document.getElementById("visitLabel").textContent || "Visites à jour."; });
-  }
-  else if (name==="compte") {
-    cBody.innerHTML = '<div class="ok-box">Connecté : <strong>'+esc(currentUser && currentUser.email)+'</strong></div><p class="msg">Le badge rouge sur le cadenas n\'apparaît que lorsque tu es connecté.</p><button class="btn btn-primary" id="btnOut" style="width:100%;margin-top:1rem;background:#b91c1c">Déconnexion</button>';
-    document.getElementById("btnOut").onclick=function(){ auth.signOut(); };
+  } else if(name==="aide"){
+    cBody.innerHTML=`
+      <h3 style="font-family:var(--font-serif);margin-bottom:.6rem">Aide pro — électricité & clim</h3>
+      <div class="help-box"><strong>Électricité — disjoncteur qui saute</strong><br>
+      1. Tout débrancher / ouvrir les divisionnaires.<br>
+      2. Remonter le général puis un circuit à la fois.<br>
+      3. Le circuit fautif est identifié → vérifier prises, luminaires, appareils.<br>
+      4. Court-circuit souvent aux boîtes de dérivation ou appareils défectueux.</div>
+      <div class="help-box"><strong>Électricité — plus de courant dans une zone</strong><br>
+      Vérifier différentiel 30 mA, serrage des bornes, continuity neutre/phase. Couper avant d’ouvrir.</div>
+      <div class="help-box"><strong>Clim — ne refroidit plus</strong><br>
+      Filtres, flux d’air unité extérieure, mode (cool), consigne, manque de gaz (manomètres), sonde ambiance, carte.</div>
+      <div class="help-box"><strong>Clim — fuite d’eau intérieure</strong><br>
+      Bac + tuyau d’évacuation bouchés, pente insuffisante, isolation du tube froid.</div>
+      <div class="help-box"><strong>Questions types au client</strong><br>
+      • Depuis quand ? Progressif ou brutal ?<br>
+      • Code erreur affiché ?<br>
+      • Disjoncteur / différentiel a-t-il sauté ?<br>
+      • Accès tableau / unité extérieure ?</div>
+      <p class="msg">Ces mémos s’affichent aussi automatiquement dans l’onglet Demandes selon le type de message.</p>`;
+  } else if(name==="textes"){
+    cBody.innerHTML=`
+      <label>Nom du site</label><input class="field" data-k="siteName" value="${esc(cfg.siteName)}">
+      <label>Initiales logo</label><input class="field" data-k="logoMark" value="${esc(cfg.logoMark)}" maxlength="3">
+      <label>Badge / icône hero</label>
+      <input class="field" data-k="heroBadge" value="${esc(cfg.heroBadge)}" style="margin-bottom:.3rem">
+      <input class="field" data-k="heroIcon" value="${esc(cfg.heroIcon)}" maxlength="4">
+      <label>Titre / sous-titre</label>
+      <input class="field" data-k="heroTitle" value="${esc(cfg.heroTitle)}" style="margin-bottom:.3rem">
+      <textarea class="field" data-k="heroSub" rows="3">${esc(cfg.heroSub)}</textarea>
+      <label>Boutons</label>
+      <input class="field" data-k="btnDevis" value="${esc(cfg.btnDevis)}" style="margin-bottom:.3rem">
+      <input class="field" data-k="btnTel" value="${esc(cfg.btnTel)}">
+      <label>Navigation</label>
+      <input class="field" data-k="navServ" value="${esc(cfg.navServ)}" style="margin-bottom:.3rem">
+      <input class="field" data-k="navReal" value="${esc(cfg.navReal)}" style="margin-bottom:.3rem">
+      <input class="field" data-k="navTarif" value="${esc(cfg.navTarif)}" style="margin-bottom:.3rem">
+      <input class="field" data-k="navCta" value="${esc(cfg.navCta)}">
+      <label>Sections titres</label>
+      <input class="field" data-k="servTitle" value="${esc(cfg.servTitle)}" style="margin-bottom:.3rem">
+      <textarea class="field" data-k="servSub" rows="2">${esc(cfg.servSub)}</textarea>
+      <input class="field" data-k="tarifTitle" value="${esc(cfg.tarifTitle)}" style="margin-bottom:.3rem">
+      <textarea class="field" data-k="tarifSub" rows="2">${esc(cfg.tarifSub)}</textarea>
+      <input class="field" data-k="contactTitle" value="${esc(cfg.contactTitle)}" style="margin-bottom:.3rem">
+      <textarea class="field" data-k="contactSub" rows="2">${esc(cfg.contactSub)}</textarea>
+      <label>Footer</label><input class="field" data-k="footText" value="${esc(cfg.footText)}">`;
+  } else if(name==="services"){
+    let h=`<p class="msg" style="margin-bottom:.6rem">Icônes + titres + descriptions</p>`;
+    (cfg.services||[]).forEach((s,i)=>{
+      h+=`<div class="card" style="margin-bottom:.6rem;padding:.9rem">
+        <label>Icône</label><input class="field" data-si="${i}" data-sk="icon" value="${esc(s.icon)}" maxlength="4">
+        <label>Titre</label><input class="field" data-si="${i}" data-sk="title" value="${esc(s.title)}">
+        <label>Description</label><textarea class="field" data-si="${i}" data-sk="desc" rows="2">${esc(s.desc)}</textarea>
+      </div>`;
+    });
+    cBody.innerHTML=h;
+  } else if(name==="tarifs"){
+    let h=`<p class="msg" style="margin-bottom:.6rem">Tarifs affichés</p>`;
+    (cfg.tarifs||[]).forEach((t,i)=>{
+      h+=`<div class="card" style="margin-bottom:.6rem;padding:.9rem">
+        <label>Tag</label><input class="field" data-ti="${i}" data-tk="tag" value="${esc(t.tag)}">
+        <label>Titre</label><input class="field" data-ti="${i}" data-tk="title" value="${esc(t.title)}">
+        <label>Prix</label><input class="field" data-ti="${i}" data-tk="price" value="${esc(t.price)}">
+        <label>Description</label><textarea class="field" data-ti="${i}" data-tk="desc" rows="2">${esc(t.desc)}</textarea>
+      </div>`;
+    });
+    cBody.innerHTML=h;
+  } else if(name==="contact"){
+    cBody.innerHTML=`
+      <label>Téléphone affiché</label><input class="field" data-k="phone" value="${esc(cfg.phone)}">
+      <label>Email affiché</label><input class="field" data-k="email" value="${esc(cfg.email)}">
+      <label>Email de notification (où tu reçois les demandes)</label><input class="field" data-k="notifEmail" value="${esc(cfg.notifEmail||cfg.email)}">
+      <label>Zone</label><input class="field" data-k="zone" value="${esc(cfg.zone)}">
+      <label>Horaires</label><input class="field" data-k="hours" value="${esc(cfg.hours)}">
+      <div class="ok-box">Les demandes s’enregistrent toujours dans l’onglet Demandes (même navigateur).<br>
+      Les e-mails de notification partent via <strong>Web3Forms</strong> vers vincent.legall974@gmail.com.</div>`;
+  } else if(name==="couleurs"){
+    const c=cfg.colors||{};
+    cBody.innerHTML=`
+      <div class="color-row"><input type="color" data-color="sage" value="${c.sage||"#0f766e"}"><label>Sage (boutons)</label></div>
+      <div class="color-row"><input type="color" data-color="clay" value="${c.clay||"#c4a574"}"><label>Clay</label></div>
+      <div class="color-row"><input type="color" data-color="bg" value="${c.bg||"#faf7f2"}"><label>Fond</label></div>
+      <div class="color-row"><input type="color" data-color="ink" value="${c.ink||"#1c1917"}"><label>Texte</label></div>`;
+    cBody.querySelectorAll("[data-color]").forEach(inp=>{
+      inp.oninput=()=>{ if(!cfg.colors) cfg.colors={}; cfg.colors[inp.dataset.color]=inp.value; apply(); };
+    });
+  } else if(name==="compte"){
+    cBody.innerHTML=`
+      <div class="ok-box">Connecté : <strong>${esc(currentUser?.email||"")}</strong></div>
+      <p class="msg" style="margin-top:.8rem">Demandes stockées localement sur cet appareil. Pour synchroniser multi-appareils, il faudrait Firestore (prochaine étape possible).</p>
+      <button class="btn btn-primary" id="btnOut" style="width:100%;margin-top:1rem;background:#b91c1c">Se déconnecter</button>`;
+    document.getElementById("btnOut").onclick=()=>auth.signOut();
   }
 }
 
-function collect(){ cBody.querySelectorAll("[data-k]").forEach(function(el){ cfg[el.dataset.k]=el.value; }); }
+function collect(){
+  cBody.querySelectorAll("[data-k]").forEach(el=>{ cfg[el.dataset.k]=el.value; });
+  cBody.querySelectorAll("[data-si]").forEach(el=>{
+    const i=+el.dataset.si, k=el.dataset.sk;
+    if(cfg.services[i]) cfg.services[i][k]=el.value;
+  });
+  cBody.querySelectorAll("[data-ti]").forEach(el=>{
+    const i=+el.dataset.ti, k=el.dataset.tk;
+    if(cfg.tarifs[i]) cfg.tarifs[i][k]=el.value;
+  });
+}
 
-auth.onAuthStateChanged(function(user){
-  currentUser = user;
-  updateBadge();
-  if (user) { if (creator.classList.contains("open")) showEditor(); }
-  else { if (creator.classList.contains("open")) showLogin(); }
+auth.onAuthStateChanged(user=>{
+  currentUser=user;
+  if(user){ if(creator.classList.contains("open")) showEditor(); }
+  else { if(creator.classList.contains("open")) showLogin(); }
 });
 
-document.getElementById("lockBtn").onclick = function(){ creator.classList.add("open"); if (currentUser) showEditor(); else showLogin(); };
-document.getElementById("cClose").onclick = function(){ creator.classList.remove("open"); };
-document.getElementById("cLogout").onclick = function(){ auth.signOut(); };
-document.getElementById("cTabs").addEventListener("click", function(e){ const b=e.target.closest("[data-tab]"); if(b){ collect(); renderTab(b.dataset.tab); } });
-document.getElementById("cSave").onclick = function(){ collect(); localStorage.setItem(STORAGE, JSON.stringify(cfg)); apply(); cMsg.textContent="✓"; setTimeout(function(){cMsg.textContent="";},1500); };
-document.getElementById("expandBtn").onclick = function(){ creator.classList.toggle("wide"); };
+lockBtn.onclick=()=>{ creator.classList.add("open"); if(currentUser) showEditor(); else showLogin(); };
+cClose.onclick=()=>creator.classList.remove("open");
+cLogout.onclick=()=>auth.signOut();
+cTabs.addEventListener("click",e=>{
+  const btn=e.target.closest("[data-tab]");
+  if(btn){ collect(); renderTab(btn.dataset.tab); }
+});
+cSave.onclick=()=>{ collect(); localStorage.setItem(STORAGE, JSON.stringify(cfg)); apply(); cMsg.textContent="✓ Enregistré"; setTimeout(()=>cMsg.textContent="",2000); };
+cReset.onclick=()=>{ if(!confirm("Réinitialiser textes / couleurs / services ?")) return; cfg=structuredClone(DEFAULTS); localStorage.removeItem(STORAGE); apply(); renderTab(currentTab); };
 
+/* Resize + expand creator */
 (function(){
-  const handle = document.getElementById("resizeHandle");
-  let dragging=false, startX=0, startW=0;
-  handle.addEventListener("mousedown", function(e){ dragging=true; startX=e.clientX; startW=creator.getBoundingClientRect().width; handle.classList.add("active"); e.preventDefault(); });
-  window.addEventListener("mousemove", function(e){ if(!dragging) return; const w=Math.min(Math.max(320, startW+(startX-e.clientX)), window.innerWidth*0.98); creator.style.width=w+"px"; creator.classList.remove("wide"); });
-  window.addEventListener("mouseup", function(){ dragging=false; handle.classList.remove("active"); });
+  function bindResize() {
+    const panel = document.getElementById("creator");
+    const handle = document.getElementById("resizeHandle");
+    const exp = document.getElementById("expandBtn");
+    if (!panel) return;
+    if (exp && !exp._bound) {
+      exp._bound = true;
+      exp.onclick = function(){ panel.classList.toggle("wide"); };
+    }
+    if (!handle || handle._bound) return;
+    handle._bound = true;
+    var dragging = false, startX = 0, startW = 0;
+    handle.addEventListener("mousedown", function(e) {
+      dragging = true; startX = e.clientX; startW = panel.getBoundingClientRect().width;
+      handle.classList.add("active"); e.preventDefault();
+    });
+    window.addEventListener("mousemove", function(e) {
+      if (!dragging) return;
+      var dx = startX - e.clientX;
+      var w = Math.min(Math.max(320, startW + dx), window.innerWidth * 0.98);
+      panel.style.width = w + "px";
+      panel.classList.remove("wide");
+    });
+    window.addEventListener("mouseup", function() {
+      dragging = false;
+      if (handle) handle.classList.remove("active");
+    });
+  }
+  bindResize();
+  // re-bind when opening
+  var lb = document.getElementById("lockBtn");
+  if (lb) {
+    var prev = lb.onclick;
+    lb.addEventListener("click", function(){ setTimeout(bindResize, 50); });
+  }
 })();
+
 </script>
 </body>
 </html>
