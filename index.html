@@ -9,7 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js" onerror="window.__emailjs_cdn_fail=1"></script>
 <style>
 :root{--ink:#1c1917;--muted:#57534e;--soft:#78716c;--bg:#faf7f2;--card:#fff;--sand:#f5f0e8;--clay:#c4a574;--clay-dark:#a68b5b;--sage:#0f766e;--sage-dark:#0d5c56;--blush:#e8d5c4;--line:#e7e0d5;--shadow:0 4px 24px rgba(28,25,23,.06);--radius:16px;--font-serif:"Cormorant Garamond",Georgia,serif;--font-sans:"Source Sans 3",system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;scroll-padding-top:84px}
@@ -228,13 +228,45 @@ const EMAILJS_PUBLIC_KEY = "9eNMtdUBT78dTSrkT";
 const EMAILJS_SERVICE_ID = "service_ld451te";
 const EMAILJS_TEMPLATE_NOTIFY = "template_90u3dvn";  // notification pour toi
 const EMAILJS_TEMPLATE_CLIENT = "template_2zqa4qf";  // e-mail au client
-try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); } catch(e) { console.warn("EmailJS init", e); }
+var emailjsReady = null;
+function ensureEmailJS() {
+  if (emailjsReady) return emailjsReady;
+  emailjsReady = new Promise(function(resolve, reject) {
+    function tryInit() {
+      var lib = window.emailjs;
+      if (!lib) {
+        reject(new Error("SDK EmailJS non chargé (CDN bloqué ou file://). Héberge le site ou autorise cdn.jsdelivr.net"));
+        return;
+      }
+      try {
+        if (typeof lib.init === "function") {
+          try { lib.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
+          catch (e1) {
+            try { lib.init(EMAILJS_PUBLIC_KEY); } catch (e2) {}
+          }
+        }
+        resolve(lib);
+      } catch (e) {
+        reject(e);
+      }
+    }
+    if (window.emailjs) tryInit();
+    else {
+      var n = 0;
+      var t = setInterval(function() {
+        n++;
+        if (window.emailjs) { clearInterval(t); tryInit(); }
+        else if (n > 40) { clearInterval(t); tryInit(); }
+      }, 100);
+    }
+  });
+  return emailjsReady;
+}
 
 function emailjsSend(templateId, params) {
-  if (typeof emailjs === "undefined") {
-    return Promise.reject(new Error("EmailJS SDK absent"));
-  }
-  return emailjs.send(EMAILJS_SERVICE_ID, templateId, params);
+  return ensureEmailJS().then(function(lib) {
+    return lib.send(EMAILJS_SERVICE_ID, templateId, params);
+  });
 }
 
 const STORAGE = "clim_v5_cfg";
@@ -482,16 +514,27 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
     return;
   }
 
-  Promise.all([
-    emailjsSend(EMAILJS_TEMPLATE_NOTIFY, params),
-    emailjsSend(EMAILJS_TEMPLATE_CLIENT, params)
-  ]).then(function(){
-    done(true);
-  }).catch(function(err){
-    console.warn("EmailJS error", err);
-    var m = (err && (err.text || err.message)) ? String(err.text || err.message) : "Erreur EmailJS";
-    done(false, m);
-  });
+  // Envoi séparé pour voir quelle étape échoue
+  emailjsSend(EMAILJS_TEMPLATE_NOTIFY, params)
+    .then(function(res){
+      console.log("EmailJS notify OK", res);
+      return emailjsSend(EMAILJS_TEMPLATE_CLIENT, params);
+    })
+    .then(function(res){
+      console.log("EmailJS client OK", res);
+      done(true);
+    })
+    .catch(function(err){
+      console.warn("EmailJS error", err);
+      var m = "Erreur EmailJS";
+      if (err) {
+        if (err.status) m += " " + err.status;
+        if (err.text) m += " — " + err.text;
+        else if (err.message) m += " — " + err.message;
+      }
+      m += " | Vérifie Email History sur emailjs.com";
+      done(false, m);
+    });
 });
 
 /* Client portal */
