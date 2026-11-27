@@ -9,6 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 :root{--ink:#1c1917;--muted:#57534e;--soft:#78716c;--bg:#faf7f2;--card:#fff;--sand:#f5f0e8;--clay:#c4a574;--clay-dark:#a68b5b;--sage:#0f766e;--sage-dark:#0d5c56;--blush:#e8d5c4;--line:#e7e0d5;--shadow:0 4px 24px rgba(28,25,23,.06);--radius:16px;--font-serif:"Cormorant Garamond",Georgia,serif;--font-sans:"Source Sans 3",system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;scroll-padding-top:84px}
@@ -222,6 +223,17 @@ const auth = firebase.auth();
 let db = null;
 try { db = firebase.firestore(); } catch(e) {}
 
+/* ===== EmailJS ===== */
+const EMAILJS_PUBLIC_KEY = "9eNMtdUBT78dTSrkT";
+const EMAILJS_SERVICE_ID = "service_ld451te";
+const EMAILJS_TEMPLATE_NOTIFY = "template_90u3dvn";  // notification pour toi
+const EMAILJS_TEMPLATE_CLIENT = "template_2zqa4qf";  // e-mail au client
+try { emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY }); } catch(e) { console.warn("EmailJS init", e); }
+
+function emailjsSend(templateId, params) {
+  return emailjs.send(EMAILJS_SERVICE_ID, templateId, params);
+}
+
 const STORAGE = "clim_v5_cfg";
 const REQ_KEY = "clim_v5_reqs";
 const VID_KEY = "clim_v5_vid";
@@ -431,22 +443,22 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
     setTimeout(function(){ msgEl.textContent=""; }, 9000);
   }
 
-  const to = (cfg.notifEmail || cfg.email || "").trim();
-  if (to && location.protocol !== "file:") {
-    const ctrl = new AbortController();
-    const t = setTimeout(function(){ ctrl.abort(); }, 6000);
-    fetch("https://formsubmit.co/ajax/" + encodeURIComponent(to), {
-      method:"POST",
-      headers:{"Content-Type":"application/json","Accept":"application/json"},
-      signal: ctrl.signal,
-      body: JSON.stringify({
-        _subject: "Nouvelle demande — " + d.name,
-        _captcha: "false",
-        _template: "table",
-        Nom: d.name, Telephone: d.phone, Email: d.email, Type: d.type, Message: d.msg
-      })
-    }).then(function(r){ clearTimeout(t); done(r.ok); }).catch(function(){ clearTimeout(t); done(false); });
-  } else done(false);
+  var params = {
+    name: d.name,
+    phone: d.phone,
+    email: d.email,
+    type: d.type,
+    message: d.msg
+  };
+
+  // 1) Notification pour toi + 2) confirmation client (EmailJS)
+  Promise.all([
+    emailjsSend(EMAILJS_TEMPLATE_NOTIFY, params),
+    emailjsSend(EMAILJS_TEMPLATE_CLIENT, params)
+  ]).then(function(){ done(true); }).catch(function(err){
+    console.warn("EmailJS", err);
+    done(false);
+  });
 });
 
 /* Client portal */
@@ -532,22 +544,18 @@ function renderTab(name){
         r.read = true;
         saveReqs();
         // Direct-looking email to client (FormSubmit still powers delivery)
-        if (r.email && location.protocol !== "file:") {
+        if (r.email) {
           try {
-            await fetch("https://formsubmit.co/ajax/" + encodeURIComponent(r.email), {
-              method:"POST",
-              headers:{"Content-Type":"application/json","Accept":"application/json"},
-              body: JSON.stringify({
-                _subject: "Réponse de Clim & Électricité",
-                _captcha: "false",
-                _template: "box",
-                message: text,
-                _replyto: cfg.notifEmail || cfg.email || ""
-              })
+            await emailjsSend(EMAILJS_TEMPLATE_CLIENT, {
+              name: r.name || "",
+              phone: cfg.phone || "",
+              email: r.email,
+              type: r.type || "",
+              message: text
             });
-          } catch(e) {}
+          } catch(e) { console.warn("EmailJS reply", e); }
         }
-        alert("Réponse enregistrée. Le client la voit dans « Suivi demande »" + (r.email ? " et un e-mail lui a été envoyé si le service mail est actif." : "."));
+        alert("Réponse enregistrée. Le client la voit dans « Suivi demande » et reçoit l'e-mail.");
         renderTab("demandes");
       };
     });
@@ -572,7 +580,7 @@ function renderTab(name){
     cBody.innerHTML = '<label>Nom du site</label><input class="field" data-k="siteName" value="'+esc(cfg.siteName)+'"><label>Titre</label><input class="field" data-k="heroTitle" value="'+esc(cfg.heroTitle)+'"><label>Sous-titre</label><textarea class="field" data-k="heroSub" rows="3">'+esc(cfg.heroSub)+'</textarea><label>Badge</label><input class="field" data-k="heroBadge" value="'+esc(cfg.heroBadge)+'">';
   }
   else if (name==="contact") {
-    cBody.innerHTML = '<label>Téléphone</label><input class="field" data-k="phone" value="'+esc(cfg.phone)+'"><label>Email affiché</label><input class="field" data-k="email" value="'+esc(cfg.email)+'"><label>Email notification (tes alertes)</label><input class="field" data-k="notifEmail" value="'+esc(cfg.notifEmail||cfg.email)+'"><label>Zone</label><input class="field" data-k="zone" value="'+esc(cfg.zone)+'"><label>Horaires</label><input class="field" data-k="hours" value="'+esc(cfg.hours)+'"><div class="ok-box">Réponses client : enregistrées dans le suivi + e-mail envoyé à son adresse (après activation FormSubmit / hébergement).</div>';
+    cBody.innerHTML = '<label>Téléphone</label><input class="field" data-k="phone" value="'+esc(cfg.phone)+'"><label>Email affiché</label><input class="field" data-k="email" value="'+esc(cfg.email)+'"><label>Email notification (tes alertes)</label><input class="field" data-k="notifEmail" value="'+esc(cfg.notifEmail||cfg.email)+'"><label>Zone</label><input class="field" data-k="zone" value="'+esc(cfg.zone)+'"><label>Horaires</label><input class="field" data-k="hours" value="'+esc(cfg.hours)+'"><div class="ok-box">E-mails via EmailJS (Gmail). Notification pour toi + message au client, sans confirmation FormSubmit.</div>';
   }
   else if (name==="stats") {
     const unread = reqs.filter(function(r){return !r.read;}).length;
