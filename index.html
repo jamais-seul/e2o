@@ -199,6 +199,21 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
 
 <button id="lockBtn" type="button" title="Espace créateur">🔒<span id="notifBadge">0</span></button>
 
+
+<div id="replyPanel" style="display:none;position:fixed;inset:0;background:rgba(28,25,23,.45);z-index:10050;align-items:center;justify-content:center;padding:1rem">
+  <div class="card" style="width:min(520px,100%);max-height:92vh;overflow:auto;position:relative">
+    <button type="button" id="replyPanelX" class="btn btn-secondary btn-sm" style="position:absolute;right:12px;top:12px">✕</button>
+    <h3 style="font-family:var(--font-serif);margin-bottom:.5rem;padding-right:2rem">Répondre au client</h3>
+    <p class="msg" id="replyMeta"></p>
+    <div class="chat" id="replyChat" style="max-height:220px"></div>
+    <label>Votre réponse</label>
+    <textarea class="field" id="replyText" rows="4" placeholder="Écrire la réponse…"></textarea>
+    <button type="button" class="btn btn-primary" id="replySend" style="width:100%">Envoyer (site + e-mail client)</button>
+    <p class="msg" id="replyMsg" style="margin-top:.5rem"></p>
+    <p class="msg" id="replyNeedAuth" style="display:none;color:#9a3412">Connecte-toi d'abord via le 🔒 (Firebase) pour répondre.</p>
+  </div>
+</div>
+
 <div id="creator">
   <div id="resizeHandle" title="Glisser pour redimensionner"></div>
   <div class="sh">
@@ -319,6 +334,40 @@ function updateBadge(){
 }
 
 function saveReqs(){ localStorage.setItem(REQ_KEY, JSON.stringify(reqs)); updateBadge(); }
+
+/* EmailJS REST — réponses client (pas de bouton Activate FormSubmit) */
+const EMAILJS_PUBLIC_KEY = "9eNMtdUBT78dTSrkT";
+const EMAILJS_SERVICE_ID = "service_ld451te";
+const EMAILJS_TEMPLATE_CLIENT = "template_2zqa4qf";
+
+function emailClient(params) {
+  return fetch("https://api.emailjs.com/api/v1.0/email/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      service_id: EMAILJS_SERVICE_ID,
+      template_id: EMAILJS_TEMPLATE_CLIENT,
+      user_id: EMAILJS_PUBLIC_KEY,
+      template_params: {
+        name: params.name || "",
+        phone: params.phone || "",
+        email: params.email || "",
+        type: params.type || "",
+        message: params.message || ""
+      }
+    })
+  }).then(function(res) {
+    return res.text().then(function(text) {
+      if (!res.ok) {
+        var err = new Error(text || ("HTTP " + res.status));
+        err.status = res.status;
+        throw err;
+      }
+      return text;
+    });
+  });
+}
+
 function makeToken(){
   try { return crypto.randomUUID().replace(/-/g,"").slice(0,16); }
   catch(e){ return String(Date.now())+Math.random().toString(16).slice(2,10); }
@@ -458,7 +507,7 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
     read: false,
     messages: [{ from: "client", text: document.getElementById("cMsg").value.trim(), at: new Date().toISOString() }]
   };
-  const lienAdmin = siteBase() + "?admin=" + token;
+  const lienAdmin = siteBase() + "?repondre=" + token;
   const lienClient = siteBase() + "?suivi=" + token;
 
   // 1) Toujours enregistrer localement EN PREMIER
@@ -500,7 +549,7 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
       phone: d.phone,
       email: d.email,
       type: d.type,
-      message: d.msg + "\n\n---\nOuvrir la conversation (répondre depuis le site) :\n" + lienAdmin + "\n\nLien suivi client :\n" + lienClient,
+      message: d.msg + "\n\n---\nRepondre depuis le site (bouton) :\n" + lienAdmin + "\n\nLien suivi client :\n" + lienClient,
       lien_reponse: lienAdmin,
       lien_suivi_client: lienClient
     })
@@ -609,14 +658,16 @@ function renderTab(name){
         r.read=true;
         saveReqs();
         // email client
-        if(r.email && location.protocol!=="file:"){
+        if(r.email){
           try{
-            await fetch("https://formsubmit.co/ajax/"+encodeURIComponent(r.email),{
-              method:"POST",
-              headers:{"Content-Type":"application/json",Accept:"application/json"},
-              body:JSON.stringify({_subject:"Réponse — Clim & Électricité",_captcha:"false",message:text})
+            await emailClient({
+              name: r.name || "",
+              phone: cfg.phone || "",
+              email: r.email,
+              type: r.type || "",
+              message: text
             });
-          }catch(e){}
+          }catch(e){ console.warn("emailClient", e); }
         }
         renderTab("demandes");
       });
@@ -837,10 +888,91 @@ if(suiviBtn){
     box.innerHTML = renderSuiviConv(r);
   };
 }
+
+function openReplyPanel(token){
+  var r = findByToken(token);
+  var panel = document.getElementById("replyPanel");
+  if(!panel) return;
+  if(!r){
+    alert("Conversation introuvable sur cet appareil. Ouvre le site depuis le navigateur où la demande a été reçue / enregistrée.");
+    return;
+  }
+  window.__replyToken = token;
+  document.getElementById("replyMeta").textContent = (r.name||"") + " · " + (r.phone||"") + " · " + (r.email||"") + " · " + (r.type||"");
+  var msgs = r.messages || [];
+  document.getElementById("replyChat").innerHTML = msgs.map(function(m){
+    var who = m.from==="client" ? "Client" : "Vous";
+    return '<div class="bubble '+(m.from==="client"?"from-client":"from-admin")+'"><strong>'+esc(who)+'</strong><br>'+esc(m.text)+'</div>';
+  }).join("");
+  document.getElementById("replyText").value = "";
+  document.getElementById("replyMsg").textContent = "";
+  var need = document.getElementById("replyNeedAuth");
+  if(!currentUser){
+    need.style.display = "block";
+    document.getElementById("replySend").disabled = true;
+  } else {
+    need.style.display = "none";
+    document.getElementById("replySend").disabled = false;
+  }
+  panel.style.display = "flex";
+}
+
+document.getElementById("replyPanelX").onclick = function(){
+  document.getElementById("replyPanel").style.display = "none";
+};
+
+document.getElementById("replySend").onclick = async function(){
+  if(!currentUser){
+    document.getElementById("replyNeedAuth").style.display = "block";
+    document.getElementById("lockBtn").click();
+    return;
+  }
+  var token = window.__replyToken;
+  var r = findByToken(token);
+  var text = (document.getElementById("replyText").value||"").trim();
+  var msgEl = document.getElementById("replyMsg");
+  if(!r || !text){ msgEl.textContent = "Écris une réponse."; return; }
+  if(!r.messages) r.messages = [];
+  r.messages.push({ from:"admin", text:text, at:new Date().toISOString() });
+  r.read = true;
+  saveReqs();
+  msgEl.textContent = "Envoi…";
+  try {
+    if(r.email){
+      await emailClient({
+        name: r.name || "",
+        phone: cfg.phone || "",
+        email: r.email,
+        type: r.type || "",
+        message: text
+      });
+    }
+    msgEl.textContent = "✅ Envoyé : visible dans Suivi client + e-mail client.";
+    openReplyPanel(token);
+    document.getElementById("replyText").value = "";
+  } catch(e){
+    msgEl.textContent = "✅ Sauvé sur le site. E-mail client peut être en retard / spam.";
+    openReplyPanel(token);
+  }
+};
+
+// Re-enable send when auth changes
+if(typeof auth !== "undefined" && auth && auth.onAuthStateChanged){
+  auth.onAuthStateChanged(function(u){
+    currentUser = u;
+    updateBadge();
+    if(document.getElementById("replyPanel") && document.getElementById("replyPanel").style.display==="flex" && window.__replyToken){
+      openReplyPanel(window.__replyToken);
+    }
+    if(u){ if(creator.classList.contains("open")) showEditor(); }
+    else { if(creator.classList.contains("open")) showLogin(); }
+  });
+}
+
 (function openFromLink(){
   try{
     var q = new URLSearchParams(location.search);
-    var adminTok = q.get("admin");
+    var repondre = q.get("repondre") || q.get("admin");
     var suiviTok = q.get("suivi");
     if(suiviTok){
       var r = findByToken(suiviTok);
@@ -851,20 +983,12 @@ if(suiviBtn){
         location.hash = "#suivi";
       }
     }
-    if(adminTok){
-      // ouvre créateur si connecté, focus demandes
-      var r2 = findByToken(adminTok);
-      if(r2){
-        window.__focusToken = adminTok;
-        // ouvrir cadenas après court délai
-        setTimeout(function(){
-          if(typeof lockBtn !== "undefined" && lockBtn.onclick) lockBtn.onclick();
-          else document.getElementById("lockBtn").click();
-        }, 400);
-      }
+    if(repondre){
+      setTimeout(function(){ openReplyPanel(repondre); }, 300);
     }
   }catch(e){ console.warn(e); }
 })();
+
 
 </script>
 </body>
