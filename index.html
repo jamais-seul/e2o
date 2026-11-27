@@ -91,6 +91,7 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
     <a href="#services" id="navServ">Services</a>
     <a href="#realisations" id="navReal">Réalisations</a>
     <a href="#tarifs" id="navTarif">Tarifs</a>
+    <a href="#suivi" id="navSuivi">Suivi</a>
     <a href="#contact" class="nav-cta" id="navCta">Devis gratuit</a>
   </div>
 </nav>
@@ -139,6 +140,24 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
     <h2 id="tarifTitle">Tarifs indicatifs</h2>
     <p class="section-intro" id="tarifSub">Devis gratuit et personnalisé.</p>
     <div class="grid-3" id="tarifGrid"></div>
+  </div>
+</section>
+
+
+<section id="suivi">
+  <div class="wrap">
+    <div class="section-label">Espace client</div>
+    <h2>Suivi de votre demande</h2>
+    <p class="section-intro">Accès confidentiel : utilisez le lien reçu par e-mail, ou votre e-mail + le code de suivi.</p>
+    <div class="card" style="max-width:480px">
+      <label>E-mail de la demande</label>
+      <input class="field" id="suiviEmail" type="email" placeholder="vous@email.com">
+      <label>Code de suivi (reçu par e-mail)</label>
+      <input class="field" id="suiviToken" placeholder="code unique">
+      <button class="btn btn-primary" type="button" id="suiviBtn">Voir ma conversation</button>
+      <p class="msg" id="suiviErr" style="color:#b91c1c;margin-top:.5rem"></p>
+      <div id="suiviResult" style="margin-top:1rem"></div>
+    </div>
   </div>
 </section>
 
@@ -293,12 +312,24 @@ function apply() {
 apply();
 
 function updateBadge(){
-  const n=reqs.filter(r=>!r.read).length;
   const b=document.getElementById("notifBadge");
+  if(!currentUser){ b.style.display="none"; return; }
+  const n=reqs.filter(r=>!r.read).length;
   if(n>0){b.style.display="flex";b.textContent=n;} else b.style.display="none";
 }
 
 function saveReqs(){ localStorage.setItem(REQ_KEY, JSON.stringify(reqs)); updateBadge(); }
+function makeToken(){
+  try { return crypto.randomUUID().replace(/-/g,"").slice(0,16); }
+  catch(e){ return String(Date.now())+Math.random().toString(16).slice(2,10); }
+}
+function siteBase(){
+  try {
+    var u = location.href.split("?")[0].split("#")[0];
+    return u;
+  } catch(e){ return ""; }
+}
+
 
 /* ===== ASSISTANT RÉPONSES (5 styles) ===== */
 function suggestReplies(req) {
@@ -414,8 +445,10 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
   msgEl.textContent = "";
   msgEl.style.color = "";
 
+  const token = makeToken();
   const d = {
     id: Date.now(),
+    token: token,
     date: new Date().toLocaleString("fr-FR"),
     name: document.getElementById("cName").value.trim(),
     phone: document.getElementById("cPhone").value.trim(),
@@ -425,6 +458,8 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
     read: false,
     messages: [{ from: "client", text: document.getElementById("cMsg").value.trim(), at: new Date().toISOString() }]
   };
+  const lienAdmin = siteBase() + "?admin=" + token;
+  const lienClient = siteBase() + "?suivi=" + token;
 
   // 1) Toujours enregistrer localement EN PREMIER
   try {
@@ -465,7 +500,9 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
       phone: d.phone,
       email: d.email,
       type: d.type,
-      message: d.msg
+      message: d.msg + "\n\n---\nOuvrir la conversation (répondre depuis le site) :\n" + lienAdmin + "\n\nLien suivi client :\n" + lienClient,
+      lien_reponse: lienAdmin,
+      lien_suivi_client: lienClient
     })
   }).then(function(res){
     return res.json().then(function(j){
@@ -752,6 +789,81 @@ cReset.onclick=()=>{ if(!confirm("Réinitialiser textes / couleurs / services ?"
     var prev = lb.onclick;
     lb.addEventListener("click", function(){ setTimeout(bindResize, 50); });
   }
+})();
+
+
+/* Suivi client + liens mail */
+function findByToken(tok){
+  tok = String(tok||"").trim();
+  if(!tok) return null;
+  for(var i=0;i<reqs.length;i++){
+    if(String(reqs[i].token||"")===tok) return reqs[i];
+  }
+  return null;
+}
+function renderSuiviConv(r){
+  var msgs = r.messages||[];
+  var chat = msgs.map(function(m){
+    var who = m.from==="client" ? "Vous" : "L'équipe";
+    return '<div class="bubble '+(m.from==="client"?"from-client":"from-admin")+'"><strong>'+esc(who)+'</strong><br>'+esc(m.text)+'</div>';
+  }).join("");
+  return '<div class="req-card"><p class="msg">'+esc(r.date)+' · '+esc(r.type)+'</p><div class="chat">'+chat+'</div><p class="msg">Code suivi : <code>'+esc(r.token||"")+'</code></p></div>';
+}
+var suiviBtn = document.getElementById("suiviBtn");
+if(suiviBtn){
+  suiviBtn.onclick = function(){
+    var email = (document.getElementById("suiviEmail").value||"").trim().toLowerCase();
+    var tok = (document.getElementById("suiviToken").value||"").trim();
+    var err = document.getElementById("suiviErr");
+    var box = document.getElementById("suiviResult");
+    err.textContent = "";
+    var r = null;
+    if(tok) r = findByToken(tok);
+    if(r && email && String(r.email||"").toLowerCase() !== email){
+      err.textContent = "E-mail et code ne correspondent pas.";
+      box.innerHTML = "";
+      return;
+    }
+    if(!r && email){
+      var list = reqs.filter(function(x){ return String(x.email||"").toLowerCase()===email; });
+      if(list.length===1) r = list[0];
+      else if(list.length>1){
+        err.textContent = "Plusieurs demandes : indiquez le code de suivi reçu par e-mail.";
+        box.innerHTML = "";
+        return;
+      }
+    }
+    if(!r){ err.textContent = "Aucune conversation trouvée."; box.innerHTML=""; return; }
+    box.innerHTML = renderSuiviConv(r);
+  };
+}
+(function openFromLink(){
+  try{
+    var q = new URLSearchParams(location.search);
+    var adminTok = q.get("admin");
+    var suiviTok = q.get("suivi");
+    if(suiviTok){
+      var r = findByToken(suiviTok);
+      if(document.getElementById("suiviToken")) document.getElementById("suiviToken").value = suiviTok;
+      if(r && document.getElementById("suiviEmail")) document.getElementById("suiviEmail").value = r.email||"";
+      if(r && document.getElementById("suiviResult")){
+        document.getElementById("suiviResult").innerHTML = renderSuiviConv(r);
+        location.hash = "#suivi";
+      }
+    }
+    if(adminTok){
+      // ouvre créateur si connecté, focus demandes
+      var r2 = findByToken(adminTok);
+      if(r2){
+        window.__focusToken = adminTok;
+        // ouvrir cadenas après court délai
+        setTimeout(function(){
+          if(typeof lockBtn !== "undefined" && lockBtn.onclick) lockBtn.onclick();
+          else document.getElementById("lockBtn").click();
+        }, 400);
+      }
+    }
+  }catch(e){ console.warn(e); }
 })();
 
 </script>
