@@ -9,7 +9,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js" onerror="window.__emailjs_cdn_fail=1"></script>
 <style>
 :root{--ink:#1c1917;--muted:#57534e;--soft:#78716c;--bg:#faf7f2;--card:#fff;--sand:#f5f0e8;--clay:#c4a574;--clay-dark:#a68b5b;--sage:#0f766e;--sage-dark:#0d5c56;--blush:#e8d5c4;--line:#e7e0d5;--shadow:0 4px 24px rgba(28,25,23,.06);--radius:16px;--font-serif:"Cormorant Garamond",Georgia,serif;--font-sans:"Source Sans 3",system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;scroll-padding-top:84px}
@@ -223,87 +222,65 @@ const auth = firebase.auth();
 let db = null;
 try { db = firebase.firestore(); } catch(e) {}
 
-/* ===== EmailJS ===== */
-const EMAILJS_PUBLIC_KEY = "9eNMtdUBT78dTSrkT";
-const EMAILJS_SERVICE_ID = "service_ld451te";
-const EMAILJS_TEMPLATE_NOTIFY = "template_90u3dvn";  // notification pour toi
-const EMAILJS_TEMPLATE_CLIENT = "template_2zqa4qf";  // e-mail au client
-var emailjsReady = null;
-function ensureEmailJS() {
-  if (emailjsReady) return emailjsReady;
-  emailjsReady = new Promise(function(resolve, reject) {
-    function tryInit() {
-      var lib = window.emailjs;
-      if (!lib) {
-        reject(new Error("SDK EmailJS non chargé (CDN bloqué ou file://). Héberge le site ou autorise cdn.jsdelivr.net"));
-        return;
-      }
-      try {
-        if (typeof lib.init === "function") {
-          try { lib.init({ publicKey: EMAILJS_PUBLIC_KEY }); }
-          catch (e1) {
-            try { lib.init(EMAILJS_PUBLIC_KEY); } catch (e2) {}
-          }
-        }
-        resolve(lib);
-      } catch (e) {
-        reject(e);
-      }
-    }
-    if (window.emailjs) tryInit();
-    else {
-      var n = 0;
-      var t = setInterval(function() {
-        n++;
-        if (window.emailjs) { clearInterval(t); tryInit(); }
-        else if (n > 40) { clearInterval(t); tryInit(); }
-      }, 100);
-    }
-  });
-  return emailjsReady;
+/* ===== Web3Forms (e-mails) =====
+   1. Va sur https://web3forms.com
+   2. Access Key gratuite avec ton Gmail
+   3. Colle la clé ci-dessous
+*/
+const WEB3FORMS_KEY = "REMPLACE_PAR_TA_ACCESS_KEY"; // ex: a1b2c3d4-...
+const NOTIFY_EMAIL = "vincent.legall974@gmail.com";
+
+function sendMailNotify(d) {
+  // Notification pour toi
+  return fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({
+      access_key: WEB3FORMS_KEY,
+      subject: "Nouvelle demande — " + d.name,
+      from_name: "Site Clim & Électricité",
+      name: d.name,
+      phone: d.phone,
+      email: d.email,
+      type: d.type,
+      message: d.msg
+    })
+  }).then(function(r){ return r.json().then(function(j){ if (!r.ok || j.success === false) { var e = new Error(j.message || "Web3Forms error"); e.detail = j; throw e; } return j; }); });
 }
 
-function emailjsSend(templateId, params) {
-  return ensureEmailJS().then(function(lib) {
-    return lib.send(EMAILJS_SERVICE_ID, templateId, params);
-  });
+function sendMailClient(d, replyText) {
+  // E-mail au client (même clé ; le "email" du payload = reply-to, Web3Forms envoie à ton compte par défaut)
+  // Pour écrire AU client, on utilise FormSubmit direct sur son adresse (après 1 confirmation éventuelle)
+  if (!d.email) return Promise.resolve();
+  var body = replyText
+    ? { _subject: "Réponse — Clim & Électricité", _captcha: "false", _template: "box", message: replyText, name: d.name || "" }
+    : { _subject: "Confirmation de votre demande — Clim & Électricité", _captcha: "false", _template: "box",
+        message: "Bonjour " + (d.name||"") + ",\n\nNous avons bien reçu votre demande (" + (d.type||"") + ").\nNous vous recontactons rapidement.\n\nCordialement" };
+  return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(d.email), {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify(body)
+  }).then(function(r){ return r.json().catch(function(){ return {}; }); });
 }
 
-const STORAGE = "clim_v5_cfg";
-const REQ_KEY = "clim_v5_reqs";
-const VID_KEY = "clim_v5_vid";
+function sendMailNotifyFallback(d) {
+  // Secours FormSubmit vers ta boîte
+  return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(NOTIFY_EMAIL), {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({
+      _subject: "Nouvelle demande — " + d.name,
+      _captcha: "false",
+      _template: "table",
+      name: d.name,
+      phone: d.phone,
+      email: d.email,
+      type: d.type,
+      message: d.msg
+    })
+  }).then(function(r){ return r.ok; });
+}
 
-const DEFAULTS = {
-  siteName: "Clim & Électricité", logoMark: "CÉ",
-  heroTitle: "Pose de clim & dépannage électrique",
-  heroSub: "Installation, entretien et dépannage. Intervention rapide, devis gratuit.",
-  heroBadge: "❄️ Pose · Dépannage · Entretien", heroIcon: "❄️",
-  phone: "+33 0 00 00 00 00", email: "contact@exemple.fr", notifEmail: "vincent.legall974@gmail.com",
-  zone: "Votre ville et alentours", hours: "Lun–Ven 8h–19h · Sam sur RDV",
-  servTitle: "Nos services", servSub: "Climatisation et électricité.",
-  tarifTitle: "Tarifs indicatifs", contactTitle: "Contact & devis",
-  footText: "Pose et dépannage.",
-  services: [
-    {icon:"❄️", title:"Pose de climatisation", desc:"Mono-split, multi-split, gainable."},
-    {icon:"⚡", title:"Dépannage électrique", desc:"Panne, tableau, prises. Intervention rapide."},
-    {icon:"🔧", title:"Entretien clim", desc:"Nettoyage, contrôle, mise en service."},
-    {icon:"🏠", title:"Rénovation électrique", desc:"Mise aux normes, LED."}
-  ],
-  tarifs: [
-    {tag:"Clim", title:"Pose mono-split", price:"dès 890 €", desc:"Fourniture et pose standard."},
-    {tag:"Clim", title:"Entretien", price:"dès 120 €", desc:"Nettoyage et contrôle."},
-    {tag:"Élec", title:"Dépannage", price:"dès 70 €", desc:"Déplacement + 1ère heure."},
-    {tag:"Élec", title:"Mise aux normes", price:"Sur devis", desc:"Diagnostic et conformité."}
-  ],
-  colors: { sage:"#0f766e", clay:"#c4a574", bg:"#faf7f2", ink:"#1c1917" }
-};
-
-let cfg = Object.assign({}, DEFAULTS);
-try { const s = localStorage.getItem(STORAGE); if (s) cfg = Object.assign({}, DEFAULTS, JSON.parse(s)); } catch(e){}
-let reqs = [];
-try { reqs = JSON.parse(localStorage.getItem(REQ_KEY) || "[]"); } catch(e){}
-let currentUser = null, currentTab = "demandes";
-let iaHistory = [];
 
 function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 function saveReqs(){ localStorage.setItem(REQ_KEY, JSON.stringify(reqs)); updateBadge(); syncReqToCloud(); }
@@ -509,31 +486,24 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
     message: d.msg
   };
 
-  if (typeof emailjs === "undefined" || typeof emailjsSend !== "function") {
-    done(false, "EmailJS non chargé. Ouvre le site via http (pas file://) ou héberge-le.");
-    return;
-  }
+  var useWeb3 = WEB3FORMS_KEY && WEB3FORMS_KEY.indexOf("REMPLACE") === -1;
 
-  // Envoi séparé pour voir quelle étape échoue
-  emailjsSend(EMAILJS_TEMPLATE_NOTIFY, params)
-    .then(function(res){
-      console.log("EmailJS notify OK", res);
-      return emailjsSend(EMAILJS_TEMPLATE_CLIENT, params);
+  var p = useWeb3
+    ? sendMailNotify(d)
+    : sendMailNotifyFallback(d).then(function(ok){ if (!ok) throw new Error("FormSubmit notify failed"); });
+
+  p.then(function(){
+      return sendMailClient(d, null).catch(function(){ return null; });
     })
-    .then(function(res){
-      console.log("EmailJS client OK", res);
-      done(true);
-    })
+    .then(function(){ done(true); })
     .catch(function(err){
-      console.warn("EmailJS error", err);
-      var m = "Erreur EmailJS";
-      if (err) {
-        if (err.status) m += " " + err.status;
-        if (err.text) m += " — " + err.text;
-        else if (err.message) m += " — " + err.message;
-      }
-      m += " | Vérifie Email History sur emailjs.com";
-      done(false, m);
+      console.warn("Mail error", err);
+      // dernier recours FormSubmit
+      sendMailNotifyFallback(d).then(function(ok){
+        done(ok, ok ? null : ((err && err.message) || "E-mail non envoyé — vérifie la clé Web3Forms ou FormSubmit"));
+      }).catch(function(){
+        done(false, (err && err.message) || "E-mail non envoyé");
+      });
     });
 });
 
@@ -621,22 +591,16 @@ function renderTab(name){
         saveReqs();
         // Direct-looking email to client (FormSubmit still powers delivery)
         var mailNote = "";
-        if (r.email && typeof emailjsSend === "function") {
+        if (r.email) {
           try {
             await Promise.race([
-              emailjsSend(EMAILJS_TEMPLATE_CLIENT, {
-                name: r.name || "",
-                phone: cfg.phone || "",
-                email: r.email,
-                type: r.type || "",
-                message: text
-              }),
+              sendMailClient(r, text),
               new Promise(function(_, rej){ setTimeout(function(){ rej(new Error("timeout")); }, 8000); })
             ]);
             mailNote = " E-mail envoyé au client.";
           } catch(e) {
-            console.warn("EmailJS reply", e);
-            mailNote = " E-mail non envoyé (demande visible dans Suivi).";
+            console.warn("reply mail", e);
+            mailNote = " E-mail non envoyé (visible dans Suivi demande).";
           }
         }
         alert("Réponse enregistrée." + mailNote);
@@ -664,7 +628,7 @@ function renderTab(name){
     cBody.innerHTML = '<label>Nom du site</label><input class="field" data-k="siteName" value="'+esc(cfg.siteName)+'"><label>Titre</label><input class="field" data-k="heroTitle" value="'+esc(cfg.heroTitle)+'"><label>Sous-titre</label><textarea class="field" data-k="heroSub" rows="3">'+esc(cfg.heroSub)+'</textarea><label>Badge</label><input class="field" data-k="heroBadge" value="'+esc(cfg.heroBadge)+'">';
   }
   else if (name==="contact") {
-    cBody.innerHTML = '<label>Téléphone</label><input class="field" data-k="phone" value="'+esc(cfg.phone)+'"><label>Email affiché</label><input class="field" data-k="email" value="'+esc(cfg.email)+'"><label>Email notification (tes alertes)</label><input class="field" data-k="notifEmail" value="'+esc(cfg.notifEmail||cfg.email)+'"><label>Zone</label><input class="field" data-k="zone" value="'+esc(cfg.zone)+'"><label>Horaires</label><input class="field" data-k="hours" value="'+esc(cfg.hours)+'"><div class="ok-box">E-mails via EmailJS (Gmail). Notification pour toi + message au client, sans confirmation FormSubmit.</div>';
+    cBody.innerHTML = '<label>Téléphone</label><input class="field" data-k="phone" value="'+esc(cfg.phone)+'"><label>Email affiché</label><input class="field" data-k="email" value="'+esc(cfg.email)+'"><label>Email notification (tes alertes)</label><input class="field" data-k="notifEmail" value="'+esc(cfg.notifEmail||cfg.email)+'"><label>Zone</label><input class="field" data-k="zone" value="'+esc(cfg.zone)+'"><label>Horaires</label><input class="field" data-k="hours" value="'+esc(cfg.hours)+'"><div class="ok-box">E-mails : Web3Forms (colle ta Access Key dans le code) + secours FormSubmit vers vincent.legall974@gmail.com.</div>';
   }
   else if (name==="stats") {
     const unread = reqs.filter(function(r){return !r.read;}).length;
