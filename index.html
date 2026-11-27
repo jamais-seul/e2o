@@ -217,35 +217,56 @@ const firebaseConfig = {
   appId: "1:732295186075:web:6cc5c9c7d762a1b626683e",
   measurementId: "G-VYJRCPD0YQ"
 };
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+let auth = null;
 let db = null;
-try { db = firebase.firestore(); } catch(e) {}
+try {
+  firebase.initializeApp(firebaseConfig);
+  auth = firebase.auth();
+  try { db = firebase.firestore(); } catch(e) {}
+} catch (e) {
+  console.warn("Firebase init error", e);
+  auth = {
+    signInWithEmailAndPassword: function(){ return Promise.reject(new Error("Firebase indisponible")); },
+    signOut: function(){ return Promise.resolve(); },
+    onAuthStateChanged: function(cb){ cb(null); }
+  };
+}
 
 /* ===== Web3Forms (e-mails) =====
    1. Va sur https://web3forms.com
    2. Access Key gratuite avec ton Gmail
    3. Colle la clé ci-dessous
 */
-const WEB3FORMS_KEY = "100000ed-8d22-4090-8a0e-7b2007680766"; 
+const WEB3FORMS_KEY = "100000ed-8d22-4090-8a0e-7b2007680766";
 const NOTIFY_EMAIL = "vincent.legall974@gmail.com";
 
 function sendMailNotify(d) {
-  // Notification pour toi
   return fetch("https://api.web3forms.com/submit", {
     method: "POST",
     headers: { "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
       access_key: WEB3FORMS_KEY,
-      subject: "Nouvelle demande — " + d.name,
-      from_name: "Site Clim & Électricité",
-      name: d.name,
-      phone: d.phone,
-      email: d.email,
-      type: d.type,
-      message: d.msg
+      subject: "Nouvelle demande Clim — " + (d.name || ""),
+      from_name: "Site Clim et Electricite",
+      name: d.name || "",
+      phone: d.phone || "",
+      email: d.email || NOTIFY_EMAIL,
+      type: d.type || "",
+      message: d.msg || "",
+      botcheck: "",
+      replyto: d.email || ""
     })
-  }).then(function(r){ return r.json().then(function(j){ if (!r.ok || j.success === false) { var e = new Error(j.message || "Web3Forms error"); e.detail = j; throw e; } return j; }); });
+  }).then(function(r){
+    return r.json().then(function(j){
+      console.log("Web3Forms response", r.status, j);
+      if (!r.ok || j.success === false) {
+        var e = new Error((j && j.message) || ("Web3Forms HTTP " + r.status));
+        e.detail = j;
+        throw e;
+      }
+      return j;
+    });
+  });
 }
 
 function sendMailClient(d, replyText) {
@@ -292,7 +313,7 @@ function updateBadge(){
   if (n > 0) { b.style.display = "flex"; b.textContent = String(n); }
   else b.style.display = "none";
 }
-let cfg = JSON.parse(localStorage.getItem("site_cfg") || "{}";
+
 function apply(){
   const set=(id,v)=>{ const el=document.getElementById(id); if(el&&v!=null) el.textContent=v; };
   set("siteName", cfg.siteName); set("logoMark", cfg.logoMark);
@@ -664,6 +685,23 @@ document.getElementById("expandBtn").onclick = function(){ creator.classList.tog
   window.addEventListener("mousemove", function(e){ if(!dragging) return; const w=Math.min(Math.max(320, startW+(startX-e.clientX)), window.innerWidth*0.98); creator.style.width=w+"px"; creator.classList.remove("wide"); });
   window.addEventListener("mouseup", function(){ dragging=false; handle.classList.remove("active"); });
 })();
+
+/* Secours cadenas : si le handler principal a planté */
+(function(){
+  var btn = document.getElementById("lockBtn");
+  var creator = document.getElementById("creator");
+  if (!btn || !creator) return;
+  btn.addEventListener("click", function(){
+    if (creator.classList.contains("open")) return;
+    creator.classList.add("open");
+    // si pas de contenu login, forcer un login simple
+    var body = document.getElementById("cBody");
+    if (body && !body.innerHTML.trim()) {
+      body.innerHTML = '<div class="login-box"><h3 style="font-family:var(--font-serif);margin-bottom:1rem">Connexion</h3><p class="msg">Email Firebase ou mot de passe local de secours</p><input type="email" id="authEmail" class="field" placeholder="Email"><input type="password" id="authPass" class="field" placeholder="Mot de passe"><button class="btn btn-primary" id="authGo" style="width:100%">Entrer</button><p class="msg" id="authMsg" style="color:#b91c1c;margin-top:.5rem"></p></div>';
+    }
+  });
+})();
+
 </script>
 </body>
 </html>
