@@ -217,89 +217,39 @@ const firebaseConfig = {
   appId: "1:732295186075:web:6cc5c9c7d762a1b626683e",
   measurementId: "G-VYJRCPD0YQ"
 };
-let auth = null;
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 let db = null;
-try {
-  firebase.initializeApp(firebaseConfig);
-  auth = firebase.auth();
-  try { db = firebase.firestore(); } catch(e) {}
-} catch (e) {
-  console.warn("Firebase init error", e);
-  auth = {
-    signInWithEmailAndPassword: function(){ return Promise.reject(new Error("Firebase indisponible")); },
-    signOut: function(){ return Promise.resolve(); },
-    onAuthStateChanged: function(cb){ cb(null); }
+try { db = firebase.firestore(); } catch(e) {}
+
+/* ===== EmailJS ===== */
+const EMAILJS_PUBLIC_KEY = "9eNMtdUBT78dTSrkT";
+const EMAILJS_SERVICE_ID = "service_ld451te";
+const EMAILJS_TEMPLATE_NOTIFY = "template_90u3dvn";  // notification pour toi
+const EMAILJS_TEMPLATE_CLIENT = "template_2zqa4qf";  // e-mail au client
+function emailjsSend(templateId, params) {
+  // API REST EmailJS — pas besoin du SDK navigateur
+  var payload = {
+    service_id: EMAILJS_SERVICE_ID,
+    template_id: templateId,
+    user_id: EMAILJS_PUBLIC_KEY,
+    template_params: params
   };
-}
-
-/* ===== Web3Forms (e-mails) =====
-   1. Va sur https://web3forms.com
-   2. Access Key gratuite avec ton Gmail
-   3. Colle la clé ci-dessous
-*/
-const WEB3FORMS_KEY = "100000ed-8d22-4090-8a0e-7b2007680766";
-const NOTIFY_EMAIL = "vincent.legall974@gmail.com";
-
-function sendMailNotify(d) {
-  return fetch("https://api.web3forms.com/submit", {
+  return fetch("https://api.emailjs.com/api/v1.0/email/send", {
     method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({
-      access_key: WEB3FORMS_KEY,
-      subject: "Nouvelle demande Clim — " + (d.name || ""),
-      from_name: "Site Clim et Electricite",
-      name: d.name || "",
-      phone: d.phone || "",
-      email: d.email || NOTIFY_EMAIL,
-      type: d.type || "",
-      message: d.msg || "",
-      botcheck: "",
-      replyto: d.email || ""
-    })
-  }).then(function(r){
-    return r.json().then(function(j){
-      console.log("Web3Forms response", r.status, j);
-      if (!r.ok || j.success === false) {
-        var e = new Error((j && j.message) || ("Web3Forms HTTP " + r.status));
-        e.detail = j;
-        throw e;
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  }).then(function(res) {
+    return res.text().then(function(text) {
+      if (!res.ok) {
+        var err = new Error(text || ("HTTP " + res.status));
+        err.status = res.status;
+        err.text = text;
+        throw err;
       }
-      return j;
+      return text;
     });
   });
-}
-
-function sendMailClient(d, replyText) {
-  // E-mail au client (même clé ; le "email" du payload = reply-to, Web3Forms envoie à ton compte par défaut)
-  // Pour écrire AU client, on utilise FormSubmit direct sur son adresse (après 1 confirmation éventuelle)
-  if (!d.email) return Promise.resolve();
-  var body = replyText
-    ? { _subject: "Réponse — Clim & Électricité", _captcha: "false", _template: "box", message: replyText, name: d.name || "" }
-    : { _subject: "Confirmation de votre demande — Clim & Électricité", _captcha: "false", _template: "box",
-        message: "Bonjour " + (d.name||"") + ",\n\nNous avons bien reçu votre demande (" + (d.type||"") + ").\nNous vous recontactons rapidement.\n\nCordialement" };
-  return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(d.email), {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify(body)
-  }).then(function(r){ return r.json().catch(function(){ return {}; }); });
-}
-
-function sendMailNotifyFallback(d) {
-  // Secours FormSubmit vers ta boîte
-  return fetch("https://formsubmit.co/ajax/" + encodeURIComponent(NOTIFY_EMAIL), {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Accept: "application/json" },
-    body: JSON.stringify({
-      _subject: "Nouvelle demande — " + d.name,
-      _captcha: "false",
-      _template: "table",
-      name: d.name,
-      phone: d.phone,
-      email: d.email,
-      type: d.type,
-      message: d.msg
-    })
-  }).then(function(r){ return r.ok; });
 }
 
 
@@ -507,24 +457,31 @@ document.getElementById("contactForm").addEventListener("submit", function(e){
     message: d.msg
   };
 
-  var useWeb3 = WEB3FORMS_KEY && WEB3FORMS_KEY.indexOf("REMPLACE") === -1;
+  if (typeof emailjs === "undefined" || typeof emailjsSend !== "function") {
+    done(false, "EmailJS non chargé. Ouvre le site via http (pas file://) ou héberge-le.");
+    return;
+  }
 
-  var p = useWeb3
-    ? sendMailNotify(d)
-    : sendMailNotifyFallback(d).then(function(ok){ if (!ok) throw new Error("FormSubmit notify failed"); });
-
-  p.then(function(){
-      return sendMailClient(d, null).catch(function(){ return null; });
+  // Envoi séparé pour voir quelle étape échoue
+  emailjsSend(EMAILJS_TEMPLATE_NOTIFY, params)
+    .then(function(res){
+      console.log("EmailJS notify OK", res);
+      return emailjsSend(EMAILJS_TEMPLATE_CLIENT, params);
     })
-    .then(function(){ done(true); })
+    .then(function(res){
+      console.log("EmailJS client OK", res);
+      done(true);
+    })
     .catch(function(err){
-      console.warn("Mail error", err);
-      // dernier recours FormSubmit
-      sendMailNotifyFallback(d).then(function(ok){
-        done(ok, ok ? null : ((err && err.message) || "E-mail non envoyé — vérifie la clé Web3Forms ou FormSubmit"));
-      }).catch(function(){
-        done(false, (err && err.message) || "E-mail non envoyé");
-      });
+      console.warn("EmailJS error", err);
+      var m = "Erreur EmailJS";
+      if (err) {
+        if (err.status) m += " " + err.status;
+        if (err.text) m += " — " + err.text;
+        else if (err.message) m += " — " + err.message;
+      }
+      m += " | Vérifie Email History sur emailjs.com";
+      done(false, m);
     });
 });
 
@@ -612,16 +569,22 @@ function renderTab(name){
         saveReqs();
         // Direct-looking email to client (FormSubmit still powers delivery)
         var mailNote = "";
-        if (r.email) {
+        if (r.email && typeof emailjsSend === "function") {
           try {
             await Promise.race([
-              sendMailClient(r, text),
+              emailjsSend(EMAILJS_TEMPLATE_CLIENT, {
+                name: r.name || "",
+                phone: cfg.phone || "",
+                email: r.email,
+                type: r.type || "",
+                message: text
+              }),
               new Promise(function(_, rej){ setTimeout(function(){ rej(new Error("timeout")); }, 8000); })
             ]);
             mailNote = " E-mail envoyé au client.";
           } catch(e) {
-            console.warn("reply mail", e);
-            mailNote = " E-mail non envoyé (visible dans Suivi demande).";
+            console.warn("EmailJS reply", e);
+            mailNote = " E-mail non envoyé (demande visible dans Suivi).";
           }
         }
         alert("Réponse enregistrée." + mailNote);
@@ -649,7 +612,7 @@ function renderTab(name){
     cBody.innerHTML = '<label>Nom du site</label><input class="field" data-k="siteName" value="'+esc(cfg.siteName)+'"><label>Titre</label><input class="field" data-k="heroTitle" value="'+esc(cfg.heroTitle)+'"><label>Sous-titre</label><textarea class="field" data-k="heroSub" rows="3">'+esc(cfg.heroSub)+'</textarea><label>Badge</label><input class="field" data-k="heroBadge" value="'+esc(cfg.heroBadge)+'">';
   }
   else if (name==="contact") {
-    cBody.innerHTML = '<label>Téléphone</label><input class="field" data-k="phone" value="'+esc(cfg.phone)+'"><label>Email affiché</label><input class="field" data-k="email" value="'+esc(cfg.email)+'"><label>Email notification (tes alertes)</label><input class="field" data-k="notifEmail" value="'+esc(cfg.notifEmail||cfg.email)+'"><label>Zone</label><input class="field" data-k="zone" value="'+esc(cfg.zone)+'"><label>Horaires</label><input class="field" data-k="hours" value="'+esc(cfg.hours)+'"><div class="ok-box">E-mails : Web3Forms (colle ta Access Key dans le code) + secours FormSubmit vers vincent.legall974@gmail.com.</div>';
+    cBody.innerHTML = '<label>Téléphone</label><input class="field" data-k="phone" value="'+esc(cfg.phone)+'"><label>Email affiché</label><input class="field" data-k="email" value="'+esc(cfg.email)+'"><label>Email notification (tes alertes)</label><input class="field" data-k="notifEmail" value="'+esc(cfg.notifEmail||cfg.email)+'"><label>Zone</label><input class="field" data-k="zone" value="'+esc(cfg.zone)+'"><label>Horaires</label><input class="field" data-k="hours" value="'+esc(cfg.hours)+'"><div class="ok-box">E-mails via EmailJS (Gmail). Notification pour toi + message au client, sans confirmation FormSubmit.</div>';
   }
   else if (name==="stats") {
     const unread = reqs.filter(function(r){return !r.read;}).length;
@@ -685,23 +648,6 @@ document.getElementById("expandBtn").onclick = function(){ creator.classList.tog
   window.addEventListener("mousemove", function(e){ if(!dragging) return; const w=Math.min(Math.max(320, startW+(startX-e.clientX)), window.innerWidth*0.98); creator.style.width=w+"px"; creator.classList.remove("wide"); });
   window.addEventListener("mouseup", function(){ dragging=false; handle.classList.remove("active"); });
 })();
-
-/* Secours cadenas : si le handler principal a planté */
-(function(){
-  var btn = document.getElementById("lockBtn");
-  var creator = document.getElementById("creator");
-  if (!btn || !creator) return;
-  btn.addEventListener("click", function(){
-    if (creator.classList.contains("open")) return;
-    creator.classList.add("open");
-    // si pas de contenu login, forcer un login simple
-    var body = document.getElementById("cBody");
-    if (body && !body.innerHTML.trim()) {
-      body.innerHTML = '<div class="login-box"><h3 style="font-family:var(--font-serif);margin-bottom:1rem">Connexion</h3><p class="msg">Email Firebase ou mot de passe local de secours</p><input type="email" id="authEmail" class="field" placeholder="Email"><input type="password" id="authPass" class="field" placeholder="Mot de passe"><button class="btn btn-primary" id="authGo" style="width:100%">Entrer</button><p class="msg" id="authMsg" style="color:#b91c1c;margin-top:.5rem"></p></div>';
-    }
-  });
-})();
-
 </script>
 </body>
 </html>
