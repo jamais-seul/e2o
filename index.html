@@ -92,6 +92,7 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
     <a href="#realisations" id="navReal">Réalisations</a>
     <a href="#tarifs" id="navTarif">Tarifs</a>
     <a href="#suivi" id="navSuivi">Suivi</a>
+    <a href="#mentions" id="navMentions">Mentions</a>
     <a href="#contact" class="nav-cta" id="navCta">Devis gratuit</a>
   </div>
 </nav>
@@ -144,21 +145,6 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
 </section>
 
 
-<section id="suivi">
-  <div class="wrap">
-    <div class="section-label">Espace client</div>
-    <h2>Suivi de votre demande</h2>
-    <p class="section-intro">Entrez l’e-mail utilisé pour votre demande. Seules vos conversations s’affichent.</p>
-    <div class="card" style="max-width:480px">
-      <label>Votre e-mail</label>
-      <input class="field" id="suiviEmail" type="email" placeholder="vous@email.com">
-      <button class="btn btn-primary" type="button" id="suiviBtn">Voir ma conversation</button>
-      <p class="msg" id="suiviErr" style="color:#b91c1c;margin-top:.5rem"></p>
-      <div id="suiviResult" style="margin-top:1rem"></div>
-    </div>
-  </div>
-</section>
-
 <section id="contact" class="band">
   <div class="wrap">
     <div class="section-label" id="contactLabel">Contact</div>
@@ -190,6 +176,31 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
         <p style="margin-bottom:.45rem"><strong>🕒 Horaires</strong><br><span id="infoHours2">Lun–Ven 8h–19h · Sam sur RDV</span></p>
       </div>
     </div>
+  </div>
+</section>
+
+<section id="suivi">
+  <div class="wrap">
+    <div class="section-label">Espace client</div>
+    <h2>Suivi de votre demande</h2>
+    <p class="section-intro">Entrez l’e-mail utilisé pour votre demande. Seules vos conversations s’affichent. Vous pouvez y ajouter un message.</p>
+    <div class="card" style="max-width:520px">
+      <label>Votre e-mail</label>
+      <input class="field" id="suiviEmail" type="email" placeholder="vous@email.com">
+      <button class="btn btn-primary" type="button" id="suiviBtn">Voir ma conversation</button>
+      <p class="msg" id="suiviErr" style="color:#b91c1c;margin-top:.5rem"></p>
+      <div id="suiviResult" style="margin-top:1rem"></div>
+    </div>
+  </div>
+</section>
+
+
+
+<section id="mentions">
+  <div class="wrap">
+    <div class="section-label">Informations</div>
+    <h2 id="mentionsTitle">Mentions légales</h2>
+    <div class="card" id="mentionsBody" style="font-size:.92rem;color:var(--muted);white-space:pre-wrap"></div>
   </div>
 </section>
 
@@ -263,6 +274,8 @@ const DEFAULTS = {
   tarifLabel: "Tarifs", tarifTitle: "Tarifs indicatifs", tarifSub: "Devis gratuit et personnalisé.",
   contactLabel: "Contact", contactTitle: "Contact & devis", contactSub: "Décrivez votre besoin, on vous rappelle rapidement.",
   coordTitle: "Coordonnées", footText: "Pose de climatisation et dépannage électrique.",
+  mentionsTitle: "Mentions légales",
+  mentionsText: "ÉDITEUR DU SITE\nLe présent site est édité par Clim & Électricité.\nResponsable de la publication : le titulaire de l'activité.\nContact : voir la rubrique Contact du site.\n\nHÉBERGEMENT\nLe site peut être hébergé par GitHub Pages (GitHub Inc.) ou tout autre hébergeur choisi par l'éditeur.\n\nPROPRIÉTÉ INTELLECTUELLE\nL'ensemble des contenus présents sur ce site (textes, visuels, logos) est protégé. Toute reproduction non autorisée est interdite.\n\nDONNÉES PERSONNELLES\nLes données collectées via le formulaire (nom, téléphone, e-mail, message) sont destinées uniquement au traitement de votre demande de devis ou d'intervention.\nBase légale : intérêt légitime et/ou mesures précontractuelles.\nDurée de conservation : le temps nécessaire au traitement de la demande, puis archivage limité si obligation légale.\nVous disposez d'un droit d'accès, de rectification, d'effacement et d'opposition en nous contactant via les coordonnées indiquées sur le site.\nAucune cession commerciale des données à des tiers.\n\nCOOKIES\nLe site peut utiliser le stockage local du navigateur (localStorage) pour le fonctionnement du suivi de demande et des statistiques de fréquentation anonymisées (1 visiteur = 1 compteur).\n\nRESPONSABILITÉ\nLes informations présentées le sont à titre indicatif. Les devis et interventions font l'objet d'un accord spécifique.\n\nDROIT APPLICABLE\nDroit français. Tribunaux compétents selon les règles en vigueur.",
   services: [
     {icon:"❄️", title:"Pose de climatisation", desc:"Installation mono-split, multi-split, gainable."},
     {icon:"⚡", title:"Dépannage électrique", desc:"Panne, court-circuit, tableau électrique. Intervention rapide."},
@@ -301,6 +314,8 @@ function apply() {
   set("tarifLabel",cfg.tarifLabel); set("tarifTitle",cfg.tarifTitle); set("tarifSub",cfg.tarifSub);
   set("contactLabel",cfg.contactLabel); set("contactTitle",cfg.contactTitle); set("contactSub",cfg.contactSub);
   set("coordTitle",cfg.coordTitle); set("footName",cfg.siteName); set("footText",cfg.footText);
+  set("mentionsTitle", cfg.mentionsTitle || "Mentions légales");
+  var mb=document.getElementById("mentionsBody"); if(mb) mb.textContent = cfg.mentionsText || "";
   const tel=(cfg.phone||"").replace(/\s/g,"");
   document.getElementById("infoTel").textContent=cfg.phone||"";
   document.getElementById("infoTel").href="tel:"+tel;
@@ -323,6 +338,25 @@ function apply() {
   updateBadge();
 }
 apply();
+
+/* Visiteurs uniques : 1 navigateur = 1 */
+(function trackUnique(){
+  try {
+    var VID = "clim_visitor_id";
+    var COUNTED = "clim_visitor_counted";
+    var TOTAL = "clim_unique_visits";
+    if(!localStorage.getItem(VID)){
+      var id = (crypto.randomUUID && crypto.randomUUID()) || ("v"+Date.now());
+      localStorage.setItem(VID, id);
+    }
+    if(!localStorage.getItem(COUNTED)){
+      localStorage.setItem(COUNTED, "1");
+      var n = parseInt(localStorage.getItem(TOTAL)||"0",10) || 0;
+      localStorage.setItem(TOTAL, String(n+1));
+    }
+  } catch(e){}
+})();
+
 
 function updateBadge(){
   const b=document.getElementById("notifBadge");
@@ -382,6 +416,65 @@ function siteBase(){
 
 
 /* ===== ASSISTANT RÉPONSES (5 styles) ===== */
+
+/* Assistant général — large couverture par mots-clés (500+ formulations possibles) */
+function generalAnswer(question){
+  var q = (question||"").toLowerCase();
+  var hits = [];
+  function add(keys, text){
+    for(var i=0;i<keys.length;i++){
+      if(q.indexOf(keys[i]) !== -1){ hits.push(text); return; }
+    }
+  }
+  // Électricité
+  add(["disjoncteur","saute","disjoncte"], "Disjoncteur qui saute : 1) Couper / débrancher les appareils du circuit. 2) Remonter le général. 3) Remonter les divisionnaires un par un. Le départ qui refait sauter est en cause (surcharge ou court-circuit). Ne jamais forcer en boucle. Si odeur de brûlé ou étincelles : couper le général et faire intervenir.");
+  add(["différentiel","30 ma","30ma","différentiel"], "Différentiel 30 mA : protège les personnes contre les fuites à la terre. S'il saute : isoler les circuits, tester appareils (chauffe-eau, plaque, extérieur humide). Un diff qui saute au moindre orage peut être HS ou mal sélectif.");
+  add(["prise","chauffe","brûlé","fondue"], "Prise qui chauffe : danger d'incendie. Couper le circuit au tableau. Causes fréquentes : mauvais serrage, section insuffisante, multiprise surchargée. Remplacer la prise et contrôler le câblage. Ne pas réutiliser une prise noircie.");
+  add(["plus de courant","coupure","panne de courant","blackout"], "Plus de courant : vérifier si le quartier est touché. Sinon tableau : position du général et des différentiels. Remonter un par un. Multimètre utile sur l'arrivée. Si l'arrivée EDF/Enedis est morte : contacter le gestionnaire de réseau.");
+  add(["court-circuit","court circuit","courtcircuit"], "Court-circuit : contact direct phase/neutre ou phase/terre. Souvent dans boîtes de dérivation, douilles, appareils défectueux. Isoler le circuit, inspecter connexions, remplacer le matériel endommagé.");
+  add(["section","câble","cable","mm2","mm²"], "Section de câble (indicatif) : éclairage 1,5 mm² (10 A), prises 2,5 mm² (16/20 A), four/plaque selon puissance (souvent 6 mm²), borne de recharge selon installateur. Toujours respecter la norme et le calibre du disjoncteur.");
+  add(["tableau","gtl","peigne"], "Tableau électrique : organisation par rangées, peignes, repérage, espaces pour évolutions. GTL (gaine technique de logement) en construction neuve. Avant travaux : schéma et identification des départs.");
+  add(["norme","nfc","c 15","c15-100","nf c"], "NF C 15-100 : règle les sections, protections, volumes de salle de bain, nombre de circuits, DDR 30 mA, etc. Toute rénovation importante doit viser la conformité. Un diagnostic peut être nécessaire.");
+  add(["salle de bain","sdb","volume 0","volume 1"], "Salle de bain : volumes de sécurité (0, 1, 2). Matériel adapté IP, interdiction de certaines prises selon volume. Éclairage et chauffe-eau selon emplacement. En cas de doute, ne pas improvis.");
+  add(["led","éclairage","luminaire"], "Éclairage LED : faible conso, attention aux drivers de mauvaise qualité (scintillement, CEM). Respecter le calibre et la section du circuit. Points d'éclairage normés par pièce type.");
+  add(["chauffe-eau","cumulus","ballon"], "Chauffe-eau : circuit dédié, section adaptée, protection correcte. Fuite = couper eau + électricité. Entretien / anode selon modèle. Ne pas manipuler la résistance sans coupure.");
+  add(["plaque","four","cuisinière"], "Plaque / four : lignes dédiées souvent en 6 mm² selon puissance. Ne pas brancher sur une simple prise 16 A si la notice exige un raccordement spécifique.");
+  add(["extérieur","jardin","humidité","étanche"], "Extérieur : matériel IP adapté, diff 30 mA dédié conseillé, gaines et presse-étoupes. L'humidité est une cause fréquente de fuites et de différentiel qui saute.");
+  add(["terre","prise de terre","vert-jaune"], "Prise de terre : conducteur vert/jaune, liaison équipotentielle salle de bain. Une terre dégradée compromet la sécurité des différentiels. Mesure au tellurohmètre par pro.");
+  add(["surintensité","surcharge","calibre"], "Surcharge : trop d'appareils sur un même circuit. Répartir les charges, éviter multiprises en série, respecter le calibre du disjoncteur (ne jamais surcôter sans reprendre le câble).");
+  // Clim
+  add(["pose","installation","installer","mono-split","monosplit","multi-split","multisplit"], "Pose de clim : dimensionner la puissance (volume, isolation, exposition, apports gratuits). Prévoir unité extérieure (support, distances, nuisances sonores), liaisons frigorifiques, évacuation condensats, alimentation électrique dédiée, mise sous vide, test d'étanchéité, mise en service. Visite technique recommandée.");
+  add(["ne refroidit","pas froid","plus froid","chaud au lieu"], "Clim ne refroidit plus : filtres sales, mode incorrect (heat au lieu de cool), consigne, unité extérieure obstruée, manque de fluide, sonde, carte électronique. Noter le code erreur avant tout reset.");
+  add(["fuite d'eau","fuit de l'eau","condensa","écoulement"], "Fuite d'eau intérieure : bac ou tuyau d'évacuation bouché, pente insuffisante, isolation du tube froid insuffisante. Nettoyer la ligne d'évacuation en priorité.");
+  add(["bruit","vibration","claque"], "Bruit clim : support mal calé, ventilateur, détente, corps étranger, mode dégivrage. Vérifier fixations et niveau. Bruit électrique au tableau : possible desserrage → couper et contrôler.");
+  add(["gaz","fluide","r32","r410","recharge"], "Fluide frigorigène : intervention réservée aux techniciens avec attestation de capacité. Contrôle d'étanchéité, vide, charge au poids. Pas de recharge au feeling. R32 courant sur le neuf.");
+  add(["filtre","entretien","maintenance","nettoyer"], "Entretien : nettoyer les filtres régulièrement, vérifier unités, évacuation, performances. Un entretien annuel pro prolonge la durée de vie et limite les pannes.");
+  add(["gainable","ducted"], "Gainable : unité dans les combles/faux-plafond, diffusion par bouches. Dimensionnement des réseaux d'air, accès pour maintenance, isolation des gaines, bruit de soufflage à anticiper.");
+  add(["puissance","btu","kw","dimensionnement","m²","m2"], "Dimensionnement : on ne se base pas seulement sur les m². Volume, isolation, orientation, surfaces vitrées, étage. Un sous-dimensionnement fatigue la machine ; un surdimensionnement cycle trop court.");
+  add(["unité extérieure","ue","groupe extérieur"], "Unité extérieure : dégagements d'air, support anti-vibration, évacuation des condensats, protection intempéries, distances min. au voisinage (bruit).");
+  add(["liaison","cuivre","flare","dudgeon"], "Liaisons frigorifiques : longueurs et dénivelés selon notice, isolation, qualité des évasements, serrage au couple, test azote, vide poussé avant ouverture des vannes.");
+  add(["code erreur","erreur e","fault"], "Code erreur : le noter tel quel (photo), consulter la doc de la marque. Un reset sans diagnostic peut masquer une panne grave (sonde, carte, manque de gaz).");
+  add(["dégivrage","givre","gel"], "Givre / dégivrage : normal en mode pompe à chaleur par temps froid. Givre permanent ou cycles trop fréquents = problème de débit d'air, sonde, fluide ou carte.");
+  add(["pompe à chaleur","pac","chauffage"], "PAC air/air : chauffage et climatisation. Performance liée à la température extérieure. Appoint parfois nécessaire par grand froid. Entretien et dimensionnement critiques.");
+  // Méthodes / sécu / devis
+  add(["urgent","urgence","danger"], "Urgence : couper le général si odeur de brûlé, fumée, prise fondue, choc électrique. Ne pas rouvrir en boucle. Clim : couper l'alimentation si fuite d'eau importante sur électrique.");
+  add(["devis","prix","tarif","combien"], "Devis : détailler fourniture / main-d'œuvre / mise en service / éventuels frais d'accès. Pour une clim, une visite évite les mauvaises surprises (longueurs, supports, électricité).");
+  add(["outillage","multimètre","pince"], "Outillage de base élec : multimètre, tournevis isolés, pince à dénuder, détecteur de tension sans contact (en plus, jamais seul). Clim : manomètres, pompe à vide, balance — réservés aux habilités.");
+  add(["habilitation","attestation","certificat"], "Habilitation électrique (B1, BR…) pour travailler sur les installations. Attestation de capacité pour la manipulation des fluides. Travailler hors habilitation expose à des risques légaux et humains.");
+  add(["comment faire","méthode","procédure","étapes"], "Pour une procédure précise, indique le matériel (clim ou élec) et le symptôme. Règle d'or : couper l'alimentation avant ouverture, vérifier l'absence de tension, respecter les notices constructeur.");
+  add(["sécurité","epi","consignation"], "Sécurité : consignation, VAT (vérification d'absence de tension), EPI, ne jamais travailler seul sur risque élevé. En clim, attention aux parties tournantes et au fluide sous pression.");
+
+  if(hits.length){
+    // unique
+    var seen = {};
+    var out = [];
+    for(var j=0;j<hits.length;j++){ if(!seen[hits[j]]){ seen[hits[j]]=1; out.push(hits[j]); } }
+    return out.join("\n\n");
+  }
+  return "Je n'ai pas de fiche exacte pour cette formulation. Essaye avec des mots-clés : disjoncteur, différentiel, prise qui chauffe, section câble, pose split, ne refroidit plus, fuite d'eau, R32, NF C 15-100, tableau, urgence… Tu peux aussi décrire le symptôme + le matériel.";
+}
+
+
 function suggestReplies(req) {
   const name = (req.name || "").split(" ")[0] || "";
   const hello = name ? ("Bonjour " + name) : "Bonjour";
@@ -571,7 +664,7 @@ const creator = document.getElementById("creator");
 const cBody = document.getElementById("cBody");
 const cTabs = document.getElementById("cTabs");
 const cFoot = document.getElementById("cFoot");
-const TABS = [["demandes","Demandes"],["textes","Textes"],["services","Services"],["tarifs","Tarifs"],["contact","Contact"],["couleurs","Couleurs"],["aide","Aide pro"],["compte","Compte"]];
+const TABS = [["demandes","Demandes"],["assistant","Assistant général"],["stats","Stats"],["textes","Textes"],["services","Services"],["tarifs","Tarifs"],["contact","Contact"],["couleurs","Couleurs"],["mentions","Mentions"],["compte","Compte"]];
 
 function showLogin(){
   cTabs.style.display="none"; cFoot.style.display="none"; cLogout.style.display="none";
@@ -623,7 +716,6 @@ function renderTab(name){
           </div>
           <p class="msg">${esc(r.date)} · ${esc(r.phone)} · ${esc(r.email||"")}</p>
           ${helpForType(r.type, r.msg)}
-          ${aiBox(r)}
           <div class="chat">${chat||"<span class=\'msg\'>—</span>"}</div>
           <p class="msg" style="margin:.3rem 0 .2rem">Assistant — choisir un style de réponse :</p>
           <div class="style-btns">${styleBtns}</div>
@@ -681,27 +773,48 @@ if(r.email){
         saveReqs(); renderTab("demandes");
       });
     }
-  } else if(name==="aide"){
-    cBody.innerHTML=`
-      <h3 style="font-family:var(--font-serif);margin-bottom:.6rem">Aide pro — électricité & clim</h3>
-      <div class="help-box"><strong>Électricité — disjoncteur qui saute</strong><br>
-      1. Tout débrancher / ouvrir les divisionnaires.<br>
-      2. Remonter le général puis un circuit à la fois.<br>
-      3. Le circuit fautif est identifié → vérifier prises, luminaires, appareils.<br>
-      4. Court-circuit souvent aux boîtes de dérivation ou appareils défectueux.</div>
-      <div class="help-box"><strong>Électricité — plus de courant dans une zone</strong><br>
-      Vérifier différentiel 30 mA, serrage des bornes, continuity neutre/phase. Couper avant d’ouvrir.</div>
-      <div class="help-box"><strong>Clim — ne refroidit plus</strong><br>
-      Filtres, flux d’air unité extérieure, mode (cool), consigne, manque de gaz (manomètres), sonde ambiance, carte.</div>
-      <div class="help-box"><strong>Clim — fuite d’eau intérieure</strong><br>
-      Bac + tuyau d’évacuation bouchés, pente insuffisante, isolation du tube froid.</div>
-      <div class="help-box"><strong>Questions types au client</strong><br>
-      • Depuis quand ? Progressif ou brutal ?<br>
-      • Code erreur affiché ?<br>
-      • Disjoncteur / différentiel a-t-il sauté ?<br>
-      • Accès tableau / unité extérieure ?</div>
-      <p class="msg">Ces mémos s’affichent aussi automatiquement dans l’onglet Demandes selon le type de message.</p>`;
-  } else if(name==="textes"){
+  
+  } else if(name==="assistant"){
+    cBody.innerHTML = `<p class="msg" style="margin-bottom:.5rem">Assistant général — pose n'importe quelle question (clim, électricité, méthodes, sécurité…). Des centaines de formulations sont reconnues via mots-clés.</p>
+      <div class="style-btns" id="iaQuick" style="margin-bottom:.6rem"></div>
+      <div class="chat" id="iaChat" style="max-height:280px;min-height:120px"></div>
+      <label>Ta question</label>
+      <textarea class="field" id="iaInput" rows="2" placeholder="Ex : disjoncteur qui saute le soir, pose split 35m², fuite d'eau unité intérieure…"></textarea>
+      <button class="btn btn-primary btn-sm" type="button" id="iaSend">Demander</button>`;
+    if(!window.__iaHist) window.__iaHist = [];
+    var quicks = ["Disjoncteur saute","Prise qui chauffe","Plus de courant","Pose mono-split","Clim ne refroidit plus","Fuite d'eau clim","Norme NF C 15-100","Manque de gaz","Section de câble","Différentiel 30mA","Urgence odeur brûlé","Entretien filtres","Devis que demander","Tableau électrique"];
+    var qbox = document.getElementById("iaQuick");
+    qbox.innerHTML = quicks.map(function(q){ return '<button type="button" data-q="'+esc(q)+'">'+esc(q)+'</button>'; }).join("");
+    function paintIA(){
+      document.getElementById("iaChat").innerHTML = window.__iaHist.map(function(h){
+        return '<div class="bubble from-client"><strong>Toi</strong><br>'+esc(h.q)+'</div><div class="bubble from-admin"><strong>Assistant</strong><br>'+esc(h.a)+'</div>';
+      }).join("");
+      var box = document.getElementById("iaChat"); box.scrollTop = box.scrollHeight;
+    }
+    paintIA();
+    qbox.querySelectorAll("[data-q]").forEach(function(b){
+      b.onclick = function(){ var q=b.getAttribute("data-q"); window.__iaHist.push({q:q,a:generalAnswer(q)}); paintIA(); };
+    });
+    document.getElementById("iaSend").onclick = function(){
+      var q = (document.getElementById("iaInput").value||"").trim();
+      if(!q) return;
+      window.__iaHist.push({q:q,a:generalAnswer(q)});
+      document.getElementById("iaInput").value = "";
+      paintIA();
+    };
+  } else if(name==="stats"){
+    var total = 0;
+    try {
+      total = parseInt(localStorage.getItem("clim_unique_visits")||"0",10) || 0;
+    } catch(e){}
+    cBody.innerHTML = `<div class="ok-box"><strong>Visiteurs uniques</strong><br><span style="font-size:1.8rem;font-family:var(--font-serif)">${total}</span><br>1 appareil / navigateur = 1 visite (même s'il revient souvent).</div>
+      <p class="msg" style="margin-top:.8rem">Demandes enregistrées : <strong>${reqs.length}</strong> · Non lues : <strong>${reqs.filter(function(r){return !r.read;}).length}</strong></p>`;
+  } else if(name==="mentions"){
+    cBody.innerHTML = `<label>Titre</label><input class="field" data-k="mentionsTitle" value="${esc(cfg.mentionsTitle||"Mentions légales")}">
+      <label>Texte des mentions légales (modifiable)</label>
+      <textarea class="field" data-k="mentionsText" rows="16">${esc(cfg.mentionsText||"")}</textarea>
+      <p class="msg">Enregistre avec le bouton Sauvegarder en bas.</p>`;
+} else if(name==="textes"){
     cBody.innerHTML=`
       <label>Nom du site</label><input class="field" data-k="siteName" value="${esc(cfg.siteName)}">
       <label>Initiales logo</label><input class="field" data-k="logoMark" value="${esc(cfg.logoMark)}" maxlength="3">
@@ -859,7 +972,11 @@ function renderSuiviConv(r){
     var who = m.from==="client" ? "Vous" : "L'équipe";
     return '<div class="bubble '+(m.from==="client"?"from-client":"from-admin")+'"><strong>'+esc(who)+'</strong><br>'+esc(m.text)+'</div>';
   }).join("");
-  return '<div class="req-card"><p class="msg">'+esc(r.date)+' · '+esc(r.type)+'</p><div class="chat">'+chat+'</div><p class="msg">Code suivi : <code>'+esc(r.token||"")+'</code></p></div>';
+  return '<div class="req-card" data-suivi-id="'+esc(String(r.id))+'"><p class="msg">'+esc(r.date)+' · '+esc(r.type)+'</p><div class="chat">'+chat+'</div>' +
+    '<label>Ajouter une info / répondre</label>' +
+    '<textarea class="field" rows="3" id="suiviMsg-'+r.id+'" placeholder="Précision, adresse, créneau…"></textarea>' +
+    '<button type="button" class="btn btn-primary btn-sm" data-suivi-send="'+r.id+'">Envoyer</button>' +
+    '<p class="msg" id="suiviSendMsg-'+r.id+'"></p></div>';
 }
 var suiviBtn = document.getElementById("suiviBtn");
 if(suiviBtn){
@@ -879,6 +996,39 @@ if(suiviBtn){
       return;
     }
     box.innerHTML = list.map(renderSuiviConv).join("");
+    box.querySelectorAll("[data-suivi-send]").forEach(function(btn){
+      btn.onclick = function(){
+        var id = btn.getAttribute("data-suivi-send");
+        var ta = document.getElementById("suiviMsg-"+id);
+        var text = (ta && ta.value || "").trim();
+        var info = document.getElementById("suiviSendMsg-"+id);
+        if(!text){ if(info) info.textContent = "Écrivez un message."; return; }
+        var r = null;
+        for(var i=0;i<reqs.length;i++) if(String(reqs[i].id)===String(id)) r = reqs[i];
+        if(!r) return;
+        if(!r.messages) r.messages = [];
+        r.messages.push({from:"client", text:text, at:new Date().toISOString()});
+        r.read = false;
+        saveReqs();
+        // notif pro via Web3Forms
+        try {
+          fetch("https://api.web3forms.com/submit", {
+            method:"POST",
+            headers:{"Content-Type":"application/json","Accept":"application/json"},
+            body: JSON.stringify({
+              access_key: "100000ed-8d22-4090-8a0e-7b2007680766",
+              subject: "Réponse client — " + (r.name||""),
+              name: r.name||"",
+              email: r.email||"",
+              message: text
+            })
+          });
+        } catch(e){}
+        if(info) info.textContent = "Message envoyé.";
+        // refresh list
+        document.getElementById("suiviBtn").click();
+      };
+    });
   };
 }
 
