@@ -668,10 +668,7 @@ if(r.email){
       type: r.type || "",
       message: text
     });
-    alert("OK ! Mail envoyé à : " + r.email);
-  }catch(e){ alert("Erreur EmailJS : " + (e.message || e)); }
-} else {
-  alert("Bloqué : aucune adresse email trouvée sur cette demande client !");
+  }catch(e){ console.warn("emailClient", e); }
 }
         renderTab("demandes");
       });
