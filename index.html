@@ -659,17 +659,20 @@ function renderTab(name){
         r.read=true;
         saveReqs();
         // email client
-        if(r.email){
-          try{
-            await emailClient({
-              name: r.name || "",
-              phone: cfg.phone || "",
-              email: r.email,
-              type: r.type || "",
-              message: text
-            });
-          }catch(e){ console.warn("emailClient", e); }
-        }
+if(r.email){
+  try{
+    await emailClient({
+      name: r.name || "",
+      phone: cfg.phone || "",
+      email: r.email,
+      type: r.type || "",
+      message: text
+    });
+    alert("OK ! Mail envoyé à : " + r.email);
+  }catch(e){ alert("Erreur EmailJS : " + (e.message || e)); }
+} else {
+  alert("Bloqué : aucune adresse email trouvée sur cette demande client !");
+}
         renderTab("demandes");
       });
       cBody.querySelectorAll("[data-read]").forEach(b=>b.onclick=()=>{
