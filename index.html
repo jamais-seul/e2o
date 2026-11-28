@@ -648,11 +648,11 @@ function renderTab(name){
         };
       });
       cBody.querySelectorAll("[data-send]").forEach(b=>b.onclick=async()=>{
-        const id=+b.dataset.send;
+        const id=b.dataset.send;
         const ta=cBody.querySelector(`[data-reply="${id}"]`);
         const text=(ta?.value||"").trim();
         if(!text) return;
-        const r=reqs.find(x=>x.id===id);
+        const r=reqs.find(x=>String(x.id)===String(id));
         if(!r) return;
         if(!r.messages) r.messages=[];
         r.messages.push({from:"admin", text, at:new Date().toISOString()});
