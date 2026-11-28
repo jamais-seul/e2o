@@ -197,10 +197,12 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
 
 
 <section id="mentions">
-  <div class="wrap">
-    <div class="section-label">Informations</div>
-    <h2 id="mentionsTitle">Mentions légales</h2>
-    <div class="card" id="mentionsBody" style="font-size:.92rem;color:var(--muted);white-space:pre-wrap"></div>
+  <div class="wrap" style="text-align:center">
+    <button type="button" class="btn btn-secondary" id="mentionsToggle">Mentions légales</button>
+    <div id="mentionsPanel" style="display:none;text-align:left;margin-top:1rem">
+      <h2 id="mentionsTitle" style="margin-bottom:.7rem">Mentions légales</h2>
+      <div class="card" id="mentionsBody" style="font-size:.92rem;color:var(--muted);white-space:pre-wrap"></div>
+    </div>
   </div>
 </section>
 
@@ -417,61 +419,143 @@ function siteBase(){
 
 /* ===== ASSISTANT RÉPONSES (5 styles) ===== */
 
-/* Assistant général — large couverture par mots-clés (500+ formulations possibles) */
-function generalAnswer(question){
-  var q = (question||"").toLowerCase();
-  var hits = [];
-  function add(keys, text){
-    for(var i=0;i<keys.length;i++){
-      if(q.indexOf(keys[i]) !== -1){ hits.push(text); return; }
-    }
-  }
-  // Électricité
-  add(["disjoncteur","saute","disjoncte"], "Disjoncteur qui saute : 1) Couper / débrancher les appareils du circuit. 2) Remonter le général. 3) Remonter les divisionnaires un par un. Le départ qui refait sauter est en cause (surcharge ou court-circuit). Ne jamais forcer en boucle. Si odeur de brûlé ou étincelles : couper le général et faire intervenir.");
-  add(["différentiel","30 ma","30ma","différentiel"], "Différentiel 30 mA : protège les personnes contre les fuites à la terre. S'il saute : isoler les circuits, tester appareils (chauffe-eau, plaque, extérieur humide). Un diff qui saute au moindre orage peut être HS ou mal sélectif.");
-  add(["prise","chauffe","brûlé","fondue"], "Prise qui chauffe : danger d'incendie. Couper le circuit au tableau. Causes fréquentes : mauvais serrage, section insuffisante, multiprise surchargée. Remplacer la prise et contrôler le câblage. Ne pas réutiliser une prise noircie.");
-  add(["plus de courant","coupure","panne de courant","blackout"], "Plus de courant : vérifier si le quartier est touché. Sinon tableau : position du général et des différentiels. Remonter un par un. Multimètre utile sur l'arrivée. Si l'arrivée EDF/Enedis est morte : contacter le gestionnaire de réseau.");
-  add(["court-circuit","court circuit","courtcircuit"], "Court-circuit : contact direct phase/neutre ou phase/terre. Souvent dans boîtes de dérivation, douilles, appareils défectueux. Isoler le circuit, inspecter connexions, remplacer le matériel endommagé.");
-  add(["section","câble","cable","mm2","mm²"], "Section de câble (indicatif) : éclairage 1,5 mm² (10 A), prises 2,5 mm² (16/20 A), four/plaque selon puissance (souvent 6 mm²), borne de recharge selon installateur. Toujours respecter la norme et le calibre du disjoncteur.");
-  add(["tableau","gtl","peigne"], "Tableau électrique : organisation par rangées, peignes, repérage, espaces pour évolutions. GTL (gaine technique de logement) en construction neuve. Avant travaux : schéma et identification des départs.");
-  add(["norme","nfc","c 15","c15-100","nf c"], "NF C 15-100 : règle les sections, protections, volumes de salle de bain, nombre de circuits, DDR 30 mA, etc. Toute rénovation importante doit viser la conformité. Un diagnostic peut être nécessaire.");
-  add(["salle de bain","sdb","volume 0","volume 1"], "Salle de bain : volumes de sécurité (0, 1, 2). Matériel adapté IP, interdiction de certaines prises selon volume. Éclairage et chauffe-eau selon emplacement. En cas de doute, ne pas improvis.");
-  add(["led","éclairage","luminaire"], "Éclairage LED : faible conso, attention aux drivers de mauvaise qualité (scintillement, CEM). Respecter le calibre et la section du circuit. Points d'éclairage normés par pièce type.");
-  add(["chauffe-eau","cumulus","ballon"], "Chauffe-eau : circuit dédié, section adaptée, protection correcte. Fuite = couper eau + électricité. Entretien / anode selon modèle. Ne pas manipuler la résistance sans coupure.");
-  add(["plaque","four","cuisinière"], "Plaque / four : lignes dédiées souvent en 6 mm² selon puissance. Ne pas brancher sur une simple prise 16 A si la notice exige un raccordement spécifique.");
-  add(["extérieur","jardin","humidité","étanche"], "Extérieur : matériel IP adapté, diff 30 mA dédié conseillé, gaines et presse-étoupes. L'humidité est une cause fréquente de fuites et de différentiel qui saute.");
-  add(["terre","prise de terre","vert-jaune"], "Prise de terre : conducteur vert/jaune, liaison équipotentielle salle de bain. Une terre dégradée compromet la sécurité des différentiels. Mesure au tellurohmètre par pro.");
-  add(["surintensité","surcharge","calibre"], "Surcharge : trop d'appareils sur un même circuit. Répartir les charges, éviter multiprises en série, respecter le calibre du disjoncteur (ne jamais surcôter sans reprendre le câble).");
-  // Clim
-  add(["pose","installation","installer","mono-split","monosplit","multi-split","multisplit"], "Pose de clim : dimensionner la puissance (volume, isolation, exposition, apports gratuits). Prévoir unité extérieure (support, distances, nuisances sonores), liaisons frigorifiques, évacuation condensats, alimentation électrique dédiée, mise sous vide, test d'étanchéité, mise en service. Visite technique recommandée.");
-  add(["ne refroidit","pas froid","plus froid","chaud au lieu"], "Clim ne refroidit plus : filtres sales, mode incorrect (heat au lieu de cool), consigne, unité extérieure obstruée, manque de fluide, sonde, carte électronique. Noter le code erreur avant tout reset.");
-  add(["fuite d'eau","fuit de l'eau","condensa","écoulement"], "Fuite d'eau intérieure : bac ou tuyau d'évacuation bouché, pente insuffisante, isolation du tube froid insuffisante. Nettoyer la ligne d'évacuation en priorité.");
-  add(["bruit","vibration","claque"], "Bruit clim : support mal calé, ventilateur, détente, corps étranger, mode dégivrage. Vérifier fixations et niveau. Bruit électrique au tableau : possible desserrage → couper et contrôler.");
-  add(["gaz","fluide","r32","r410","recharge"], "Fluide frigorigène : intervention réservée aux techniciens avec attestation de capacité. Contrôle d'étanchéité, vide, charge au poids. Pas de recharge au feeling. R32 courant sur le neuf.");
-  add(["filtre","entretien","maintenance","nettoyer"], "Entretien : nettoyer les filtres régulièrement, vérifier unités, évacuation, performances. Un entretien annuel pro prolonge la durée de vie et limite les pannes.");
-  add(["gainable","ducted"], "Gainable : unité dans les combles/faux-plafond, diffusion par bouches. Dimensionnement des réseaux d'air, accès pour maintenance, isolation des gaines, bruit de soufflage à anticiper.");
-  add(["puissance","btu","kw","dimensionnement","m²","m2"], "Dimensionnement : on ne se base pas seulement sur les m². Volume, isolation, orientation, surfaces vitrées, étage. Un sous-dimensionnement fatigue la machine ; un surdimensionnement cycle trop court.");
-  add(["unité extérieure","ue","groupe extérieur"], "Unité extérieure : dégagements d'air, support anti-vibration, évacuation des condensats, protection intempéries, distances min. au voisinage (bruit).");
-  add(["liaison","cuivre","flare","dudgeon"], "Liaisons frigorifiques : longueurs et dénivelés selon notice, isolation, qualité des évasements, serrage au couple, test azote, vide poussé avant ouverture des vannes.");
-  add(["code erreur","erreur e","fault"], "Code erreur : le noter tel quel (photo), consulter la doc de la marque. Un reset sans diagnostic peut masquer une panne grave (sonde, carte, manque de gaz).");
-  add(["dégivrage","givre","gel"], "Givre / dégivrage : normal en mode pompe à chaleur par temps froid. Givre permanent ou cycles trop fréquents = problème de débit d'air, sonde, fluide ou carte.");
-  add(["pompe à chaleur","pac","chauffage"], "PAC air/air : chauffage et climatisation. Performance liée à la température extérieure. Appoint parfois nécessaire par grand froid. Entretien et dimensionnement critiques.");
-  // Méthodes / sécu / devis
-  add(["urgent","urgence","danger"], "Urgence : couper le général si odeur de brûlé, fumée, prise fondue, choc électrique. Ne pas rouvrir en boucle. Clim : couper l'alimentation si fuite d'eau importante sur électrique.");
-  add(["devis","prix","tarif","combien"], "Devis : détailler fourniture / main-d'œuvre / mise en service / éventuels frais d'accès. Pour une clim, une visite évite les mauvaises surprises (longueurs, supports, électricité).");
-  add(["outillage","multimètre","pince"], "Outillage de base élec : multimètre, tournevis isolés, pince à dénuder, détecteur de tension sans contact (en plus, jamais seul). Clim : manomètres, pompe à vide, balance — réservés aux habilités.");
-  add(["habilitation","attestation","certificat"], "Habilitation électrique (B1, BR…) pour travailler sur les installations. Attestation de capacité pour la manipulation des fluides. Travailler hors habilitation expose à des risques légaux et humains.");
-  add(["comment faire","méthode","procédure","étapes"], "Pour une procédure précise, indique le matériel (clim ou élec) et le symptôme. Règle d'or : couper l'alimentation avant ouverture, vérifier l'absence de tension, respecter les notices constructeur.");
-  add(["sécurité","epi","consignation"], "Sécurité : consignation, VAT (vérification d'absence de tension), EPI, ne jamais travailler seul sur risque élevé. En clim, attention aux parties tournantes et au fluide sous pression.");
 
-  if(hits.length){
-    // unique
-    var seen = {};
-    var out = [];
-    for(var j=0;j<hits.length;j++){ if(!seen[hits[j]]){ seen[hits[j]]=1; out.push(hits[j]); } }
-    return out.join("\n\n");
+/* Assistant général — moteur élargi clim / élec / site */
+function generalAnswer(question){
+  var raw = String(question||"").trim();
+  var q = raw.toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[’']/g,"'");
+  if(!q) return "Pose une question sur la clim, l'électricité, une panne, une pose, la sécurité, un devis, ou le fonctionnement de ce site.";
+
+  var scores = [];
+  function add(keys, title, text, weight){
+    weight = weight || 1;
+    var s = 0;
+    for(var i=0;i<keys.length;i++){
+      if(q.indexOf(keys[i]) !== -1) s += weight + Math.min(3, keys[i].length/4);
+    }
+    if(s>0) scores.push({s:s, title:title, text:text});
   }
-  return "Je n'ai pas de fiche exacte pour cette formulation. Essaye avec des mots-clés : disjoncteur, différentiel, prise qui chauffe, section câble, pose split, ne refroidit plus, fuite d'eau, R32, NF C 15-100, tableau, urgence… Tu peux aussi décrire le symptôme + le matériel.";
+
+  // ——— ÉLECTRICITÉ ———
+  add(["disjoncteur","saute","disjoncte","declenche","se coupe"], "Disjoncteur qui saute",
+    "1) Débrancher/couper les appareils du circuit suspect.\n2) Remonter le disjoncteur général.\n3) Remonter les divisionnaires un par un.\nLe départ qui refait sauter est en cause (surcharge ou court-circuit).\nNe jamais forcer en boucle. Odeur de brûlé / étincelles : couper le général et intervenir hors tension.", 3);
+  add(["differentiel","diff ","30ma","30 ma","interrupteur differentiel","ddr"], "Différentiel 30 mA",
+    "Protège les personnes contre les fuites à la terre. S'il saute : isoler les circuits un par un, tester chauffe-eau, plaques, circuits extérieurs humides. Un diff qui saute trop souvent peut être HS, mal sélectif, ou révéler une vraie fuite. Ne le shunter jamais.", 3);
+  add(["prise","chauffe","brule","fondue","noirci","arc"], "Prise qui chauffe",
+    "Risque incendie. Couper le circuit au tableau. Causes : mauvais serrage, section trop faible, multiprise surchargée, fiche abîmée. Remplacer la prise, contrôler le câble et les connexions. Ne pas réutiliser une prise noircie.", 3);
+  add(["plus de courant","coupure","panne de courant","blackout","plus d'electricite","plus d elec"], "Plus de courant",
+    "Vérifier si le voisinage est touché (réseau). Sinon tableau : général + différentiels. Remonter méthodiquement. Multimètre sur l'arrivée si habilité. Arrivée morte côté réseau : contacter Enedis / gestionnaire.", 2);
+  add(["court-circuit","court circuit","cc "], "Court-circuit",
+    "Contact phase/neutre ou phase/terre. Souvent boîtes de dérivation, douilles, appareils défectueux. Isoler le circuit, inspecter, remplacer le matériel endommagé. Protéger avant de remonter le disjoncteur.", 2);
+  add(["section","cable","câble","mm2","mm²","fil electrique"], "Section de câble",
+    "Indicatif courant : éclairage 1,5 mm² (10 A), prises 2,5 mm² (16/20 A), gros appareils selon puissance (souvent 6 mm² plaque/four). Le disjoncteur doit correspondre à la section. Ne jamais surcôter un disjoncteur sur un câble trop petit.", 2);
+  add(["tableau","gtl","peigne","rangée","rangee"], "Tableau électrique",
+    "Organisation par rangées, peignes, repérage clair, place pour évolutions. En neuf : GTL. Avant travaux : identifier les départs, faire un schéma. Toute modification sensible = conformité NF C 15-100.", 2);
+  add(["norme","nfc","c15","c 15-100","nf c 15"], "Norme NF C 15-100",
+    "Fixe sections, protections, volumes salle de bain, nombre de circuits, DDR 30 mA, etc. Les rénovations importantes doivent viser la conformité. En cas de doute sur une installation ancienne : diagnostic par pro.", 2);
+  add(["salle de bain","sdb","volume 0","volume 1","volume 2","douche"], "Salle de bain / volumes",
+    "Volumes de sécurité 0, 1, 2 : matériel IP adapté, interdictions selon zone. Éclairage, prises, chauffe-eau selon emplacement. Ne pas improviser près de l'eau.", 2);
+  add(["led","eclairage","luminaire","ampoule"], "Éclairage LED",
+    "Faible conso. Attention drivers bas de gamme (scintillement). Respecter circuit et calibre. Nombre de points d'éclairage selon type de pièce (norme).", 1);
+  add(["chauffe-eau","cumulus","ballon d'eau"], "Chauffe-eau",
+    "Circuit dédié, section et protection adaptées. Fuite : couper eau + électricité. Entretien/anode selon modèle. Résistance hors tension uniquement.", 2);
+  add(["plaque","four","cuisiniere","induction"], "Plaque / four",
+    "Lignes dédiées, souvent forte section selon puissance. Respecter la notice (parfois bornier, pas simple prise 16 A).", 2);
+  add(["exterieur","jardin","terrasse","humidite","etanche","ip65","ip55"], "Électricité extérieure",
+    "Matériel IP adapté, différentiel 30 mA, gaines et presse-étoupes. L'humidité provoque fuites et déclenchements. Éviter les montages provisoires exposés.", 2);
+  add(["terre","vert-jaune","vert jaune","prise de terre","equipotentielle"], "Prise de terre",
+    "Conducteur de protection, liaisons équipotentielles (sdb). Terre dégradée = danger même avec différentiel. Mesure par professionnel si doute.", 2);
+  add(["surcharge","surintensite","multiprise","trop d'appareils"], "Surcharge",
+    "Trop de charges sur un circuit. Répartir, éviter multiprises en série, respecter calibres. Un disjoncteur qui saute en charge utile n'est pas forcément HS.", 2);
+  add(["interrupteur","va-et-vient","poussoir","telerupteur"], "Commandes d'éclairage",
+    "Va-et-vient : 2 interrupteurs, navettes. Télérupteur/poussoirs pour plus de points. Toujours couper le circuit avant démontage.", 1);
+  add(["spot","encastre","halogene"], "Spots encastrés",
+    "Respecter isolation environnante (spots adaptés combles). Transformateurs/drivers accessibles. Ne pas surcharger le circuit d'éclairage.", 1);
+  add(["borne de recharge","irve","voiture electrique","wallbox"], "Borne de recharge",
+    "Installation réglementée, circuit dédié, protection adaptée, parfois déclaration/consuel selon puissance. À confier à un installateur qualifié IRVE.", 2);
+  add(["photovoltaique","panneau solaire","onduleur","injection"], "Photovoltaïque",
+    "Cofre de protection, onduleur, consuel souvent requis, conventions avec le gestionnaire de réseau. Ne pas raccorder soi-même n'importe comment au tableau.", 2);
+
+  // ——— CLIM / FROID ———
+  add(["pose","installation","installer","mono-split","monosplit","multi-split","multisplit","split"], "Pose / installation clim",
+    "1) Dimensionner (volume, isolation, expo, vitrages).\n2) Emplacement UE (support, bruit, dégagements) et UI.\n3) Liaisons cuivre, isolation, condensats.\n4) Alim électrique dédiée.\n5) Vide, tests d'étanchéité, ouverture vannes, mise en service.\nVisite technique recommandée avant devis ferme.", 3);
+  add(["ne refroidit","pas froid","plus froid","souffle chaud","pas de froid"], "Clim ne refroidit plus",
+    "Filtres sales, mauvais mode (heat vs cool), consigne, débit d'air, UE obstruée, manque de fluide, sonde, carte. Noter tout code erreur avant reset. Entretien + diagnostic pro si besoin.", 3);
+  add(["fuite d'eau","fuit","condensation","ecoulement","goutte"], "Fuite d'eau clim",
+    "Bac/tuyau d'évacuation bouché, mauvaise pente, isolation du tube froid insuffisante. Nettoyer la ligne d'évacuation. Si persistant : contrôle pose et isolation.", 3);
+  add(["bruit","vibration","claque","sifflement","grince"], "Bruit clim",
+    "Support mal calé, ventilateur, détente, mode dégivrage, corps étranger. Vérifier fixations et niveau. Bruit anormal continu : diagnostic.", 2);
+  add(["gaz","fluide","r32","r410","r410a","recharge","frigorigene"], "Fluide frigorigène",
+    "Manipulation réservée aux techniciens avec attestation de capacité. Étanchéité, vide, charge au poids. Pas de recharge au feeling. R32 fréquent sur le neuf.", 3);
+  add(["filtre","entretien","maintenance","nettoyer","servicing"], "Entretien clim",
+    "Filtres régulièrement, unités propres, évacuation libre, contrôle perfs. Contrat annuel conseillé pour fiabilité et garantie parfois.", 2);
+  add(["gainable","ducted","bouches"], "Gainable",
+    "Unité en comble/faux-plafond, réseau de gaines, bouches. Isolation des gaines, accès maintenance, bruit de soufflage à anticiper au dimensionnement.", 2);
+  add(["puissance","btu","kw","dimensionnement","combien de kw","quelle puissance"], "Dimensionnement puissance",
+    "Pas seulement les m² : volume, isolation, orientation, étage, apports solaires. Sous-dimensionné = fatigue ; surdimensionné = cycles courts et inconfort.", 3);
+  add(["unite exterieure","ue ","groupe exterieur","condenseur"], "Unité extérieure",
+    "Dégagements d'air, support anti-vibration, condensats, distances voisinage (bruit), protection intempéries. Ne pas confiner dans un local non prévu.", 2);
+  add(["liaison","cuivre","flare","dudgeon","tube frigo"], "Liaisons frigorifiques",
+    "Longueurs/dénivelés selon notice, isolation, évasements soignés, serrage au couple, test azote, vide poussé avant ouverture des vannes.", 2);
+  add(["code erreur","erreur e","fault","defaut affiche"], "Codes erreur",
+    "Photographier le code, consulter la doc marque. Reset sans analyse peut masquer sonde, carte, manque de gaz, communication UI/UE.", 2);
+  add(["degivrage","givre","gel","degel"], "Givre / dégivrage",
+    "En pompe à chaleur par temps froid, cycles de dégivrage normaux. Givre permanent ou trop fréquent : débit d'air, sonde, fluide, carte.", 2);
+  add(["pompe a chaleur","pac","chauffage clim","air/air","air air"], "Pompe à chaleur air/air",
+    "Chauffage + clim. COP lié à la température extérieure. Appoint parfois nécessaire par grand froid. Dimensionnement et entretien déterminants.", 2);
+  add(["mise en service","vacuum","vide","azote"], "Mise en service",
+    "Test d'étanchéité à l'azote, vide poussé, ouverture des vannes service, contrôles intensité/températures, paramétrage. Étape clé pour la durée de vie.", 2);
+  add(["deshumidif","humidite","mode dry"], "Déshumidification",
+    "Mode Dry : réduit l'humidité avec moins de froid ressenti. Utile mi-saison. Filtres propres indispensables.", 1);
+  add(["wifi","telecommande","appli clim","connecter clim"], "Pilotage / Wi-Fi",
+    "Modules Wi-Fi selon marque, appli constructeur, réseau 2,4 GHz souvent. Reset module + notice. Pas indispensable au fonctionnement froid/chaud de base.", 1);
+  add(["split mural","cassette","console"], "Types d'unités intérieures",
+    "Mural (le plus courant), console, cassette plafond, gainable. Choix selon architecture, esthétique, diffusion d'air et contraintes de pose.", 1);
+
+  // ——— SÉCURITÉ / MÉTIER / DEVIS ———
+  add(["urgent","urgence","danger","incendie","fumee","odeur de brule"], "Urgence",
+    "Odeur de brûlé, fumée, prise fondue, choc : couper le général, évacuer si besoin, ne pas réenclencher. Clim + eau sur électrique : couper l'alimentation de la machine.", 3);
+  add(["devis","prix","tarif","combien ca coute","budget"], "Devis",
+    "Détailler fourniture, main-d'œuvre, mise en service, accès difficiles, longueurs de liaisons, éventuelle mise à niveau électrique. Visite = devis plus fiable.", 2);
+  add(["habilitation","attestation de capacite","certificat capacite","br ","b1t"], "Habilitations",
+    "Travaux élec : habilitation adaptée. Fluides : attestation de capacité. Intervenir hors cadre = risques humains et légaux.", 2);
+  add(["securite","epi","consignation","vat"], "Sécurité intervention",
+    "Consignation, vérification d'absence de tension, EPI, ne pas travailler seul sur risques élevés. Clim : pièces tournantes, pression, électricité.", 2);
+  add(["outillage","multimetre","pince amperemetrique","pompe a vide"], "Outillage",
+    "Élec : multimètre, VAT, tournevis isolés. Clim pro : manifold, pompe à vide, balance, détecteur de fuites — réservés aux habilités pour le circuit frigorifique.", 1);
+  add(["comment faire","methode","procedure","etapes","pas a pas"], "Méthode",
+    "Précise le matériel (clim ou élec) et l'objectif. Règle d'or : couper l'alimentation, vérifier l'absence de tension, suivre la notice constructeur, ne pas sauter les tests d'étanchéité en clim.", 1);
+
+  // ——— SITE / OUTIL ———
+  add(["suivi","conversation","voir ma demande","espace client"], "Suivi de demande (site)",
+    "Section Suivi : le client entre l'e-mail utilisé à l'envoi. Il voit sa conversation et peut ajouter un message. Confidentialité : seules les demandes liées à cet e-mail s'affichent (stockage navigateur).", 2);
+  add(["formulaire","devis gratuit","envoyer une demande","contact"], "Formulaire de contact",
+    "Le formulaire enregistre la demande, t'envoie une notif (Web3Forms) et permet le suivi. Réponds depuis l'espace créateur ou le lien de réponse pour que ce soit aussi sur le site.", 2);
+  add(["espace createur","cadenas","firebase","connexion admin"], "Espace créateur",
+    "Bouton cadenas 🔒 : login Firebase. Onglets demandes, assistant, stats, textes, services, tarifs, contact, couleurs, mentions. Les clients ne voient pas le badge de notifs (réservé connecté).", 2);
+  add(["stats","visiteur","frequentation","vue"], "Statistiques",
+    "Onglet Stats : visiteurs uniques (1 navigateur = 1 compte, même s'il revient souvent) + nombre de demandes.", 2);
+  add(["mentions legales","cgv","confidentialite"], "Mentions légales",
+    "Accessibles via le bouton Mentions légales en bas de page. Texte modifiable dans l'espace créateur → Mentions.", 1);
+  add(["repondre au client","mail client","notification"], "Répondre au client",
+    "Réponds depuis Demandes ou le lien ?repondre=… : message enregistré sur le site + e-mail client (EmailJS). Le client le voit aussi dans Suivi.", 2);
+
+  scores.sort(function(a,b){ return b.s - a.s; });
+  if(!scores.length){
+    return "Je n'ai pas identifié le sujet avec précision.\n\nTu peux reformuler avec un mot-clé : disjoncteur, différentiel, prise qui chauffe, section câble, pose split, ne refroidit plus, fuite d'eau, R32, dimensionnement, NF C 15-100, suivi de demande, devis…\n\nDécris aussi : matériel + symptôme + depuis quand.";
+  }
+  var top = scores.slice(0, 3);
+  var out = [];
+  for(var k=0;k<top.length;k++){
+    if(k>0 && top[k].s < top[0].s * 0.4) break;
+    out.push("【 " + top[k].title + " 】\n" + top[k].text);
+  }
+  if(scores.length > out.length){
+    out.push("Autres pistes possibles : " + scores.slice(out.length, out.length+4).map(function(x){ return x.title; }).join(", ") + ".");
+  }
+  return out.join("\n\n");
 }
 
 
@@ -775,7 +859,7 @@ if(r.email){
     }
   
   } else if(name==="assistant"){
-    cBody.innerHTML = `<p class="msg" style="margin-bottom:.5rem">Assistant général — pose n'importe quelle question (clim, électricité, méthodes, sécurité…). Des centaines de formulations sont reconnues via mots-clés.</p>
+    cBody.innerHTML = `<p class="msg" style="margin-bottom:.5rem">Assistant général — clim, électricité, sécurité, devis, et fonctionnement de ce site. Décris le problème avec tes mots ; l'assistant croise plusieurs fiches pertinentes.</p>
       <div class="style-btns" id="iaQuick" style="margin-bottom:.6rem"></div>
       <div class="chat" id="iaChat" style="max-height:280px;min-height:120px"></div>
       <label>Ta question</label>
