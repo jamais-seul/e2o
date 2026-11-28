@@ -148,12 +148,10 @@ footer{background:var(--card);border-top:1px solid var(--line);text-align:center
   <div class="wrap">
     <div class="section-label">Espace client</div>
     <h2>Suivi de votre demande</h2>
-    <p class="section-intro">Accès confidentiel : utilisez le lien reçu par e-mail, ou votre e-mail + le code de suivi.</p>
+    <p class="section-intro">Entrez l’e-mail utilisé pour votre demande. Seules vos conversations s’affichent.</p>
     <div class="card" style="max-width:480px">
-      <label>E-mail de la demande</label>
+      <label>Votre e-mail</label>
       <input class="field" id="suiviEmail" type="email" placeholder="vous@email.com">
-      <label>Code de suivi (reçu par e-mail)</label>
-      <input class="field" id="suiviToken" placeholder="code unique">
       <button class="btn btn-primary" type="button" id="suiviBtn">Voir ma conversation</button>
       <p class="msg" id="suiviErr" style="color:#b91c1c;margin-top:.5rem"></p>
       <div id="suiviResult" style="margin-top:1rem"></div>
@@ -341,26 +339,30 @@ const EMAILJS_SERVICE_ID = "service_ld451te";
 const EMAILJS_TEMPLATE_CLIENT = "template_2zqa4qf";
 
 function emailClient(params) {
+  var payload = {
+    service_id: EMAILJS_SERVICE_ID,
+    template_id: EMAILJS_TEMPLATE_CLIENT,
+    user_id: EMAILJS_PUBLIC_KEY,
+    accessToken: "",
+    template_params: {
+      name: params.name || "",
+      phone: params.phone || "",
+      email: params.email || "",
+      type: params.type || "",
+      message: params.message || ""
+    }
+  };
   return fetch("https://api.emailjs.com/api/v1.0/email/send", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      service_id: EMAILJS_SERVICE_ID,
-      template_id: EMAILJS_TEMPLATE_CLIENT,
-      user_id: EMAILJS_PUBLIC_KEY,
-      template_params: {
-        name: params.name || "",
-        phone: params.phone || "",
-        email: params.email || "",
-        type: params.type || "",
-        message: params.message || ""
-      }
-    })
+    body: JSON.stringify(payload)
   }).then(function(res) {
     return res.text().then(function(text) {
+      console.log("EmailJS client", res.status, text);
       if (!res.ok) {
         var err = new Error(text || ("HTTP " + res.status));
         err.status = res.status;
+        err.text = text;
         throw err;
       }
       return text;
@@ -864,28 +866,20 @@ var suiviBtn = document.getElementById("suiviBtn");
 if(suiviBtn){
   suiviBtn.onclick = function(){
     var email = (document.getElementById("suiviEmail").value||"").trim().toLowerCase();
-    var tok = (document.getElementById("suiviToken").value||"").trim();
     var err = document.getElementById("suiviErr");
     var box = document.getElementById("suiviResult");
     err.textContent = "";
-    var r = null;
-    if(tok) r = findByToken(tok);
-    if(r && email && String(r.email||"").toLowerCase() !== email){
-      err.textContent = "E-mail et code ne correspondent pas.";
-      box.innerHTML = "";
+    box.innerHTML = "";
+    if(!email || email.indexOf("@") < 0){
+      err.textContent = "Indiquez votre e-mail.";
       return;
     }
-    if(!r && email){
-      var list = reqs.filter(function(x){ return String(x.email||"").toLowerCase()===email; });
-      if(list.length===1) r = list[0];
-      else if(list.length>1){
-        err.textContent = "Plusieurs demandes : indiquez le code de suivi reçu par e-mail.";
-        box.innerHTML = "";
-        return;
-      }
+    var list = reqs.filter(function(x){ return String(x.email||"").toLowerCase() === email; });
+    if(!list.length){
+      err.textContent = "Aucune demande pour cet e-mail.";
+      return;
     }
-    if(!r){ err.textContent = "Aucune conversation trouvée."; box.innerHTML=""; return; }
-    box.innerHTML = renderSuiviConv(r);
+    box.innerHTML = list.map(renderSuiviConv).join("");
   };
 }
 
@@ -946,12 +940,15 @@ document.getElementById("replySend").onclick = async function(){
         type: r.type || "",
         message: text
       });
+      msgEl.textContent = "✅ Envoyé : site + e-mail client.";
+    } else {
+      msgEl.textContent = "✅ Sauvé sur le site (pas d'e-mail client).";
     }
-    msgEl.textContent = "✅ Envoyé : visible dans Suivi client + e-mail client.";
     openReplyPanel(token);
     document.getElementById("replyText").value = "";
   } catch(e){
-    msgEl.textContent = "✅ Sauvé sur le site. E-mail client peut être en retard / spam.";
+    console.warn(e);
+    msgEl.textContent = "✅ Sauvé sur le site. E-mail client échoué: " + (e.message || e.text || "erreur") + " — vérifie EmailJS (To = {{email}}, origines autorisées).";
     openReplyPanel(token);
   }
 };
@@ -976,7 +973,6 @@ if(typeof auth !== "undefined" && auth && auth.onAuthStateChanged){
     var suiviTok = q.get("suivi");
     if(suiviTok){
       var r = findByToken(suiviTok);
-      if(document.getElementById("suiviToken")) document.getElementById("suiviToken").value = suiviTok;
       if(r && document.getElementById("suiviEmail")) document.getElementById("suiviEmail").value = r.email||"";
       if(r && document.getElementById("suiviResult")){
         document.getElementById("suiviResult").innerHTML = renderSuiviConv(r);
